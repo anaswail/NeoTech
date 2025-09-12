@@ -1,4 +1,4 @@
-import { Eye, Heart } from "lucide-react";
+import { Eye, Heart, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 
@@ -9,6 +9,8 @@ interface CardProps {
   price: number;
   discount?: number;
   percent?: number;
+  deleteIcon?: boolean;
+  wishAndCart?: boolean;
 }
 
 const addToCart = () => {
@@ -19,7 +21,20 @@ const addToWishlist = () => {
   // Logic to add the item to the wishlist
 };
 
-const Card = ({ img, title, price, discount, percent, id }: CardProps) => {
+const removeFromWishList = () => {
+  // Logic to add the item to the wishlist
+};
+
+const Card = ({
+  img,
+  title,
+  price,
+  discount,
+  percent,
+  id,
+  deleteIcon = false,
+  wishAndCart = false,
+}: CardProps) => {
   return (
     <div className="w-full max-w-[150px]  sm:max-w-[250px] md:max-w-[270px] group bg-txt-secondary/40 mx-auto">
       <div className="img-sec bg-txt-gray/10 flex justify-center items-center p-6 sm:p-8 md:p-10 lg:p-12 relative overflow-hidden aspect-square sm:aspect-[4/3] md:aspect-square">
@@ -39,17 +54,29 @@ const Card = ({ img, title, price, discount, percent, id }: CardProps) => {
 
         {/* Action Icons */}
         <div className="icons absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col justify-center items-center gap-2 sm:gap-3">
-          <div
-            onClick={addToWishlist}
-            className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
-          >
-            <Heart size={16} className="sm:w-5 sm:h-5" />
-          </div>
-          <div className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm">
-            <Link to={`/product/${id}`}>
-              <Eye size={16} className="sm:w-5 sm:h-5" />
-            </Link>
-          </div>
+          {wishAndCart && (
+            <>
+              <div
+                onClick={addToWishlist}
+                className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
+              >
+                <Heart size={16} className="sm:w-5 sm:h-5" />
+              </div>
+              <div className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm">
+                <Link to={`/product/${id}`}>
+                  <Eye size={16} className="sm:w-5 sm:h-5" />
+                </Link>
+              </div>
+            </>
+          )}
+          {deleteIcon && (
+            <div
+              onClick={removeFromWishList}
+              className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
+            >
+              <Trash size={16} className="sm:w-5 sm:h-5" />
+            </div>
+          )}
         </div>
 
         {/* Discount Badge */}

@@ -17,6 +17,7 @@ const CategoryPage = () => {
               img={product.img}
               title={product.title}
               price={product.price}
+              wishAndCart={true}
               id={idx}
             />
           ))}
