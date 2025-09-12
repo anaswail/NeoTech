@@ -326,8 +326,6 @@ const HomePage = () => {
                   img={product.img}
                   title={product.title}
                   price={product.price}
-                  discount={product.discount}
-                  percent={product.percent}
                   id={idx}
                 />
               </div>
@@ -360,7 +358,6 @@ const HomePage = () => {
               img={product.img}
               title={product.title}
               price={product.price}
-              discount={product.discount}
               id={idx}
             />
           ))}

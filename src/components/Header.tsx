@@ -48,14 +48,14 @@ const Header = () => {
               <h1 className="cursor-pointer p-3">Categories</h1>
               <div className="absolute hidden group-hover:block bg-white border shadow-lg w-64 p-3">
                 {categories.map((category, index) => (
-                  <p
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    key={index}
-                  >
-                    <Link to={`/category/${category.name}`}>
+                  <Link to={`/category/${category.name}`}>
+                    <p
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      key={index}
+                    >
                       {category.name}
-                    </Link>
-                  </p>
+                    </p>
+                  </Link>
                 ))}
               </div>
             </li>
