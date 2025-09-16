@@ -23,6 +23,11 @@ import { banners, categories, products } from "@/utils/Repeated";
 import Card from "@/components/Card";
 import SectionTitle from "@/utils/SectionTitle";
 import { Button } from "@/components/ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { actFetchProducts } from "@/store/slices/actProducts";
+import type { AppDispatch, RootState } from "@/store/store";
+import { PuffLoader, ScaleLoader } from "react-spinners";
 
 // Custom arrow components
 const PrevArrow = (props: any) => {
@@ -185,6 +190,22 @@ const HomePage = () => {
     arrows: false,
   };
 
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state?.products
+  );
+  useEffect(() => {
+    dispatch(actFetchProducts());
+  }, []);
+
+  // if (loading !== "fulfilled") {
+  //   return (
+  //     <div className=" top-0 left-0 w-full h-screen flex justify-center items-center bg-black/70  z-30">
+  //       <ScaleLoader color="#DB4444" size={200} className="z-40" />
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="container mx-auto px-4 mt-24 sm:mt-32">
       {/* Hero Section */}
@@ -254,19 +275,23 @@ const HomePage = () => {
               ? discountSettings
               : discountSettingsMobile)}
           >
-            {products.map((product, idx) => (
-              <div key={idx} className="px-2 ">
-                <Card
-                  img={product.img}
-                  title={product.title}
-                  price={product.price}
-                  discount={product.discount}
-                  percent={product.percent}
-                  wishAndCart={true}
-                  id={idx}
-                />
-              </div>
-            ))}
+            {data
+              .filter(
+                (productFilter) =>
+                  productFilter.price !== productFilter.discount
+              )
+              .map((product, idx) => (
+                <div key={idx} className="px-2 ">
+                  <Card
+                    img={product.img[0]}
+                    title={product.title}
+                    price={product.price}
+                    discount={product.discount}
+                    wishAndCart={true}
+                    id={idx}
+                  />
+                </div>
+              ))}
           </Slider>
         </div>
       </div>
@@ -321,12 +346,13 @@ const HomePage = () => {
               ? discountSettings
               : discountSettingsMobile)}
           >
-            {products.map((product, idx) => (
+            {data.map((product, idx) => (
               <div key={idx} className="px-2">
                 <Card
-                  img={product.img}
+                  img={product.img[0]}
                   title={product.title}
                   price={product.price}
+                  discount={product.discount}
                   wishAndCart={true}
                   id={idx}
                 />
@@ -354,12 +380,13 @@ const HomePage = () => {
 
         {/* Desktop Grid */}
         <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
-          {products.map((product, idx) => (
+          {data.slice(0, 8).map((product, idx) => (
             <Card
               key={idx}
-              img={product.img}
+              img={product.img[0]}
               title={product.title}
               price={product.price}
+              discount={product.discount}
               wishAndCart={true}
               id={idx}
             />
@@ -367,9 +394,11 @@ const HomePage = () => {
         </div>
 
         <div className="flex justify-center mt-8 lg:mt-10">
-          <Button className="text-base sm:text-lg p-4 sm:p-6">
-            View All Products
-          </Button>
+          <Link to="/allProducts">
+            <Button className="text-base sm:text-lg p-4 sm:p-6">
+              View All Products
+            </Button>
+          </Link>
         </div>
       </div>
 

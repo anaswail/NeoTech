@@ -12,6 +12,7 @@ import WishList from "@/pages/WishList";
 import ErrorPage from "@/pages/ErrorPage";
 import MainLayout from "@/layouts/MainLayout";
 import CategoryPage from "@/pages/CategoryPage";
+import AllProducts from "@/pages/AllProducts";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "wishlist",
         element: <WishList />,
+      },
+      {
+        path: "allProducts",
+        element: <AllProducts />,
       },
     ],
   },

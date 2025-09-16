@@ -1,17 +1,7 @@
 import { Eye, Heart, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
-
-interface CardProps {
-  id: number;
-  img: string;
-  title: string;
-  price: number;
-  discount?: number;
-  percent?: number;
-  deleteIcon?: boolean;
-  wishAndCart?: boolean;
-}
+import type { cardProps } from "@/types";
 
 const addToCart = () => {
   // Logic to add the item to the cart
@@ -30,11 +20,10 @@ const Card = ({
   title,
   price,
   discount,
-  percent,
   id,
   deleteIcon = false,
   wishAndCart = false,
-}: CardProps) => {
+}: cardProps) => {
   return (
     <div className="w-full max-w-[150px]  sm:max-w-[250px] md:max-w-[270px] group bg-txt-secondary/40 mx-auto">
       <div className="img-sec bg-txt-gray/10 flex justify-center items-center p-6 sm:p-8 md:p-10 lg:p-12 relative overflow-hidden aspect-square sm:aspect-[4/3] md:aspect-square">
@@ -80,23 +69,23 @@ const Card = ({
         </div>
 
         {/* Discount Badge */}
-        {percent && (
+        {discount && discount !== price && (
           <Button className="rounded-sm absolute top-2 sm:top-3 md:top-4 left-2 sm:left-3 md:left-4 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5">
-            -{percent}%
+            -{discount && Math.round(100 - (price / discount) * 100)}%
           </Button>
         )}
       </div>
 
       {/* Card Content */}
       <div className="text p-2 sm:p-3">
-        <h2 className="my-2 sm:my-3 text-sm sm:text-base md:text-regular font-bold line-clamp-2 leading-tight">
+        <h2 className=" truncate my-2 sm:my-3 text-sm sm:text-base md:text-regular font-bold line-clamp-2 leading-tight">
           {title}
         </h2>
         <div className="price-container flex items-center gap-3 sm:gap-5">
           <span className="text-txt-secondary2 text-sm sm:text-base md:text-lg font-semibold">
             ${price}
           </span>
-          {discount && (
+          {discount && discount !== price && (
             <span className="line-through text-txt-gray text-xs sm:text-sm md:text-base">
               ${discount}
             </span>
