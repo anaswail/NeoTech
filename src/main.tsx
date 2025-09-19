@@ -5,10 +5,12 @@ import { RouterProvider } from "react-router";
 import router from "./routes/AppRouter";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
+      <Toaster position="top-right" reverseOrder={false} />
       <RouterProvider router={router} />
     </Provider>
   </StrictMode>

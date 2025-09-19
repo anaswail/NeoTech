@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import ProductsPage from "@/pages/ProductsPage";
 import SignUp from "@/pages/SignUp";
 import Login from "@/pages/Login";
 import HomePage from "@/pages/HomePage";
@@ -24,10 +23,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
-      },
-      {
-        path: "products",
-        element: <ProductsPage />,
       },
 
       {
@@ -63,7 +58,7 @@ const router = createBrowserRouter([
         element: <WishList />,
       },
       {
-        path: "allProducts",
+        path: "products",
         element: <AllProducts />,
       },
     ],

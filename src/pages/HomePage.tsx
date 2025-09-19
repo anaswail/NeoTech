@@ -27,7 +27,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { actFetchProducts } from "@/store/slices/actProducts";
 import type { AppDispatch, RootState } from "@/store/store";
-import { PuffLoader, ScaleLoader } from "react-spinners";
 
 // Custom arrow components
 const PrevArrow = (props: any) => {
@@ -394,7 +393,7 @@ const HomePage = () => {
         </div>
 
         <div className="flex justify-center mt-8 lg:mt-10">
-          <Link to="/allProducts">
+          <Link to="/products">
             <Button className="text-base sm:text-lg p-4 sm:p-6">
               View All Products
             </Button>

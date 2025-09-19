@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { products } from "@/utils/Repeated";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { Trash2Icon } from "lucide-react";
+import { removeFromCart, type CartItem } from "@/store/slices/cartSlice";
+import toast from "react-hot-toast";
 
 const CartPage = () => {
   const [quantity, setQuantity] = useState<Record<string, number>>({});
@@ -21,6 +25,15 @@ const CartPage = () => {
     const value = parseInt(e.target.value) || min;
     updateQuantity(value, id, min, max);
   };
+
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const dispatch = useDispatch();
+
+  const handleDeleteProduct = (id: number, title: string) => {
+    dispatch(removeFromCart({ id } as CartItem));
+    toast.success(`${title} has been deleted`);
+  };
+
   return (
     <div className="container  mx-auto px-4 mt-24 sm:mt-32">
       <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
@@ -45,37 +58,50 @@ const CartPage = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, id) => {
-            const currentQuantity = quantity[id] ?? 1;
-            return (
-              <tr key={id} className="border-b border-gray-300">
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={product.img}
-                      alt={product.title}
-                      className="w-12 h-12 rounded"
+          {cartItems.length > 0 ? (
+            cartItems.map((product, id) => {
+              const currentQuantity = quantity[id] ?? 1;
+              return (
+                <tr key={id} className="border-b border-gray-300">
+                  <td className="py-4 px-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={product.img}
+                        alt={product.title}
+                        className="w-12 h-12 rounded"
+                      />
+                      <span>{product.title}</span>
+                    </div>
+                  </td>
+                  <td className="text-center py-4 px-4">${product.price}</td>
+                  <td className="text-center py-4 px-4">
+                    <input
+                      type="number"
+                      value={currentQuantity.toString().padStart(2, "0")}
+                      onChange={(e) => handleInputChange(e, id.toString())}
+                      className="w-12 text-center text-gray-800 border border-gray-300 rounded"
+                      min="1"
+                      max="99"
                     />
-                    <span>{product.title}</span>
-                  </div>
-                </td>
-                <td className="text-center py-4 px-4">${product.price}</td>
-                <td className="text-center py-4 px-4">
-                  <input
-                    type="number"
-                    value={currentQuantity.toString().padStart(2, "0")}
-                    onChange={(e) => handleInputChange(e, id.toString())}
-                    className="w-12 text-center text-gray-800 border border-gray-300 rounded"
-                    min="1"
-                    max="99"
-                  />
-                </td>
-                <td className="text-center py-4 px-4">
-                  ${(product.price * currentQuantity).toFixed(2)}
-                </td>
-              </tr>
-            );
-          })}
+                  </td>
+                  <td className="text-center py-4 px-4">
+                    ${(product.price * currentQuantity).toFixed(2)}
+                  </td>
+                  <td>
+                    <Trash2Icon
+                      className="cursor-pointer"
+                      onClick={() =>
+                        handleDeleteProduct(product.id, product.title)
+                      }
+                    />
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <h1 className="py-10 text-xl font-bold">The Cart is empty</h1>
+          )}
+          {}
         </tbody>
       </table>
     </div>

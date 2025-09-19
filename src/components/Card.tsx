@@ -2,10 +2,9 @@ import { Eye, Heart, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 import type { cardProps } from "@/types";
-
-const addToCart = () => {
-  // Logic to add the item to the cart
-};
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/slices/cartSlice";
+import toast, { Toaster } from "react-hot-toast";
 
 const addToWishlist = () => {
   // Logic to add the item to the wishlist
@@ -24,6 +23,13 @@ const Card = ({
   deleteIcon = false,
   wishAndCart = false,
 }: cardProps) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ id, title, price, img, quantity: 1 }));
+    toast.success(`${title} added to cart successfully`);
+  };
+
   return (
     <div className="w-full max-w-[150px]  sm:max-w-[250px] md:max-w-[270px] group bg-txt-secondary/40 mx-auto">
       <div className="img-sec bg-txt-gray/10 flex justify-center items-center p-6 sm:p-8 md:p-10 lg:p-12 relative overflow-hidden aspect-square sm:aspect-[4/3] md:aspect-square">
@@ -35,7 +41,7 @@ const Card = ({
 
         {/* Add to Cart Button */}
         <Button
-          onClick={addToCart}
+          onClick={handleAddToCart}
           className="bg-black hover:bg-txt-secondary2 transition-all duration-400 w-full absolute -bottom-10 left-0 group-hover:bottom-0 text-xs sm:text-sm md:text-base py-2 sm:py-3"
         >
           Add To Cart
@@ -75,7 +81,6 @@ const Card = ({
           </Button>
         )}
       </div>
-
       {/* Card Content */}
       <div className="text p-2 sm:p-3">
         <h2 className=" truncate my-2 sm:my-3 text-sm sm:text-base md:text-regular font-bold line-clamp-2 leading-tight">
