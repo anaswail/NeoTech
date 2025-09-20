@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import type { cardProps } from "@/types";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/store/slices/cartSlice";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const addToWishlist = () => {
   // Logic to add the item to the wishlist
@@ -23,6 +23,10 @@ const Card = ({
   deleteIcon = false,
   wishAndCart = false,
 }: cardProps) => {
+  const handleProductClick = () => {
+    scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
@@ -57,11 +61,11 @@ const Card = ({
               >
                 <Heart size={16} className="sm:w-5 sm:h-5" />
               </div>
-              <div className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm">
-                <Link to={`/product/${id}`}>
+              <Link to={`/product/${id}`} onClick={handleProductClick}>
+                <div className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm">
                   <Eye size={16} className="sm:w-5 sm:h-5" />
-                </Link>
-              </div>
+                </div>
+              </Link>
             </>
           )}
           {deleteIcon && (

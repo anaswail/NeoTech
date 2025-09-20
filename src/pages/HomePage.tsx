@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { actFetchProducts } from "@/store/slices/actProducts";
 import type { AppDispatch, RootState } from "@/store/store";
+import { SyncLoader } from "react-spinners";
 
 // Custom arrow components
 const PrevArrow = (props: any) => {
@@ -190,20 +191,23 @@ const HomePage = () => {
   };
 
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state?.products
-  );
+  const { data, loading } = useSelector((state: RootState) => state?.products);
   useEffect(() => {
     dispatch(actFetchProducts());
   }, []);
 
-  // if (loading !== "fulfilled") {
-  //   return (
-  //     <div className=" top-0 left-0 w-full h-screen flex justify-center items-center bg-black/70  z-30">
-  //       <ScaleLoader color="#DB4444" size={200} className="z-40" />
-  //     </div>
-  //   );
-  // }
+  if (loading !== "fulfilled") {
+    scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    return (
+      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+        <h1 className="text-txt-black text-4xl font-bold mb-8">NeoTech</h1>
+        <SyncLoader size={25} margin={5} />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 mt-24 sm:mt-32">
@@ -305,7 +309,11 @@ const HomePage = () => {
         {/* Desktop Categories Grid */}
         <div className="hidden lg:flex justify-between mt-15">
           {categoriesSec.map((cat, index) => (
-            <Link key={index} to={`category/${cat.name}`}>
+            <Link
+              key={index}
+              to={`category/${cat.name}`}
+              onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
+            >
               <div className="category h-40 w-46 rounded-lg transition-all hover:bg-txt-secondary2 hover:border-txt-secondary2 duration-300 cursor-pointer hover:text-white border-txt-gray border-2 flex flex-col justify-center items-center gap-2">
                 {cat.icon}
                 <h1 className="text-center text-sm">{cat.name}</h1>
@@ -393,7 +401,10 @@ const HomePage = () => {
         </div>
 
         <div className="flex justify-center mt-8 lg:mt-10">
-          <Link to="/products">
+          <Link
+            to="/products"
+            onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <Button className="text-base sm:text-lg p-4 sm:p-6">
               View All Products
             </Button>

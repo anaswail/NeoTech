@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { products } from "@/utils/Repeated";
+import type { RootState } from "@/store/store";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { SyncLoader } from "react-spinners";
 
 const ProductDetails = () => {
-  const [image, setImage] = useState(products[0].img);
   const [size, setSize] = useState("L");
   const [count, setCount] = useState(1);
 
@@ -14,51 +16,65 @@ const ProductDetails = () => {
   const addToCart = () => {
     // add logic
   };
+  const { id } = useParams();
+  const { data, loading } = useSelector((state: RootState) => state.products);
+  const productId = Number(id);
+  const product = data.find((item) => Number(item.id) === productId);
+
+  const [image, setImage] = useState(product?.img[0]);
+
+  if (loading !== "fulfilled") {
+    return (
+      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white/20 flex-col ">
+        <h1 className="text-txt-black text-4xl font-bold mb-5">NeoTech</h1>
+        <SyncLoader size={25} margin={5} />
+      </div>
+    );
+  }
 
   return (
     <div className="my-16 sm:my-20 lg:my-30">
       <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
-        Product Page
+        {product?.title}
       </h1>
       <div className="content flex mt-8 lg:mt-10">
-        <div className="img-section w-1/2 flex items-center justify-center">
+        <div className="img-section w-1/2 flex  justify-center">
           <div className="switchImages w-1/3">
-            {products.slice(0, 4).map((productImage, idx) => (
+            {product?.img.map((productImage, idx) => (
               <div
                 className={`image ${
-                  image === productImage.img
+                  image === productImage
                     ? "bg-txt-secondary2/85"
                     : "bg-txt-secondary hover:bg-gray-200"
                 } my-3 w-3/4 p-2 flex justify-center items-center rounded-lg cursor-pointer `}
                 key={idx}
-                onClick={() => setImage(productImage.img)}
+                onClick={() => setImage(productImage)}
               >
                 <img
-                  src={productImage.img}
+                  src={productImage}
                   alt="product image"
                   className=" w-1/2  sm:h-20 md:h-24 lg:h-22 object-contain"
                 />
               </div>
             ))}
           </div>
-          <div className="main-image w-2/3 p-10 rounded-lg bg-txt-secondary h-full flex justify-center items-center">
+          <div className="main-image w-2/3 p-10 rounded-lg bg-txt-secondary h-3/4 flex justify-center items-center">
             <img src={image} alt="main-img" className="w-full h-3/4 " />
           </div>
         </div>
 
         <div className="text-section w-1/2 ml-10 flex flex-col gap-3">
           <h1 className="product-title text-3xl font-bold ">
-            Havic HV G-92 Gamepad
+            {product?.title}
           </h1>
           <p className="product-condition text-green-400 ">In stock</p>
-          <p className="price text-2xl ">$192</p>
-          <p className="description w-5/6 border-b-1 border-black/60 border-solid pb-5">
-            PlayStation 5 Controller Skin High quality vinyl with air channel
-            adhesive for easy bubble free install & mess free removal Pressure
-            sensitive.
-          </p>
+          <p className="price text-2xl ">${product?.price}</p>
 
-          <div className="colors flex gap-2 items-center my-2">
+          {product?.description.slice(0, 2).map((desc) => (
+            <p className="description w-5/6 pb-1">{desc}</p>
+          ))}
+
+          <div className="colors flex gap-2 items-center my-2 border-t-1 pt-5 border-black/60 border-solid">
             <h2 className="mr-3">Colors:</h2>
             <span className="bg-txt-secondary2 w-5 h-5 rounded-full"></span>
             <span className="bg-blue-700 w-5 h-5 rounded-full "></span>
