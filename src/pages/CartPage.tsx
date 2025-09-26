@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { Trash2Icon } from "lucide-react";
-import { removeFromCart, type CartItem } from "@/store/slices/cartSlice";
+import { removeFromCart } from "@/store/slices/cartSlice";
 import toast from "react-hot-toast";
+import Heading from "@/components/Heading";
+import type { CartItem } from "@/types";
 
 const CartPage = () => {
   const [quantity, setQuantity] = useState<Record<string, number>>({});
@@ -36,9 +38,7 @@ const CartPage = () => {
 
   return (
     <div className="container  mx-auto px-4 mt-24 sm:mt-32">
-      <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
-        My Cart
-      </h1>
+      <Heading title="My Cart" />
 
       <table className="w-full border border-gray-300 rounded-lg overflow-hidden mt-8 lg:mt-15">
         <thead className="bg-gray-50 ">

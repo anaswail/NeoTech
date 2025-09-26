@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import SignUp from "@/pages/SignUp";
 import Login from "@/pages/Login";
@@ -12,6 +12,7 @@ import ErrorPage from "@/pages/ErrorPage";
 import MainLayout from "@/layouts/MainLayout";
 import CategoryPage from "@/pages/CategoryPage";
 import AllProducts from "@/pages/AllProducts";
+import { userToken } from "@/utils/Repeated";
 
 const router = createBrowserRouter([
   {
@@ -35,11 +36,11 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <Login />,
+        element: userToken ? <Navigate to="/" replace /> : <Login />,
       },
       {
         path: "signup",
-        element: <SignUp />,
+        element: userToken ? <Navigate to="/" replace /> : <SignUp />,
       },
       {
         path: "contactUs",

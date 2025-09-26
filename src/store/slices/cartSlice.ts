@@ -1,12 +1,7 @@
+import type { CartItem } from "@/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export interface CartItem {
-  id: number;
-  title: string;
-  img: string;
-  price: number;
-  quantity: number;
-}
+
 
 interface CartState {
   items: CartItem[];

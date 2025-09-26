@@ -1,4 +1,5 @@
 import Card from "@/components/Card";
+import Heading from "@/components/Heading";
 import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
@@ -11,8 +12,11 @@ const CategoryPage = () => {
 
   if (loading !== "fulfilled") {
     return (
-      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white/20 flex-col ">
-        <h1 className="text-txt-black text-4xl font-bold mb-5">NeoTech</h1>
+      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+        <h1 className="text-txt-black text-4xl font-bold mb-8">
+          Neo
+          <span className="text-txt-secondary2">Tech</span>
+        </h1>
         <SyncLoader size={25} margin={5} />
       </div>
     );
@@ -21,20 +25,19 @@ const CategoryPage = () => {
   return (
     <div className="container mx-auto px-4 mt-24 sm:mt-32">
       <div className="ourProducts my-16 sm:my-20 lg:my-30">
-        <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
-          {catProducts[0]?.category}
-        </h1>
+        
+        <Heading title={catProducts[0]?.category} />
 
         {/* Desktop Grid */}
         <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
-          {catProducts.map((product, idx) => (
+          {catProducts.map((product) => (
             <Card
-              key={idx}
+              key={product.id}
               img={product.img[0]}
               title={product.title}
               price={product.price}
               wishAndCart={true}
-              id={idx}
+              id={product.id}
             />
           ))}
         </div>

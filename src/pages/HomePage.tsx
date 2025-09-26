@@ -19,7 +19,7 @@ import Frame600 from "../assets/Frame600.png";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { banners, categories, products } from "@/utils/Repeated";
+import { banners, categories } from "@/utils/Repeated";
 import Card from "@/components/Card";
 import SectionTitle from "@/utils/SectionTitle";
 import { Button } from "@/components/ui/button";
@@ -203,7 +203,10 @@ const HomePage = () => {
     });
     return (
       <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
-        <h1 className="text-txt-black text-4xl font-bold mb-8">NeoTech</h1>
+        <h1 className="text-txt-black text-4xl font-bold mb-8">
+          Neo
+          <span className="text-txt-secondary2">Tech</span>
+        </h1>
         <SyncLoader size={25} margin={5} />
       </div>
     );
@@ -283,15 +286,15 @@ const HomePage = () => {
                 (productFilter) =>
                   productFilter.price !== productFilter.discount
               )
-              .map((product, idx) => (
-                <div key={idx} className="px-2 ">
+              .map((product) => (
+                <div key={product.id} className="px-2 ">
                   <Card
                     img={product.img[0]}
                     title={product.title}
                     price={product.price}
                     discount={product.discount}
                     wishAndCart={true}
-                    id={idx}
+                    id={product.id}
                   />
                 </div>
               ))}
@@ -311,7 +314,7 @@ const HomePage = () => {
           {categoriesSec.map((cat, index) => (
             <Link
               key={index}
-              to={`category/${cat.name}`}
+              to={`category/${cat.name.toLowerCase().replace(/\s+/g, "")}`}
               onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
             >
               <div className="category h-40 w-46 rounded-lg transition-all hover:bg-txt-secondary2 hover:border-txt-secondary2 duration-300 cursor-pointer hover:text-white border-txt-gray border-2 flex flex-col justify-center items-center gap-2">
@@ -353,15 +356,15 @@ const HomePage = () => {
               ? discountSettings
               : discountSettingsMobile)}
           >
-            {data.map((product, idx) => (
-              <div key={idx} className="px-2">
+            {data.map((product) => (
+              <div key={product.id} className="px-2">
                 <Card
                   img={product.img[0]}
                   title={product.title}
                   price={product.price}
                   discount={product.discount}
                   wishAndCart={true}
-                  id={idx}
+                  id={product.id}
                 />
               </div>
             ))}
@@ -387,15 +390,15 @@ const HomePage = () => {
 
         {/* Desktop Grid */}
         <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
-          {data.slice(0, 8).map((product, idx) => (
+          {data.slice(0, 8).map((product) => (
             <Card
-              key={idx}
+              key={product.id}
               img={product.img[0]}
               title={product.title}
               price={product.price}
               discount={product.discount}
               wishAndCart={true}
-              id={idx}
+              id={product.id}
             />
           ))}
         </div>
@@ -455,7 +458,7 @@ const HomePage = () => {
           </Slider>
         </div>
       </div>
-    </div>
+    </div> 
   );
 };
 

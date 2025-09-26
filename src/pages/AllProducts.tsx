@@ -1,4 +1,5 @@
 import Card from "@/components/Card";
+import Heading from "@/components/Heading";
 import { actFetchProducts } from "@/store/slices/actProducts";
 import type { AppDispatch, RootState } from "@/store/store";
 import { useEffect } from "react";
@@ -15,9 +16,7 @@ const AllProducts = () => {
 
   return (
     <div className="my-16 sm:my-20 lg:my-30">
-      <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
-        All Products
-      </h1>
+      <Heading title="All products" />
       <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
         {data.map((product, idx) => (
           <Card

@@ -25,8 +25,11 @@ const ProductDetails = () => {
 
   if (loading !== "fulfilled") {
     return (
-      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white/20 flex-col ">
-        <h1 className="text-txt-black text-4xl font-bold mb-5">NeoTech</h1>
+      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+        <h1 className="text-txt-black text-4xl font-bold mb-8">
+          Neo
+          <span className="text-txt-secondary2">Tech</span>
+        </h1>
         <SyncLoader size={25} margin={5} />
       </div>
     );

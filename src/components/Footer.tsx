@@ -45,11 +45,11 @@ const Footer = () => {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 lg:gap-12 xl:gap-36">
           {/* Logo and Developer Section */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-4">NeoTech</h1>
+            {/* <h1 className="text-2xl sm:text-3xl font-bold mb-4">NeoTech</h1> */}
             <img
-              className="w-40 sm:w-48 md:w-60"
+              className="w-40 sm:w-48 md:w-60 rounded-md"
               src={DevelopedWithAnas}
-              alt="Developed With Anas"
+              alt="Developed With Anas "
             />
           </div>
 

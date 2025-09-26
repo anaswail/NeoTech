@@ -17,11 +17,11 @@ import { Facebook, LinkedinIcon, Mail, MessageSquareMore } from "lucide-react";
 export const categories = [
   {
     index: 1,
-    name: "phones",
+    name: "smartphones",
   },
   {
     index: 2,
-    name: "computers",
+    name: "laptops",
   },
   {
     index: 3,
@@ -29,11 +29,11 @@ export const categories = [
   },
   {
     index: 4,
-    name: "camera",
+    name: "cameras",
   },
   {
     index: 5,
-    name: "gaming",
+    name: "games",
   },
   {
     index: 6,
@@ -149,3 +149,5 @@ export const products = [
     percent: 35,
   },
 ];
+
+export const userToken = localStorage.getItem("token");

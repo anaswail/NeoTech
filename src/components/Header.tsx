@@ -8,9 +8,12 @@ import {
   Menu,
   X,
   ChevronDown,
+  LogInIcon,
 } from "lucide-react";
-import { categories } from "@/utils/Repeated";
+import { categories, userToken } from "@/utils/Repeated";
 import { useState } from "react";
+
+import { Button } from "./ui/button";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,11 +34,14 @@ const Header = () => {
 
   return (
     <>
-      <div className="border-b-txt-gray z-50 border-b-2 fixed w-full top-0 block left-0 bg-white">
+      <div className="border-b-[#b3b3b3] z-50 border-b-2 fixed w-full top-0 block left-0 bg-white">
         <div className="navbar flex-schema container mx-auto p-7">
           <div className="logo">
             <h1 className="text-txt-black text-heading font-bold">
-              <Link to="/">NeoTech</Link>
+              <Link to="/">
+                Neo
+                <span className="text-txt-secondary2">Tech</span>
+              </Link>
             </h1>
           </div>
 
@@ -76,13 +82,28 @@ const Header = () => {
               />
               <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
             </div>
-
-            <Link to="/wishlist">
-              <HeartIcon className="hover:fill-red-700 hover:text-red-700 transition-all" />
-            </Link>
-            <Link to="/cart">
-              <ShoppingCart className="hover:fill-black transition-all" />
-            </Link>
+            {userToken ? (
+              <>
+                <Link to="/wishlist">
+                  <HeartIcon className="hover:fill-red-700 hover:text-red-700 transition-all" />
+                </Link>
+                <Link to="/cart">
+                  <ShoppingCart className="hover:fill-black transition-all" />
+                </Link>
+              </>
+            ) : (
+              <div>
+                <Link to="signup">
+                  <Button className="rounded-sm mr-5 w-25 py-5">Sign Up</Button>
+                </Link>
+                <Link to="login">
+                  <Button className="rounded-sm bg-black hover:bg-black/80 w-25 py-5">
+                    Login
+                    <LogInIcon />
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Icons */}
@@ -91,6 +112,12 @@ const Header = () => {
               <HeartIcon
                 size={24}
                 className="hover:fill-red-700 hover:text-red-700 transition-all"
+              />
+            </Link>
+            <Link to="/cart">
+              <ShoppingCart
+                size={24}
+                className="hover:fill-black transition-all"
               />
             </Link>
             <Link to="/cart">

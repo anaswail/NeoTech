@@ -17,3 +17,23 @@ export interface productsType {
   description: string[];
   category: string;
 }
+
+export interface CartItem {
+  id: number;
+  title: string;
+  img: string;
+  price: number;
+  quantity: number;
+}
+
+export interface IRegisterUser {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ILoginUser {
+  email: string;
+  password: string;
+}
