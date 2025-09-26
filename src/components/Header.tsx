@@ -4,12 +4,12 @@ import {
   HeartIcon,
   SearchIcon,
   ShoppingCart,
-  Store,
   Menu,
   X,
   ChevronDown,
   LogInIcon,
 } from "lucide-react";
+import profile from "../assets/profile.png";
 import { categories, userToken } from "@/utils/Repeated";
 import { useState } from "react";
 
@@ -37,7 +37,7 @@ const Header = () => {
       <div className="border-b-[#b3b3b3] z-50 border-b-2 fixed w-full top-0 block left-0 bg-white">
         <div className="navbar flex-schema container mx-auto p-7">
           <div className="logo">
-            <h1 className="text-txt-black text-heading font-bold">
+            <h1 className="text-txt-black text-heading font-bold mr-2">
               <Link to="/">
                 Neo
                 <span className="text-txt-secondary2">Tech</span>
@@ -90,6 +90,15 @@ const Header = () => {
                 <Link to="/cart">
                   <ShoppingCart className="hover:fill-black transition-all" />
                 </Link>
+                <Link to="/profile">
+                  <div className="h-8 w-8 bg-txt-white rounded-full overflow-hidden  ">
+                    <img
+                      src={profile}
+                      alt="profile picture"
+                      className="w-full"
+                    />
+                  </div>
+                </Link>
               </>
             ) : (
               <div>
@@ -108,24 +117,25 @@ const Header = () => {
 
           {/* Mobile Menu Icons */}
           <div className="flex items-center gap-4 md:hidden">
-            <Link to="/wishlist">
-              <HeartIcon
-                size={24}
-                className="hover:fill-red-700 hover:text-red-700 transition-all"
-              />
-            </Link>
-            <Link to="/cart">
-              <ShoppingCart
-                size={24}
-                className="hover:fill-black transition-all"
-              />
-            </Link>
-            <Link to="/cart">
-              <ShoppingCart
-                size={24}
-                className="hover:fill-black transition-all"
-              />
-            </Link>
+            {userToken && (
+              <>
+                <Link to="/wishlist">
+                  <HeartIcon className="hover:fill-red-700 hover:text-red-700 transition-all" />
+                </Link>
+                <Link to="/cart">
+                  <ShoppingCart className="hover:fill-black transition-all" />
+                </Link>
+                <Link to="/profile">
+                  <div className="h-8 w-8 bg-txt-white rounded-full overflow-hidden  ">
+                    <img
+                      src={profile}
+                      alt="profile picture"
+                      className="w-full"
+                    />
+                  </div>
+                </Link>
+              </>
+            )}
             <button
               onClick={toggleMenu}
               className="cursor-pointer"
@@ -171,7 +181,7 @@ const Header = () => {
               <div className="relative">
                 <Input
                   placeholder="What are you looking for?"
-                  className="p-5 bg-txt-secondary w-full"
+                  className="p-5 bg-txt-secondary w-full placeholder:truncate placeholder:w-3/4"
                 />
                 <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
               </div>
@@ -238,30 +248,39 @@ const Header = () => {
             {/* Bottom Section */}
             <div className="p-7 mt-auto">
               <div className="flex items-center justify-center gap-8 pt-6 border-t border-gray-200">
-                <Link to="/wishlist" onClick={closeMobileMenu}>
-                  <div className="flex flex-col items-center gap-2">
-                    <HeartIcon
-                      size={24}
-                      className="hover:fill-red-700 hover:text-red-700 transition-all"
-                    />
-                    <span className="text-sm">Wishlist</span>
+                {userToken ? (
+                  <>
+                    <Link to="/wishlist">
+                      <HeartIcon className="hover:fill-red-700 hover:text-red-700 transition-all" />
+                    </Link>
+                    <Link to="/cart">
+                      <ShoppingCart className="hover:fill-black transition-all" />
+                    </Link>
+                    <Link to="/profile">
+                      <div className="h-8 w-8 bg-txt-white rounded-full overflow-hidden  ">
+                        <img
+                          src={profile}
+                          alt="profile picture"
+                          className="w-full"
+                        />
+                      </div>
+                    </Link>
+                  </>
+                ) : (
+                  <div className="flex">
+                    <Link to="signup">
+                      <Button className="rounded-sm mr-5 w-25 py-5">
+                        Sign Up
+                      </Button>
+                    </Link>
+                    <Link to="login">
+                      <Button className="rounded-sm bg-black hover:bg-black/80 w-25 py-5">
+                        Login
+                        <LogInIcon />
+                      </Button>
+                    </Link>
                   </div>
-                </Link>
-
-                <Link to="/cart" onClick={closeMobileMenu}>
-                  <div className="flex flex-col items-center gap-2">
-                    <ShoppingCart
-                      size={24}
-                      className="hover:fill-black transition-all"
-                    />
-                    <span className="text-sm">Cart</span>
-                  </div>
-                </Link>
-
-                <div className="flex flex-col items-center gap-2 cursor-pointer">
-                  <Store size={24} />
-                  <span className="text-sm">Store</span>
-                </div>
+                )}
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import Heading from "@/components/Heading";
-import auth from "../assets/auth.png";
-import google from "../assets/google.png";
+import auth from "../../assets/auth.png";
+import google from "../../assets/google.png";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router";
 import z from "zod";
@@ -10,7 +10,7 @@ import { Loader } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { type AppDispatch, type RootState } from "@/store/store";
 import { useEffect } from "react";
-import { actLogin } from "@/store/slices/auth/actLogin";
+import { actLogin } from "@/store/slices/auth/act/actLogin";
 import Swal from "sweetalert2";
 
 const Login = () => {

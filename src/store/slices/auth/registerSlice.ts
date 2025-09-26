@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { actRegister } from "./actRegister";
+import { actRegister } from "./act/actRegister";
 import type { IRegisterUser } from "@/types";
 
 interface IAuthRegister {

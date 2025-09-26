@@ -5,6 +5,7 @@ import type { cardProps } from "@/types";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/store/slices/cartSlice";
 import toast from "react-hot-toast";
+import { userToken } from "@/utils/Repeated";
 
 const addToWishlist = () => {
   // Logic to add the item to the wishlist
@@ -30,8 +31,32 @@ const Card = ({
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-    dispatch(addToCart({ id, title, price, img, quantity: 1 }));
-    toast.success(`${title} added to cart successfully`);
+    if (userToken) {
+      dispatch(addToCart({ id, title, price, img, quantity: 1 }));
+      toast.success(`${title} added to cart successfully`, {
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#00000",
+        },
+        iconTheme: {
+          primary: "green",
+          secondary: "#FFFAEE",
+        },
+      });
+    } else {
+      toast.error("You must be Loged In", {
+        style: {
+          border: "1px solid #db4444",
+          padding: "16px",
+          color: "#00000",
+        },
+        iconTheme: {
+          primary: "#713200",
+          secondary: "#FFFAEE",
+        },
+      });
+    }
   };
 
   return (

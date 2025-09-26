@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { actLogin } from "./actLogin";
+import { actLogin } from "./act/actLogin";
 import type { ILoginUser } from "@/types";
 
 interface IAuthLogin {

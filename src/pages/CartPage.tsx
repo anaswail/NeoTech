@@ -33,7 +33,17 @@ const CartPage = () => {
 
   const handleDeleteProduct = (id: number, title: string) => {
     dispatch(removeFromCart({ id } as CartItem));
-    toast.success(`${title} has been deleted`);
+    toast.success(`${title} has been deleted`, {
+      style: {
+        border: "1px solid #713200",
+        padding: "16px",
+        color: "#00000",
+      },
+      iconTheme: {
+        primary: "green",
+        secondary: "#FFFAEE",
+      },
+    });
   };
 
   return (

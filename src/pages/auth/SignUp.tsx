@@ -1,6 +1,6 @@
 import Heading from "@/components/Heading";
-import auth from "../assets/auth.png";
-import google from "../assets/google.png";
+import auth from "../../assets/auth.png";
+import google from "../../assets/google.png";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router";
 import z from "zod";
@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { type AppDispatch, type RootState } from "@/store/store";
-import { actRegister } from "@/store/slices/auth/actRegister";
+import { actRegister } from "@/store/slices/auth/act/actRegister";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 

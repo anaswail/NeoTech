@@ -25,7 +25,7 @@ import SectionTitle from "@/utils/SectionTitle";
 import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { actFetchProducts } from "@/store/slices/actProducts";
+import { actFetchProducts } from "@/store/slices/products/actProducts";
 import type { AppDispatch, RootState } from "@/store/store";
 import { SyncLoader } from "react-spinners";
 
@@ -458,7 +458,7 @@ const HomePage = () => {
           </Slider>
         </div>
       </div>
-    </div> 
+    </div>
   );
 };
 

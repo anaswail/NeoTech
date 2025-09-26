@@ -1,15 +1,13 @@
 import Card from "@/components/Card";
 import Heading from "@/components/Heading";
-import { actFetchProducts } from "@/store/slices/actProducts";
+import { actFetchProducts } from "@/store/slices/products/actProducts";
 import type { AppDispatch, RootState } from "@/store/store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const AllProducts = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state?.products
-  );
+  const { data } = useSelector((state: RootState) => state?.products);
   useEffect(() => {
     dispatch(actFetchProducts());
   }, []);
