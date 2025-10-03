@@ -208,6 +208,9 @@ const HomePage = () => {
           <span className="text-txt-secondary2">Tech</span>
         </h1>
         <SyncLoader size={25} margin={5} />
+        <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
+          Developed By <span className="text-txt-secondary2">Anas & Hagar</span>
+        </h1>
       </div>
     );
   }

@@ -5,20 +5,24 @@ export interface IProfile {
   id: string;
   email: string;
   name: string;
-  avatar: string;
+  avatar: {
+    secure_url: string | null;
+    public_id: string | null;
+  };
   role: string;
   provider: string;
+  isActive: boolean;
   isEmailVerified: boolean;
 }
 
 interface initialTypes {
-  data: IProfile[] | null;
+  data: IProfile | null;
   loading: "idle" | "pending" | "fulfilled" | "rejected";
   error: string | null;
 }
 
 const initialState: initialTypes = {
-  data: null,
+  data: JSON.parse(localStorage.getItem("user") || "null"),
   loading: "idle",
   error: null,
 };
@@ -36,7 +40,7 @@ export const profileSlice = createSlice({
       .addCase(actGetMyProfile.fulfilled, (state, action) => {
         state.loading = "fulfilled";
         state.data = action.payload;
-        localStorage.setItem("user", action.payload);
+        localStorage.setItem("user", JSON.stringify(action.payload));
       })
       .addCase(
         actGetMyProfile.rejected,

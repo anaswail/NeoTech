@@ -12,7 +12,7 @@ export const actGetMyProfile = createAsyncThunk(
         },
       });
 
-      return response.data;
+      return response.data.data;
     } catch (err: any) {
       return rejectWithValue(err?.response?.data || "SomeThing went wrong");
     }

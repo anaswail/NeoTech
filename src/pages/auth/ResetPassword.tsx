@@ -1,41 +1,30 @@
 import Heading from "@/components/Heading";
-import auth from "../../assets/auth.png";
-import google from "../../assets/google.png";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router";
+import auth from "../../assets/auth.png";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { type AppDispatch, type RootState } from "@/store/store";
-import { actRegister } from "@/store/slices/auth/act/actRegister";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
+import { actResetPassword } from "@/store/slices/auth/act/actResetPassword";
 import { SyncLoader } from "react-spinners";
-// import { actGoogleAuth } from "../../store/slices/auth/act/actGoogleAuth";
+import { type AppDispatch, type RootState } from "@/store/store";
 
-const SignUp = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
 
-  // signup store
-  const {
-    loading,
-    data,
-    error: registerError,
-  } = useSelector((state: RootState) => state.register);
+  // Reset Password store
+  const { loading, error: err } = useSelector(
+    (state: RootState) => state.resetPassword
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   // React Hook Form & Zod Schema
-  const SignUpSchema = z
+  const ResetPasswordSchema = z
     .object({
-      name: z
-        .string()
-        .min(1, "Name is required")
-        .min(3, "Name must be at least contain 3 characters"),
-      email: z
-        .string()
-        .min(1, "Email is required")
-        .email("Invalid Email address"),
       password: z
         .string()
         .min(1, "Password is required")
@@ -52,13 +41,15 @@ const SignUp = () => {
       message: "password don't match",
       path: ["confirmPassword"],
     });
-  type SignUpSchemaType = z.infer<typeof SignUpSchema>;
+
+  type ResetPasswordSchemaType = z.infer<typeof ResetPasswordSchema>;
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignUpSchemaType>({
-    resolver: zodResolver(SignUpSchema),
+  } = useForm<ResetPasswordSchemaType>({
+    resolver: zodResolver(ResetPasswordSchema),
   });
 
   // handle errors and success
@@ -67,32 +58,37 @@ const SignUp = () => {
       Swal.fire({
         position: "top",
         icon: "success",
-        title: "Registered Successfully, Verified link sent to your email",
+        title: "Account created successfully",
         showConfirmButton: false,
-        timer: 2000,
+        timer: 1500,
       });
       setTimeout(() => {
-        navigate("/login/email-message", { replace: true });
-        window.location.reload();
-      }, 2000);
+        navigate("/login");
+      }, 1500);
     } else if (loading === "rejected") {
       Swal.fire({
         position: "top",
         icon: "error",
-        title: registerError?.message,
+        title: err?.message,
         showConfirmButton: false,
-        timer: 3000,
+        timer: 2000,
       });
     }
-  }, [data.token, data.user, registerError, loading]);
+  }, [err, loading]);
 
-  // Handlers
-  const handleGoogleAuth = () => {
-    window.location.href = "http://localhost:8000/api/auth/social/google";
-    // dispatch(actGoogleAuth());
-  };
-  const registerSubmit = (data: SignUpSchemaType) => {
-    dispatch(actRegister(data)).unwrap();
+  // get token from url
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // submit handler
+  const resetPasswordSubmit = (data: {
+    password: string;
+    confirmPassword: string;
+  }) => {
+    dispatch(actResetPassword({ newPassword: data?.password, token })).unwrap();
   };
 
   if (loading === "pending") {
@@ -112,35 +108,17 @@ const SignUp = () => {
     return (
       <div className="flex mt-25 max-lg:mt-30 ">
         <div className="img-sec mt-5 bg-[#CBE4E8] h-full w-1/2 flex justify-center items-center max-lg:hidden mr-20">
-          <img src={auth} alt="SignUp" />
+          <img src={auth} alt="ResetPassword" />
         </div>
 
         <div className=" container mx-auto max-lg:w-3/4 form-content flex justify-center w-full lg:w-1/2  ">
           <div className="form-content w-full ">
-            <Heading title="Create an account" />
-            <p className="mt-3 text-lg">Enter your details below</p>
+            <Heading title="Reset Password" />
+            <p className="mt-3 text-lg">Enter your new password below</p>
             <form
               className="flex flex-col w-full  mt-8 "
-              onSubmit={handleSubmit(registerSubmit)}
+              onSubmit={handleSubmit(resetPasswordSubmit)}
             >
-              <input
-                {...register("name")}
-                placeholder="Name"
-                className=" outline-none p-5 border-b-1 border-txt-gray/80 border-b-solid pb-2 placeholder-txt-gray/80 w-3/4 max-lg:w-full "
-              />
-              {errors.name && (
-                <p className="text-red-500 mt-2 ">{errors.name?.message}</p>
-              )}
-
-              <input
-                {...register("email")}
-                placeholder="Email"
-                className=" outline-none p-5 border-b-1 border-txt-gray/80 border-b-solid pb-2 placeholder-txt-gray/80 w-3/4 max-lg:w-full  mt-5"
-              />
-              {errors.email && (
-                <p className="text-red-500 mt-2 ">{errors.email?.message}</p>
-              )}
-
               <input
                 {...register("password")}
                 placeholder="Password"
@@ -163,25 +141,8 @@ const SignUp = () => {
 
               <div className="btns flex flex-col gap-4  mt-8 max-lg:w-full w-3/4">
                 <Button className="py-6 " type="submit" disabled={isSubmitting}>
-                  Create Account
+                  {isSubmitting ? <Loader /> : "Reset Password"}
                 </Button>
-                <Button
-                  onClick={handleGoogleAuth}
-                  type="button"
-                  className="py-6  bg-transparent border-black border-solid border-1 text-black hover:bg-black hover:text-white flex gap-2"
-                >
-                  <img src={google} alt="google" className="w-7" />
-                  Sign Up with Google
-                </Button>
-                <p className="text-center ">
-                  Already have an account?{" "}
-                  <Link
-                    to="/login"
-                    className="font-semibold border-b-1 border-solid border-black "
-                  >
-                    Login
-                  </Link>
-                </p>
               </div>
             </form>
           </div>
@@ -191,4 +152,4 @@ const SignUp = () => {
   }
 };
 
-export default SignUp;
+export default ResetPassword;

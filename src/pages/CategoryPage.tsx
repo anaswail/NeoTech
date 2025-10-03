@@ -11,21 +11,21 @@ const CategoryPage = () => {
   const catProducts = data.filter((item) => item.category === title);
 
   if (loading !== "fulfilled") {
-    return (
-      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
-        <h1 className="text-txt-black text-4xl font-bold mb-8">
-          Neo
-          <span className="text-txt-secondary2">Tech</span>
-        </h1>
-        <SyncLoader size={25} margin={5} />
-      </div>
-    );
+    <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+      <h1 className="text-txt-black text-4xl font-bold mb-8">
+        Neo
+        <span className="text-txt-secondary2">Tech</span>
+      </h1>
+      <SyncLoader size={25} margin={5} />
+      <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
+        Developed By <span className="text-txt-secondary2">Anas & Hagar</span>
+      </h1>
+    </div>;
   }
 
   return (
     <div className="container mx-auto px-4 mt-24 sm:mt-32">
       <div className="ourProducts my-16 sm:my-20 lg:my-30">
-        
         <Heading title={catProducts[0]?.category} />
 
         {/* Desktop Grid */}

@@ -5,11 +5,12 @@ import type { IRegisterUser } from "@/types";
 interface IAuthRegister {
   user: IRegisterUser | null;
   token: string | null;
+  message?: string;
 }
 interface authState {
   data: IAuthRegister;
   loading: "idle" | "pending" | "fulfilled" | "rejected";
-  error: string | null;
+  error: string | null | any;
 }
 
 const initialState: authState = {
@@ -22,10 +23,11 @@ const registerSlice = createSlice({
   name: "register",
   initialState,
   reducers: {
-    logOut: (state) => {
+    logout: (state) => {
       state.data.user = null;
       state.data.token = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
   },
   extraReducers: (builder) => {
@@ -54,3 +56,4 @@ const registerSlice = createSlice({
 });
 
 export default registerSlice.reducer;
+export const { logout } = registerSlice.actions;

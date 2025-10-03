@@ -20,7 +20,7 @@ export const actLogin = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
 
-            authorization: `Bearer ${userToken}`,
+            // authorization: `Bearer ${userToken}`,
           },
         }
       );

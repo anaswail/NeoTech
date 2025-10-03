@@ -75,10 +75,10 @@ const Header = () => {
 
           {/* Desktop Icons */}
           <div className="other md:flex justify-center items-center gap-8 hidden">
-            <div className="relative w-72 max-lg:hidden">
+            <div className="relative w-60 ml-2 max-lg:hidden">
               <Input
                 placeholder="What are you looking for?"
-                className="p-5 bg-txt-secondary"
+                className="p-5 bg-txt-secondary "
               />
               <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
             </div>
@@ -101,12 +101,14 @@ const Header = () => {
                 </Link>
               </>
             ) : (
-              <div>
+              <div className="flex max-lg:ml-5">
                 <Link to="signup">
-                  <Button className="rounded-sm mr-5 w-25 py-5">Sign Up</Button>
+                  <Button className="rounded-sm mr-5 w-25 py-5 max-lg:w-20 max-lg:text-sm">
+                    Sign Up
+                  </Button>
                 </Link>
                 <Link to="login">
-                  <Button className="rounded-sm bg-black hover:bg-black/80 w-25 py-5">
+                  <Button className="rounded-sm bg-black hover:bg-black/80 w-25 py-5 max-lg:w-20 max-lg:text-sm">
                     Login
                     <LogInIcon />
                   </Button>
