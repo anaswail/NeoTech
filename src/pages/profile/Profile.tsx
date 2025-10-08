@@ -8,7 +8,6 @@ import { BadgeAlert, BadgeCheck, SquarePen } from "lucide-react";
 import { actResendEmailVerification } from "@/store/slices/auth/act/actResendEmailVerification";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
-import { Input } from "@/components/ui/input";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,16 +20,6 @@ const Profile = () => {
   useEffect(() => {
     dispatch(actGetMyProfile());
   }, []);
-
-  const [file, setFile] = useState<File>();
-  const [preview, setPreview] = useState<string>(profileImg);
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-    }
-  };
 
   useEffect(() => {
     if (loading === "fulfilled") {
@@ -145,28 +134,10 @@ const Profile = () => {
           <div className="img w-40 h-40 overflow-hidden rounded-full group relative">
             {/* صورة البروفايل */}
             <img
-              src={file ? preview : profile?.avatar?.secure_url || profileImg}
+              src={profile?.avatar?.secure_url || profileImg}
               alt={profile?.name}
               className="w-full h-full object-cover"
             />
-
-            {/* input مخفي */}
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              id="upload"
-              className="hidden"
-            />
-
-            {/* overlay + أيقونة القلم */}
-            <label
-              htmlFor="upload"
-              className="absolute inset-0 bg-black/40 z-10 flex justify-center items-center 
-               opacity-0 group-hover:opacity-100 transition duration-500 cursor-pointer"
-            >
-              <SquarePen stroke="white" size={30} />
-            </label>
           </div>
         </div>
         <Outlet />

@@ -9,11 +9,12 @@ import {
   ChevronDown,
   LogInIcon,
 } from "lucide-react";
-import profile from "../assets/profile.png";
 import { categories, userToken } from "@/utils/Repeated";
 import { useState } from "react";
-
+import profileImg from "../assets/profile.png";
 import { Button } from "./ui/button";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,6 +32,8 @@ const Header = () => {
     setMenuOpen(false);
     setCategoriesOpen(false);
   };
+
+  const profile = useSelector((state: RootState) => state?.profile.data);
 
   return (
     <>
@@ -93,8 +96,8 @@ const Header = () => {
                 <Link to="/profile">
                   <div className="h-8 w-8 bg-txt-white rounded-full overflow-hidden  ">
                     <img
-                      src={profile}
-                      alt="profile picture"
+                      src={profile?.avatar?.secure_url || profileImg}
+                      alt={profile?.name}
                       className="w-full"
                     />
                   </div>
@@ -130,8 +133,8 @@ const Header = () => {
                 <Link to="/profile">
                   <div className="h-8 w-8 bg-txt-white rounded-full overflow-hidden  ">
                     <img
-                      src={profile}
-                      alt="profile picture"
+                      src={profile?.avatar?.secure_url || profileImg}
+                      alt={profile?.name}
                       className="w-full"
                     />
                   </div>
@@ -261,8 +264,8 @@ const Header = () => {
                     <Link to="/profile">
                       <div className="h-8 w-8 bg-txt-white rounded-full overflow-hidden  ">
                         <img
-                          src={profile}
-                          alt="profile picture"
+                          src={profile?.avatar?.secure_url || profileImg}
+                          alt={profile?.name}
                           className="w-full"
                         />
                       </div>
