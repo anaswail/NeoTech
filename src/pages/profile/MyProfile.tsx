@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import z from "zod";
 import { useState } from "react";
+import { actEditEmail } from "@/store/slices/profile/act/actEditEmail";
 
 const MyProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -86,6 +87,7 @@ const MyProfile = () => {
 
       if (name) formData.append("name", name);
       if (email) {
+        dispatch(actEditEmail(email));
       }
 
       const result = await dispatch(actEditProfile(formData)).unwrap();
@@ -97,9 +99,9 @@ const MyProfile = () => {
         showConfirmButton: false,
         timer: 2000,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
     } catch (error: any) {
       Swal.fire({
         position: "top",
