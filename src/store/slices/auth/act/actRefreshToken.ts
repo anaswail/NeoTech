@@ -2,22 +2,25 @@ import { userToken } from "@/utils/Repeated";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosApi from "@/axios/axiosApi";
 
-export const actResendEmailVerification = createAsyncThunk(
-  "auth/actResendEmailVerification",
+export const actRefreshToken = createAsyncThunk(
+  "auth/refreshToken",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosApi.post(
-        "api/verification/resend-verification",
-        _,
+        "api/auth/refresh-token",
+        {},
         {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
+          withCredentials: true,
         }
       );
+      console.log("data: ", response.data);
+
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err?.response?.data);
+      return rejectWithValue(err?.response?.data || "SomeThing went wrong");
     }
   }
 );

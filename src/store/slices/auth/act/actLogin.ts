@@ -1,7 +1,6 @@
+import axiosApi from "@/axios/axiosApi";
 import type { ILoginUser } from "@/types";
-import { userToken } from "@/utils/Repeated";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 export const actLogin = createAsyncThunk(
   "auth/login",
@@ -10,8 +9,8 @@ export const actLogin = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/auth/login",
+      const response = await axiosApi.post(
+        "api/auth/login",
         {
           email,
           password,
@@ -19,8 +18,6 @@ export const actLogin = createAsyncThunk(
         {
           headers: {
             "Content-Type": "application/json",
-
-            // authorization: `Bearer ${userToken}`,
           },
         }
       );

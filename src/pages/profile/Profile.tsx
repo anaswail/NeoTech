@@ -19,7 +19,7 @@ const Profile = () => {
   );
   useEffect(() => {
     dispatch(actGetMyProfile());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (loading === "fulfilled") {
@@ -58,25 +58,30 @@ const Profile = () => {
   };
 
   if (loading === "pending") {
-    <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
-      <h1 className="text-txt-black text-4xl font-bold mb-8">
-        Neo
-        <span className="text-txt-secondary2">Tech</span>
-      </h1>
-      <SyncLoader size={25} margin={5} />
-      <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
-        Developed By <span className="text-txt-secondary2">Anas & Hagar</span>
-      </h1>
-    </div>;
+    return (
+      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+        <h1 className="text-txt-black text-4xl font-bold mb-8">
+          Neo
+          <span className="text-txt-secondary2">Tech</span>
+        </h1>
+        <SyncLoader size={25} margin={5} />
+        <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
+          Developed By <span className="text-txt-secondary2">Anas & Hagar</span>
+        </h1>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto px-4 mt-24 sm:mt-32 flex gap-30">
-      <div className="navigation">
+      <div className="sidebar">
         <h2 className="font-bold text-xl mb-3">Manage My Account</h2>
         <ul>
           <li className=" hover:text-txt-secondary2 cursor-pointer ">
             <Link to="my-profile">My profile</Link>
+          </li>
+          <li className=" hover:text-txt-secondary2 cursor-pointer mt-2">
+            <Link to="/dashboard">Admin Dashboard</Link>
           </li>
         </ul>
         <h2 className="font-bold text-xl mt-5 mb-3">My Orders</h2>
@@ -95,7 +100,7 @@ const Profile = () => {
             <h1 className="font-bold text-5xl">
               Hi{"  "}
               <span className="text-txt-secondary2">
-                {profile?.name || "user"}
+                {profile?.name ?? "user"}
               </span>
             </h1>
             <p className="text-txt-secondary2 font-bold text-lg mt-5 flex items-center gap-2">
@@ -132,7 +137,6 @@ const Profile = () => {
             </p>
           </div>
           <div className="img w-40 h-40 overflow-hidden rounded-full group relative">
-            {/* صورة البروفايل */}
             <img
               src={profile?.avatar?.secure_url || profileImg}
               alt={profile?.name}

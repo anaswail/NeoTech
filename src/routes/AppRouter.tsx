@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { userToken } from "@/utils/Repeated";
+import { user, userToken } from "@/utils/Repeated";
 
 import SignUp from "@/pages/auth/SignUp";
 import Login from "@/pages/auth/Login";
@@ -20,8 +20,12 @@ import ResetPassword from "@/pages/auth/ResetPassword";
 import ForgetPassword from "@/pages/auth/ForgetPassword";
 import EmailMessage from "@/pages/auth/EmailMessage";
 import VerifyEmail from "@/pages/auth/VerifyEmail";
-
-const user = JSON.parse(localStorage.getItem("user") || "null");
+import Dashboard from "@/pages/admin/Dashboard";
+import Overview from "@/pages/admin/Overview";
+import Orders from "@/pages/admin/Orders";
+import Customers from "@/pages/admin/Customers";
+import ProductCRUD from "@/pages/admin/ProductCRUD";
+import ProductsOverview from "@/pages/admin/ProductsOverview";
 
 const isEmailVerified = user?.isEmailVerified;
 
@@ -130,11 +134,44 @@ const router = createBrowserRouter([
       },
       {
         path: "verify-email",
-        element: isEmailVerified ? (
-          <Navigate to="/" replace />
-        ) : (
+        element: 
           <VerifyEmail />
-        ),
+        
+      },
+      {
+        path: "dashboard",
+        element:
+          userToken && user !== "null" && isEmailVerified ? (
+            <Dashboard />
+          ) : (
+            <Navigate to="/" replace />
+          ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="overview" replace />,
+          },
+          {
+            path: "overview",
+            element: <Overview />,
+          },
+          {
+            path: "products-overview",
+            element: <ProductsOverview />,
+          },
+          {
+            path: "orders",
+            element: <Orders />,
+          },
+          {
+            path: "product-crud",
+            element: <ProductCRUD />,
+          },
+          {
+            path: "customers",
+            element: <Customers />,
+          },
+        ],
       },
     ],
   },

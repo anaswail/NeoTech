@@ -1,10 +1,15 @@
-import { Button } from "@/components/ui/button";
-import type { RootState } from "@/store/store";
-import { Heart, ShoppingCart } from "lucide-react";
+// =========================================
+//                  Imports
+// =========================================
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router";
+import { useSelector } from "react-redux";
+
+import { Heart, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { SyncLoader } from "react-spinners";
+
+import type { RootState } from "@/store/store";
 
 const ProductDetails = () => {
   const [size, setSize] = useState("L");

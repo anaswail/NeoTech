@@ -1,5 +1,5 @@
+import axiosApi from "@/axios/axiosApi";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 const token = localStorage.getItem("token");
 export type IEditProfile = FormData;
@@ -9,15 +9,11 @@ export const actEditProfile = createAsyncThunk(
 
   async (formData: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(
-        "http://localhost:8000/api/users/me",
-        formData,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axiosApi.patch("api/users/me", formData, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log(response.data);
       return response.data;

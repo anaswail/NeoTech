@@ -1,13 +1,11 @@
 import axiosApi from "@/axios/axiosApi";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const actForgetPassword = createAsyncThunk(
-  "auth/forgetPassword",
-  async (email: string, { rejectWithValue }) => {
+export const actGetHomeData = createAsyncThunk(
+  "products/home",
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosApi.post("api/auth/forgot-password", {
-        email,
-      });
+      const response = await axiosApi.get("api");
 
       return response.data;
     } catch (err: any) {

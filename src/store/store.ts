@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import products from "./slices/products/productsSlice";
+import home from "./slices/products/getHomeDataSlice";
 import cart from "./slices/cartSlice";
 import register from "./slices/auth/registerSlice";
 import login from "./slices/auth/loginSlice";
@@ -10,9 +11,12 @@ import forgetPassword from "./slices/auth/forgetPasswordSlice";
 import resetPassword from "./slices/auth/resetPassowrdSlice";
 import resendEmail from "./slices/auth/resendEmailVerificationSlice";
 import VerifyEmail from "./slices/auth/verifyEmailSlice";
+import refreshToken from "./slices/auth/refreshTokenSlice";
+import editEmail from "./slices/profile/editEmailSlice";
 
 export const store = configureStore({
   reducer: {
+    home,
     products,
     cart,
     register,
@@ -24,6 +28,8 @@ export const store = configureStore({
     resetPassword,
     resendEmail,
     VerifyEmail,
+    refreshToken,
+    editEmail,
   },
 });
 

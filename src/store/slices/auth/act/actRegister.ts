@@ -1,7 +1,7 @@
 // import axiosApi from "@/axios/axiosApi";
+import axiosApi from "@/axios/axiosApi";
 import type { IRegisterUser } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 export const actRegister = createAsyncThunk(
   "auth/register",
@@ -10,8 +10,8 @@ export const actRegister = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/auth/register",
+      const response = await axiosApi.post(
+        "api/auth/register",
         {
           name,
           email,

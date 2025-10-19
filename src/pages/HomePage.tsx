@@ -1,5 +1,10 @@
+// =========================================
+//                  Imports
+// =========================================
 import { Link } from "react-router";
-
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Slider from "react-slick";
 import {
   ArrowRight,
   Camera,
@@ -14,49 +19,50 @@ import {
   Truck,
   Watch,
 } from "lucide-react";
-import Slider from "react-slick";
-import Frame600 from "../assets/Frame600.png";
+import { SyncLoader } from "react-spinners";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { banners, categories } from "@/utils/Repeated";
+
+import Frame600 from "../assets/Frame600.png";
 import Card from "@/components/Card";
 import SectionTitle from "@/utils/SectionTitle";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { actFetchProducts } from "@/store/slices/products/actProducts";
+import { banners, categories } from "@/utils/Repeated";
+
 import type { AppDispatch, RootState } from "@/store/store";
-import { SyncLoader } from "react-spinners";
+import { actFetchProducts } from "@/store/slices/products/actProducts";
+import { actGetHomeData } from "@/store/slices/products/act/actGetHomeData";
 
-// Custom arrow components
-const PrevArrow = (props: any) => {
-  const { onClick } = props;
-  return (
-    <button
-      onClick={onClick}
-      className="absolute right-16 sm:right-20 -top-12 sm:-top-15 cursor-pointer -translate-y-1/2 z-10 bg-white hover:bg-gray-100 rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110"
-    >
-      <ChevronLeft size={20} className="text-gray-600 sm:w-6 sm:h-6" />
-    </button>
-  );
-};
+// =========================================
+//        Custom Arrows (with types)
+// =========================================
+interface ArrowProps {
+  onClick?: () => void;
+}
 
-const NextArrow = (props: any) => {
-  const { onClick } = props;
-  return (
-    <button
-      onClick={onClick}
-      className="absolute right-2 -top-12 sm:-top-15 cursor-pointer -translate-y-1/2 z-10 bg-white hover:bg-gray-100 rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110"
-    >
-      <ChevronRight size={20} className="text-gray-600 sm:w-6 sm:h-6" />
-    </button>
-  );
-};
+const PrevArrow: React.FC<ArrowProps> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute right-16 sm:right-20 -top-12 sm:-top-16 cursor-pointer -translate-y-1/2 z-10 bg-white hover:bg-gray-100 rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110"
+  >
+    <ChevronLeft size={20} className="text-gray-600 sm:w-6 sm:h-6" />
+  </button>
+);
 
-// data handle
+const NextArrow: React.FC<ArrowProps> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute right-2 -top-12 sm:-top-16 cursor-pointer -translate-y-1/2 z-10 bg-white hover:bg-gray-100 rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110"
+  >
+    <ChevronRight size={20} className="text-gray-600 sm:w-6 sm:h-6" />
+  </button>
+);
 
-const servicesSec = [
+// =========================================
+// Constants (services & categories data)
+// =========================================
+const servicesData = [
   {
     icon: <Truck className="text-white" size={40} />,
     title: "FREE AND FAST DELIVERY",
@@ -74,138 +80,109 @@ const servicesSec = [
   },
 ];
 
-const categoriesSec = [
-  {
-    name: "Smart phones",
-    icon: <Smartphone size={40} />,
-  },
-  {
-    name: "Laptops",
-    icon: <LaptopMinimal size={40} />,
-  },
-  {
-    name: "Cameras",
-    icon: <Camera size={40} />,
-  },
-  {
-    name: "Headphones",
-    icon: <Headphones size={40} />,
-  },
-  {
-    name: "Games",
-    icon: <Gamepad2 size={40} />,
-  },
-  {
-    name: "Smart Watches",
-    icon: <Watch size={40} />,
-  },
+const categoriesData = [
+  { name: "smartphones", icon: <Smartphone size={40} /> },
+  { name: "laptops", icon: <LaptopMinimal size={40} /> },
+  { name: "cameras", icon: <Camera size={40} /> },
+  { name: "headphones", icon: <Headphones size={40} /> },
+  { name: "games", icon: <Gamepad2 size={40} /> },
+  { name: "smartwatches", icon: <Watch size={40} /> },
 ];
 
-const HomePage = () => {
-  // Sliders settings
+// =========================================
+//              Slider Settings
+// =========================================
+const bannerSettings = {
+  dots: true,
+  fade: true,
+  infinite: true,
+  speed: 1000,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 5000,
+};
 
-  const bannerSettings = {
-    dots: true,
-    fade: true,
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    waitForAnimate: false,
-    autoplay: true,
-    autoplaySpeed: 5000,
-  };
-
-  const discountSettings = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
+const discountSettings = {
+  dots: false,
+  infinite: true,
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 2000,
+  pauseOnHover: true,
+  prevArrow: <PrevArrow />,
+  nextArrow: <NextArrow />,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
       },
-    ],
-  };
+    },
+  ],
+};
 
-  const discountSettingsMobile = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 2,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
-    responsive: [
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
+const discountSettingsMobile = {
+  ...discountSettings,
+  slidesToShow: 2,
+  responsive: [
+    {
+      breakpoint: 480,
+      settings: { slidesToShow: 1 },
+    },
+  ],
+};
 
-  // Categories slider for mobile
-  const categoriesSettings = {
-    dots: true,
-    infinite: true,
-    slidesToShow: 2,
-    slidesToScroll: 1,
-    autoplay: true,
-    Infinity: true,
-    autoplaySpeed: 5000,
-    speed: 1000,
-    arrows: false,
-    responsive: [
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
+const categoriesSettings = {
+  dots: true,
+  infinite: true,
+  slidesToShow: 2,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 5000,
+  speed: 1000,
+  arrows: false,
+  responsive: [
+    {
+      breakpoint: 480,
+      settings: { slidesToShow: 1 },
+    },
+  ],
+};
 
-  // Services slider for mobile
-  const servicesSettings = {
-    dots: true,
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: false,
-    arrows: false,
-  };
+const servicesSettings = {
+  dots: true,
+  infinite: true,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: false,
+  arrows: false,
+};
 
+// =========================================
+//            HomePage Component
+// =========================================
+const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading } = useSelector((state: RootState) => state?.products);
+  const { data, loading } = useSelector((state: RootState) => state.products);
+  const { data: homeData, loading: homeLoading } = useSelector(
+    (state: RootState) => state.home
+  );
+
+  // Fetch data from API
   useEffect(() => {
     dispatch(actFetchProducts());
-  }, []);
+    dispatch(actGetHomeData());
+  }, [dispatch]);
 
+  // Loading Screen
   if (loading !== "fulfilled") {
-    scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     return (
-      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+      <div className="fixed top-0 left-0 w-full h-screen flex flex-col justify-center items-center bg-white z-50">
         <h1 className="text-txt-black text-4xl font-bold mb-8">
-          Neo
-          <span className="text-txt-secondary2">Tech</span>
+          Neo<span className="text-txt-secondary2">Tech</span>
         </h1>
         <SyncLoader size={25} margin={5} />
         <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
@@ -217,10 +194,10 @@ const HomePage = () => {
 
   return (
     <div className="container mx-auto px-4 mt-24 sm:mt-32">
-      {/* Hero Section */}
-      <div className="hero-section flex flex-col lg:flex-row gap-4 lg:gap-6">
-        {/* Categories - Hidden on mobile, shown as sidebar on desktop */}
-        <div className="category-part hidden lg:block w-full lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow-sm">
+      {/* ================= Hero Section ================= */}
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+        {/* Categories Sidebar */}
+        <div className="hidden lg:block w-full lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow-sm">
           <div className="p-2">
             {categories.map((category, index) => (
               <div
@@ -228,7 +205,9 @@ const HomePage = () => {
                 className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 transition-colors last:border-b-0"
               >
                 <Link
-                  to={`/category/${category.name}`}
+                  to={`/category/${category.name
+                    .toLowerCase()
+                    .replace(/\s+/g, "")}`}
                   className="text-gray-700 hover:text-txt-secondary2 flex justify-between items-center"
                 >
                   {category.name}
@@ -239,16 +218,16 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Slider Section */}
-        <div className="slider-part w-full lg:w-3/4">
-          <div className="slider-container overflow-hidden shadow-lg rounded-lg">
+        {/* Slider */}
+        <div className="w-full lg:w-3/4">
+          <div className="overflow-hidden shadow-lg rounded-lg">
             <Slider {...bannerSettings}>
               {banners.map((banner, index) => (
-                <div className="slide-item" key={index}>
+                <div key={index}>
                   <img
                     src={banner.image}
                     alt={banner.alt}
-                    className="w-full  sm:h-64 lg:h-80 xl:h-96 object-cover"
+                    className="w-full sm:h-64 lg:h-80 xl:h-96 object-cover"
                   />
                 </div>
               ))}
@@ -257,13 +236,15 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Mobile Categories Section (appears after hero on mobile) */}
-      <div className="mobile-categories lg:hidden my-8">
+      {/* ================= Mobile Categories ================= */}
+      <div className="lg:hidden my-8">
         <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
           {categories.slice(0, 8).map((category, index) => (
             <Link
               key={index}
-              to={`/category/${category.name}`}
+              to={`/category/${category.name
+                .toLowerCase()
+                .replace(/\s+/g, "")}`}
               className="flex-shrink-0 bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 transition-colors whitespace-nowrap text-sm"
             >
               {category.name}
@@ -272,71 +253,68 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Discount Section */}
-      <div className="discountSection my-16 sm:my-20 lg:my-30">
-        <SectionTitle title="Offers" />
-        <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
-          Flash Sales
-        </h1>
-        <div className="slider-container relative my-8 lg:my-15 w-full ">
-          <Slider
-            {...(screen.width > 768
-              ? discountSettings
-              : discountSettingsMobile)}
-          >
-            {data
-              .filter(
-                (productFilter) =>
-                  productFilter.price !== productFilter.discount
-              )
-              .map((product) => (
-                <div key={product.id} className="px-2 ">
+      {/* ================= Flash Sales ================= */}
+      {homeData?.flashSales?.count !== 0 && (
+        <section className="my-16 sm:my-20 lg:my-30">
+          <SectionTitle title="Offers" />
+          <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
+            Flash Sales
+          </h1>
+          <div className="relative my-8 lg:my-15 w-full">
+            <Slider
+              {...(window.innerWidth > 768
+                ? discountSettings
+                : discountSettingsMobile)}
+            >
+              {homeData?.flashSales.products.map((product) => (
+                <div key={product.id} className="px-2">
                   <Card
-                    img={product.img[0]}
+                    img={product.images[0].secure_url}
                     title={product.title}
-                    price={product.price}
-                    discount={product.discount}
-                    wishAndCart={true}
+                    price={product.priceRange.max}
+                    discount={product.priceRange.min}
+                    wishAndCart
                     id={product.id}
                   />
                 </div>
               ))}
-          </Slider>
-        </div>
-      </div>
+            </Slider>
+          </div>
+        </section>
+      )}
 
-      {/* Categories Section */}
-      <div className="categoriesSection my-16 sm:my-20 lg:my-30">
+      {/* ================= Categories ================= */}
+      <section className="my-16 sm:my-20 lg:my-30">
         <SectionTitle title="Categories" />
         <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
           Shop by Category
         </h1>
 
-        {/* Desktop Categories Grid */}
+        {/* Desktop */}
         <div className="hidden lg:flex justify-between mt-15">
-          {categoriesSec.map((cat, index) => (
+          {categoriesData.map((cat, index) => (
             <Link
               key={index}
-              to={`category/${cat.name.toLowerCase().replace(/\s+/g, "")}`}
-              onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
+              to={`/category/${cat.name}`}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <div className="category h-40 w-46 rounded-lg transition-all hover:bg-txt-secondary2 hover:border-txt-secondary2 duration-300 cursor-pointer hover:text-white border-txt-gray border-2 flex flex-col justify-center items-center gap-2">
+              <div className="category h-40 w-46 rounded-lg border-2 border-txt-gray flex flex-col justify-center items-center gap-2 cursor-pointer hover:bg-txt-secondary2 hover:text-white transition-all duration-300">
                 {cat.icon}
-                <h1 className="text-center text-sm">{cat.name}</h1>
+                <h1 className="text-center text-sm capitalize">{cat.name}</h1>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Mobile & Tablet Categories Slider */}
+        {/* Mobile */}
         <div className="lg:hidden mt-8">
           <Slider {...categoriesSettings}>
-            {categoriesSec.map((cat, index) => (
+            {categoriesData.map((cat, index) => (
               <div key={index} className="px-2">
-                <Link to={`category/${cat.name}`}>
-                  <div className="category h-32 sm:h-36 rounded-lg transition-all hover:bg-txt-secondary2 hover:border-txt-secondary2 duration-300 cursor-pointer hover:text-white border-txt-gray border-2 flex flex-col justify-center items-center gap-2 mx-2">
+                <Link to={`/category/${cat.name}`}>
+                  <div className="category h-32 sm:h-36 rounded-lg border-2 border-txt-gray flex flex-col justify-center items-center gap-2 mx-2 hover:bg-txt-secondary2 hover:text-white transition-all duration-300">
                     <div className="scale-75 sm:scale-90">{cat.icon}</div>
-                    <h1 className="text-center text-xs sm:text-sm px-2">
+                    <h1 className="text-center text-xs sm:text-sm px-2 capitalize">
                       {cat.name}
                     </h1>
                   </div>
@@ -345,37 +323,37 @@ const HomePage = () => {
             ))}
           </Slider>
         </div>
-      </div>
+      </section>
 
-      {/* Best Sellers */}
-      <div className="discountSection my-16 sm:my-20 lg:my-30">
+      {/* ================= Best Selling ================= */}
+      <section className="my-16 sm:my-20 lg:my-30">
         <SectionTitle title="This Month" />
         <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
           Best Selling Products
         </h1>
-        <div className="slider-container relative my-8 lg:my-15">
+        <div className="relative my-8 lg:my-15">
           <Slider
-            {...(screen.width > 768
+            {...(window.innerWidth > 768
               ? discountSettings
               : discountSettingsMobile)}
           >
-            {data.map((product) => (
+            {homeData?.bestSelling?.map((product) => (
               <div key={product.id} className="px-2">
                 <Card
-                  img={product.img[0]}
+                  img={product.interfaceImages.secure_url}
                   title={product.title}
-                  price={product.price}
-                  discount={product.discount}
-                  wishAndCart={true}
+                  price={product.maxPrice}
+                  discount={product.minPrice}
+                  wishAndCart
                   id={product.id}
                 />
               </div>
             ))}
           </Slider>
         </div>
-      </div>
+      </section>
 
-      {/* Banner */}
+      {/* ================= Banner ================= */}
       <div className="my-16 sm:my-20 lg:my-30">
         <img
           className="bg-cover w-full rounded-lg"
@@ -384,23 +362,22 @@ const HomePage = () => {
         />
       </div>
 
-      {/* Our Products */}
-      <div className="ourProducts my-16 sm:my-20 lg:my-30">
+      {/* ================= Our Products ================= */}
+      <section className="my-16 sm:my-20 lg:my-30">
         <SectionTitle title="Our Products" />
         <h1 className="text-xl sm:text-2xl lg:text-headerSection font-semibold mt-4 lg:mt-6">
           Explore Our Products
         </h1>
 
-        {/* Desktop Grid */}
         <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
-          {data.slice(0, 8).map((product) => (
+          {homeData?.discoverProducts?.map((product) => (
             <Card
               key={product.id}
-              img={product.img[0]}
+              img={product.interfaceImages.secure_url}
               title={product.title}
-              price={product.price}
-              discount={product.discount}
-              wishAndCart={true}
+              price={product.maxPrice}
+              discount={product.minPrice}
+              wishAndCart
               id={product.id}
             />
           ))}
@@ -409,25 +386,25 @@ const HomePage = () => {
         <div className="flex justify-center mt-8 lg:mt-10">
           <Link
             to="/products"
-            onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             <Button className="text-base sm:text-lg p-4 sm:p-6">
               View All Products
             </Button>
           </Link>
         </div>
-      </div>
+      </section>
 
-      {/* Services */}
-      <div className="services mb-16 sm:mb-20 lg:mb-10">
-        {/* Desktop Services */}
+      {/* ================= Services ================= */}
+      <section className="mb-16 sm:mb-20 lg:mb-10">
+        {/* Desktop */}
         <div className="hidden md:flex justify-between items-center w-full lg:w-10/12 mx-auto">
-          {servicesSec.map((el, index) => (
+          {servicesData.map((el, index) => (
             <div
               key={index}
-              className="service flex flex-col justify-center items-center gap-2 text-center"
+              className="flex flex-col justify-center items-center gap-2 text-center"
             >
-              <div className="icon bg-txt-gray/50 rounded-full p-4 lg:p-5 text-white w-16 h-16 lg:w-20 lg:h-20 flex justify-center items-center">
+              <div className="icon bg-txt-gray/50 rounded-full p-4 lg:p-5 w-16 h-16 lg:w-20 lg:h-20 flex justify-center items-center">
                 <div className="bg-black p-2 lg:p-3 rounded-full w-12 h-12 lg:w-15 lg:h-15 flex justify-center items-center">
                   <div className="scale-75 lg:scale-100">{el.icon}</div>
                 </div>
@@ -442,13 +419,13 @@ const HomePage = () => {
           ))}
         </div>
 
-        {/* Mobile Services Slider */}
+        {/* Mobile */}
         <div className="md:hidden">
           <Slider {...servicesSettings}>
-            {servicesSec.map((el, index) => (
+            {servicesData.map((el, index) => (
               <div key={index} className="px-4">
-                <div className="service flex flex-col justify-center items-center gap-3 text-center py-8">
-                  <div className="icon bg-txt-gray/50 rounded-full p-4 text-white w-16 h-16 flex justify-center items-center">
+                <div className="flex flex-col justify-center items-center gap-3 text-center py-8">
+                  <div className="icon bg-txt-gray/50 rounded-full p-4 w-16 h-16 flex justify-center items-center">
                     <div className="bg-black p-2 rounded-full w-12 h-12 flex justify-center items-center">
                       <div className="scale-75">{el.icon}</div>
                     </div>
@@ -460,7 +437,7 @@ const HomePage = () => {
             ))}
           </Slider>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

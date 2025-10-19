@@ -151,3 +151,4 @@ export const products = [
 ];
 
 export const userToken = localStorage.getItem("token");
+export const user = JSON.parse(localStorage.getItem("user") || "null");

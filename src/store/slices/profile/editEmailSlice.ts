@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { actEditProfile, type IEditProfile } from "./act/actEditProfile";
+import { type IEditProfile } from "./act/actEditProfile";
+import { actEditEmail } from "./act/actEditEmail";
 
 interface IInitialType {
   data: IEditProfile | null | string;
@@ -13,25 +14,25 @@ const initialState: IInitialType = {
   error: null,
 };
 
-const editProfileSlice = createSlice({
+const editEmailSlice = createSlice({
   name: "editProfile",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(actEditProfile.pending, (state) => {
+      .addCase(actEditEmail.pending, (state) => {
         state.loading = "pending";
         state.error = null;
       })
-      .addCase(actEditProfile.fulfilled, (state, action) => {
+      .addCase(actEditEmail.fulfilled, (state, action) => {
         state.loading = "fulfilled";
         state.data = action.payload;
       })
-      .addCase(actEditProfile.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(actEditEmail.rejected, (state, action: PayloadAction<any>) => {
         state.loading = "rejected";
         state.error = action.payload;
       });
   },
 });
 
-export default editProfileSlice.reducer;
+export default editEmailSlice.reducer;

@@ -14,6 +14,15 @@ const VerifyEmail = () => {
     (state: RootState) => state.VerifyEmail
   );
 
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
+  useEffect(() => {
+    if (token) {
+      dispatch(actVerifyEmail({ token }));
+    }
+  }, [token, dispatch]);
+
   useEffect(() => {
     if (loading === "fulfilled") {
       navigate("/profile", { replace: true });
@@ -27,30 +36,24 @@ const VerifyEmail = () => {
         timer: 2000,
       });
     }
-  }, [loading]);
-
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-
-  if (token) {
-    dispatch(actVerifyEmail({ token }));
-  }
+  }, [navigate, err, loading]);
 
   if (loading === "fulfilled") {
     return <Navigate to="/profile" replace />;
-  } else {
-    return (
-      <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
-        <h1 className="text-txt-black text-4xl font-bold mb-8">
-          Neo
-          <span className="text-txt-secondary2">Tech</span>
-        </h1>
-        <SyncLoader size={25} margin={5} />
-        <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
-          Developed By <span className="text-txt-secondary2">Anas & Hagar</span>
-        </h1>
-      </div>
-    );
   }
+
+  return (
+    <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center z-50 bg-white flex-col ">
+      <h1 className="text-txt-black text-4xl font-bold mb-8">
+        Neo
+        <span className="text-txt-secondary2">Tech</span>
+      </h1>
+      <SyncLoader size={25} margin={5} />
+      <h1 className="absolute bottom-10 text-xl font-bold opacity-80 max-md:text-sm">
+        Developed By <span className="text-txt-secondary2">Anas & Hagar</span>
+      </h1>
+    </div>
+  );
 };
+
 export default VerifyEmail;

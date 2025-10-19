@@ -8,8 +8,9 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import z from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { actEditEmail } from "@/store/slices/profile/act/actEditEmail";
+import { actRefreshToken } from "@/store/slices/auth/act/actRefreshToken";
 
 const MyProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,13 +59,21 @@ const MyProfile = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    watch,
+    formState: { isDirty, errors, isSubmitting },
   } = useForm<editProfileSchemaType>({
     resolver: zodResolver(editProfileSchema),
   });
+  const watchedValues = watch();
+  const [isChanged, setIsChanged] = useState(false);
 
   // image upload
   const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    const hasFormChanges = isDirty || file !== null;
+    setIsChanged(hasFormChanges);
+  }, [isDirty, file, watchedValues]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -74,43 +83,112 @@ const MyProfile = () => {
   };
 
   // Handle form submission
-  const handleEditProfile = async ({ name, email }: editProfileSchemaType) => {
+  interface EditProfileSchemaType {
+    name?: string;
+    email?: string;
+  }
+
+  interface IApiResponse {
+    message: string;
+  }
+
+  const handleEditProfile = async ({
+    name,
+    email,
+  }: editProfileSchemaType): Promise<void> => {
     try {
-      const formData = new FormData();
+      const promises: Promise<IApiResponse>[] = [];
 
-      if (file) {
-        if (!file.type.startsWith("image/"))
-          throw new Error("Only images allowed");
-        if (file.size > 2 * 1024 * 1024) throw new Error("Max 2MB");
-        formData.append("avatar", file);
+      // ✅ لو المستخدم غيّر الاسم أو الصورة
+      if (file || name) {
+        const formData = new FormData();
+
+        if (file) {
+          if (!file.type.startsWith("image/")) {
+            throw new Error("Only images allowed");
+          }
+          if (file.size > 2 * 1024 * 1024) {
+            throw new Error("Max 2MB");
+          }
+          formData.append("avatar", file);
+        }
+
+        if (name) formData.append("name", name);
+
+        promises.push(dispatch(actEditProfile(formData)).unwrap());
       }
 
-      if (name) formData.append("name", name);
       if (email) {
-        dispatch(actEditEmail(email));
+        promises.push(dispatch(actEditEmail(email)).unwrap());
       }
 
-      const result = await dispatch(actEditProfile(formData)).unwrap();
+      if (promises.length === 0) {
+        Swal.fire({
+          icon: "info",
+          title: "No changes made",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        return;
+      }
 
-      Swal.fire({
-        position: "top",
-        icon: "success",
-        title: result.message || "Profile updated successfully",
-        showConfirmButton: false,
-        timer: 2000,
+      // ✅ نشغّل كل العمليات في نفس الوقت
+      const results = await Promise.allSettled(promises);
+
+      // نجهز arrays لتجميع النتائج
+      const successMessages: string[] = [];
+      const errorMessages: string[] = [];
+
+      results.forEach((res) => {
+        if (res.status === "fulfilled") {
+          successMessages.push(res.value.message || "Updated successfully");
+        } else if (res.status === "rejected") {
+          // نوع rejected بيرجع أي Error، نتحقق منه
+          const reason =
+            (res.reason as { message?: string })?.message ||
+            "Something went wrong";
+          errorMessages.push(reason);
+        }
       });
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
+
+      // ✅ نعرض النتيجة النهائية
+      if (successMessages.length && !errorMessages.length) {
+        Swal.fire({
+          icon: "success",
+          title: successMessages.join(" & "),
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      } else if (errorMessages.length && !successMessages.length) {
+        Swal.fire({
+          icon: "error",
+          title: errorMessages.join(" & "),
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      } else if (successMessages.length && errorMessages.length) {
+        Swal.fire({
+          icon: "warning",
+          title: "Some updates succeeded, some failed",
+          html: `
+          <p>✅ ${successMessages.join("<br>✅ ")}</p>
+          <p>❌ ${errorMessages.join("<br>❌ ")}</p>
+        `,
+          showConfirmButton: true,
+        });
+      }
     } catch (error: any) {
       Swal.fire({
-        position: "top",
         icon: "error",
-        title: error.message || "Something went wrong, try again",
+        title: error.message || "Unexpected error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
     }
+  };
+
+  const refreshToken = () => {
+    dispatch(actRefreshToken());
   };
 
   return (
@@ -163,13 +241,19 @@ const MyProfile = () => {
         <Button
           className="py-6 w-1/2 my-8"
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isChanged || isSubmitting}
         >
           {isSubmitting ? <Loader /> : "Save changes"}
         </Button>
       </form>
       <Button className="w-30 text-md py-5" onClick={handleLogout}>
         Log out
+      </Button>
+      <Button
+        className="w-30 text-md py-5 ml-10 bg-blue-800 hover:bg-blue-600"
+        onClick={refreshToken}
+      >
+        refresh Token
       </Button>
     </div>
   );
