@@ -1,23 +1,6 @@
-export interface cardProps {
-  id: string;
-  img: string;
-  title: string;
-  price: number;
-  discount?: number;
-  deleteIcon?: boolean;
-  wishAndCart?: boolean;
-  deleteAndUpdate?: boolean;
-}
-
-export interface productsType {
-  success: boolean;
-  message: string;
-  data: {
-    products: Product[];
-    pagination: Pagination;
-  };
-  statusCode?: number;
-}
+/* ===============================
+   🛒 Product & Related Types
+================================= */
 
 export interface Product {
   _id: string;
@@ -25,14 +8,14 @@ export interface Product {
   title: string;
   slug: string;
   description?: string;
-  images?: ProductImage[];
+  images?: ProductImage[]; // ممكن تبقى موجودة أو لا
+  interfaceImages: ProductImage; // الصورة الأساسية
   discount?: Discount;
   category?: Category;
   totalStock?: number;
   originalMinPrice?: number;
   minPrice: number;
   maxPrice: number;
-  interfaceImages: ProductImage;
   ratings: Ratings;
 }
 
@@ -50,9 +33,11 @@ export interface Discount {
 }
 
 export interface Category {
+  id?: string;
   _id: string;
   name: string;
   slug: string;
+  icon?: string;
 }
 
 export interface Ratings {
@@ -60,6 +45,9 @@ export interface Ratings {
   count: number;
 }
 
+/* ===============================
+   📦 Pagination
+================================= */
 export interface Pagination {
   currentPage: number;
   totalPages: number;
@@ -68,6 +56,9 @@ export interface Pagination {
   hasPrev: boolean;
 }
 
+/* ===============================
+   🧾 Variations
+================================= */
 export interface Variation {
   attributes: {
     color: {
@@ -91,6 +82,9 @@ export interface Variation {
   isActive: boolean;
 }
 
+/* ===============================
+   🛍️ Cart
+================================= */
 export interface CartItem {
   id: string;
   title: string;
@@ -99,6 +93,9 @@ export interface CartItem {
   quantity: number;
 }
 
+/* ===============================
+   👤 Auth
+================================= */
 export interface IRegisterUser {
   name: string;
   email: string;
@@ -111,7 +108,9 @@ export interface ILoginUser {
   password: string;
 }
 
-// Updated interface to match backend response structure
+/* ===============================
+   🏠 Home Data Response
+================================= */
 export interface HomeDataResponse {
   success: boolean;
   message: string;
@@ -127,14 +126,9 @@ export interface HomeData {
   newArrivals: Product[];
 }
 
-export interface Category {
-  id: string;
-  _id: string;
-  name: string;
-  slug: string;
-  icon: string;
-}
-
+/* ===============================
+   🏷️ Category Data
+================================= */
 export interface CategoryResponse {
   data: CategoryData;
   loading: "idle" | "pending" | "fulfilled" | "rejected";
@@ -151,44 +145,18 @@ export interface CategoryData {
 }
 
 export interface catProduct {
-  ratings: {
-    average: number;
-    count: number;
-  };
+  ratings: Ratings;
   _id: string;
   title: string;
   slug: string;
-  discount?: Discount; // optional لأن مش كل المنتجات فيها خصم
-  category: {
-    _id: string;
-    name: string;
-    slug: string;
-  };
+  discount?: Discount;
+  category: Category;
   totalStock: number;
   originalMinPrice: number;
   minPrice: number;
   maxPrice: number;
-  interfaceImages: {
-    secure_url: string;
-    public_id: string;
-  };
+  interfaceImages: ProductImage;
   id: string;
-}
-
-export interface Discount {
-  value: number;
-  maxDiscountValue: number;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-}
-
-export interface Pagination {
-  currentPage: number;
-  totalPages: number;
-  totalProducts: number;
-  hasNext: boolean;
-  hasPrev: boolean;
 }
 
 export interface ChildCategory {
@@ -205,7 +173,10 @@ export interface CategoryPath {
   level: number;
 }
 
-/* flashSales section */
+/* ===============================
+   ⚡ Flash Sales Section
+================================= */
+/* ⚡ Flash Sales Section (Updated) */
 export interface FlashSales {
   products: FlashSalesProduct[];
   count: number;
@@ -213,54 +184,42 @@ export interface FlashSales {
 }
 
 export interface FlashSalesProduct {
-  id: string;
   _id: string;
+  id: string;
   title: string;
   slug: string;
-  description?: string;
-  images: {
-    secure_url: string;
-    public_id: string;
-  }[];
   discount?: Discount;
-  category?: {
-    _id: string;
-    name: string;
-    slug: string;
-  };
-  priceRange: {
-    min: number;
-    max: number;
-  };
-  ratings: {
-    average: number;
-    count: number;
-  };
-}
-
-/* products for bestSelling, newArrivals, etc. */
-export interface Product {
-  id: string;
-  _id: string;
-  title: string;
-  slug: string;
+  totalStock: number;
+  originalMinPrice: number;
   minPrice: number;
   maxPrice: number;
-  interfaceImages: {
-    secure_url: string;
-    public_id: string;
-  };
-  ratings: {
-    average: number;
-    count: number;
-  };
-  discount?: Discount;
+  interfaceImages: ProductImage;
+  ratings: Ratings;
 }
 
-export interface Discount {
-  value: number;
-  maxDiscountValue: number;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
+/* ===============================
+   💳 Card Props (Reusable UI)
+================================= */
+export interface cardProps {
+  id: string;
+  img: string;
+  title: string;
+  price: number;
+  discount?: number;
+  deleteIcon?: boolean;
+  wishAndCart?: boolean;
+  deleteAndUpdate?: boolean;
+}
+
+/* ===============================
+   📦 Products Type for API Response
+================================= */
+export interface productsType {
+  success: boolean;
+  message: string;
+  data: {
+    products: Product[];
+    pagination: Pagination;
+  };
+  statusCode?: number;
 }

@@ -3,7 +3,7 @@ import { logout } from "@/store/slices/auth/registerSlice";
 import { actEditProfile } from "@/store/slices/profile/act/actEditProfile";
 import type { AppDispatch } from "@/store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader } from "lucide-react";
+import { Loader, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
@@ -19,7 +19,7 @@ const MyProfile = () => {
   const handleLogout = () => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't to delete your account from this device!",
+      text: "You want to log out from this device!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -29,7 +29,7 @@ const MyProfile = () => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Success!",
-          text: "Your account loggedOut from this device successfully.",
+          text: "Your account logged out from this device successfully.",
           icon: "success",
         });
         setTimeout(() => {
@@ -44,7 +44,7 @@ const MyProfile = () => {
   const editProfileSchema = z.object({
     name: z
       .string()
-      .min(3, "Characters must be more than 3 ")
+      .min(3, "Characters must be more than 3")
       .optional()
       .or(z.literal("")),
     email: z
@@ -187,23 +187,23 @@ const MyProfile = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-xl lg:text-2xl mt-4 lg:mt-6 text-txt-secondary2">
+    <div className="w-full md:max-md-4xl mx-auto px-4 sm:px-6 lg:px-0">
+      <h1 className="text-lg sm:text-xl lg:text-2xl mt-4 lg:mt-6 text-txt-secondary2 font-semibold">
         Edit your profile
       </h1>
+
       <form
-        className="flex flex-col mt-8"
+        className="flex flex-col mt-6 sm:mt-8"
         onSubmit={handleSubmit(handleEditProfile)}
       >
-        {/* Avatar Preview */}
-
         {/* File Input */}
-        <div className="mb-4">
+        <div className="mb-6">
           <label
             htmlFor="upload"
-            className="cursor-pointer inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-blue-500 text-white text-sm sm:text-base rounded-lg hover:bg-blue-600 transition-colors"
           >
-            Choose Profile Picture
+            <Upload size={18} />
+            <span>Choose Profile Picture</span>
           </label>
           <input
             type="file"
@@ -212,44 +212,73 @@ const MyProfile = () => {
             id="upload"
             className="hidden"
           />
-          {file && <p className="mt-2 text-sm text-gray-600">{file.name}</p>}
+          {file && (
+            <p className="mt-2 text-sm text-gray-600 break-all">
+              Selected: {file.name}
+            </p>
+          )}
         </div>
 
-        <input
-          {...register("name")}
-          placeholder="Name"
-          className="outline-none p-5 border-b-1 border-txt-gray/80 border-b-solid pb-2 placeholder-txt-gray/80 w-110 mt-5"
-        />
-        {errors.name && (
-          <p className="text-red-500 mt-2">{errors.name?.message}</p>
-        )}
+        {/* Name Input */}
+        <div className="mb-5">
+          <input
+            {...register("name")}
+            placeholder="Name"
+            className="outline-none p-3 sm:p-4 lg:p-5 border-b border-txt-gray/80 pb-2 placeholder-txt-gray/80 w-full text-sm sm:text-base focus:border-txt-secondary2 transition-colors"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-xs sm:text-sm mt-2">
+              {errors.name?.message}
+            </p>
+          )}
+        </div>
 
-        <input
-          {...register("email")}
-          placeholder="Email"
-          className="outline-none p-5 border-b-1 border-txt-gray/80 border-b-solid pb-2 placeholder-txt-gray/80 w-110 mt-5"
-        />
-        {errors.email && (
-          <p className="text-red-500 mt-2">{errors.email?.message}</p>
-        )}
+        {/* Email Input */}
+        <div className="mb-6">
+          <input
+            {...register("email")}
+            placeholder="Email"
+            className="outline-none p-3 sm:p-4 lg:p-5 border-b border-txt-gray/80 pb-2 placeholder-txt-gray/80 w-full text-sm sm:text-base focus:border-txt-secondary2 transition-colors"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-xs sm:text-sm mt-2">
+              {errors.email?.message}
+            </p>
+          )}
+        </div>
 
+        {/* Save Button */}
         <Button
-          className="py-6 w-1/2 my-8"
+          className="py-5 sm:py-6 w-full sm:w-2/3 lg:w-1/2 my-6 sm:my-8 text-sm sm:text-base"
           type="submit"
           disabled={!isChanged || isSubmitting}
         >
-          {isSubmitting ? <Loader /> : "Save changes"}
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader className="animate-spin" size={18} />
+              Saving...
+            </span>
+          ) : (
+            "Save changes"
+          )}
         </Button>
       </form>
-      <Button className="w-30 text-md py-5" onClick={handleLogout}>
-        Log out
-      </Button>
-      <Button
-        className="w-30 text-md py-5 ml-10 bg-blue-800 hover:bg-blue-600"
-        onClick={refreshToken}
-      >
-        refresh Token
-      </Button>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 pb-8">
+        <Button
+          className="w-full sm:w-auto text-sm sm:text-base py-4 sm:py-5 px-6"
+          onClick={handleLogout}
+        >
+          Log out
+        </Button>
+        <Button
+          className="w-full sm:w-auto text-sm sm:text-base py-4 sm:py-5 px-6 bg-blue-800 hover:bg-blue-600"
+          onClick={refreshToken}
+        >
+          Refresh Token
+        </Button>
+      </div>
     </div>
   );
 };

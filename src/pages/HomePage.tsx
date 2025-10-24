@@ -126,8 +126,8 @@ const categoriesSettings = {
   slidesToShow: 5,
   slidesToScroll: 1,
   autoplay: true,
-  autoplaySpeed: 5000,
-  speed: 1000,
+  autoplaySpeed: 2000,
+  speed: 500,
   arrows: false,
   responsive: [
     {
@@ -172,7 +172,6 @@ const HomePage: React.FC = () => {
   const handleActCategory = (slug: string) => {
     dispatch(actGetCategoryBySlug({ slug }));
   };
-  
 
   // Loading Screen
   if (loading !== "fulfilled") {
@@ -265,10 +264,10 @@ const HomePage: React.FC = () => {
               {homeData?.flashSales?.products?.map((product) => (
                 <div key={product.id} className="px-2">
                   <Card
-                    img={product?.images?.[0]?.secure_url || "not found"}
+                    img={product.interfaceImages.secure_url}
                     title={product.title}
-                    price={product?.priceRange?.max}
-                    discount={product?.priceRange?.min}
+                    price={product.maxPrice}
+                    discount={product?.minPrice}
                     wishAndCart={true}
                     id={product.id}
                   />

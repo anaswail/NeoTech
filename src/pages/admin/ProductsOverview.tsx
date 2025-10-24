@@ -33,7 +33,7 @@ const ProductsOverview = () => {
     dispatch(actGetHomeData());
   }, [dispatch]);
   useEffect(() => {
-    dispatch(actFetchProducts({ page: currentPage, limit: 15 }));
+    dispatch(actFetchProducts({ page: currentPage, limit: 30 }));
   }, [dispatch, currentPage]);
 
   const handleActCategory = (slug: string) => {
@@ -62,54 +62,95 @@ const ProductsOverview = () => {
   }
 
   return (
-    <div className="product bg-white w-full h-full p-5 rounded-md  ">
-      <Heading title="Products" />{" "}
-      <div className="header flex justify-between mt-5">
-        <div className="search relative w-1/2  ml-2 border-gray-500 border-1 rounded-md">
-          <Input placeholder="What are you looking for?" className="p-5  " />
-          <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
-        </div>
-        <div className="btns ">
-          <Button className="rounded-sm mr-5 bg-transparent text-black border-1 border-gray-500 hover:bg-gray-50  ">
-            Filter <Filter />
-          </Button>
-          <Button className="rounded-sm">
-            New Product <Plus size={25} />{" "}
-          </Button>
-        </div>
+    <div>
+      <div className="p-5">
+        <Heading title="Products" />{" "}
       </div>
-      <div className=" my-8">
-        <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
-          <Button
-            onClick={() => setSelectedCat("all")}
-            className={`"flex-shrink-0  rounded-lg px-4 py-3 border transition-colors whitespace-nowrap text-sm" ${
-              selectedCat === "all"
-                ? "bg-txt-secondary2 text-white "
-                : "bg-white text-black   border-gray-200 hover:bg-gray-50"
-            }`}
-          >
-            All ({totalProducts})
-          </Button>
-          {homeData?.categories.map((category, index) => (
+      <div className="product bg-white w-full h-full p-5 rounded-md  ">
+        <div className="header flex justify-between mt-5">
+          <div className="search relative w-1/2  ml-2 border-gray-500 border-1 rounded-md">
+            <Input placeholder="What are you looking for?" className="p-5  " />
+            <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
+          </div>
+          <div className="btns ">
+            <Button className="rounded-sm mr-5 bg-transparent text-black border-1 border-gray-500 hover:bg-gray-50  ">
+              Filter <Filter />
+            </Button>
+            <Button className="rounded-sm">
+              New Product <Plus size={25} />{" "}
+            </Button>
+          </div>
+        </div>
+        <div className=" my-8">
+          <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
             <Button
-              key={index}
-              onClick={() => handleActCategory(category.slug)}
+              onClick={() => setSelectedCat("all")}
               className={`"flex-shrink-0  rounded-lg px-4 py-3 border transition-colors whitespace-nowrap text-sm" ${
-                selectedCat === category.slug
+                selectedCat === "all"
                   ? "bg-txt-secondary2 text-white "
                   : "bg-white text-black   border-gray-200 hover:bg-gray-50"
               }`}
             >
-              {category.name} ({homeData.categories.length})
+              All ({totalProducts})
             </Button>
-          ))}
+            {homeData?.categories.map((category, index) => (
+              <Button
+                key={index}
+                onClick={() => handleActCategory(category.slug)}
+                className={`"flex-shrink-0  rounded-lg px-4 py-3 border transition-colors whitespace-nowrap text-sm" ${
+                  selectedCat === category.slug
+                    ? "bg-txt-secondary2 text-white "
+                    : "bg-white text-black   border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {category.name} ({homeData.categories.length})
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="products">
-        {selectedCat === "all" ? (
-          <>
+        <div className="products">
+          {selectedCat === "all" ? (
+            <>
+              <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
+                {productsData?.map((product, idx) => (
+                  <Card
+                    key={idx}
+                    img={product?.interfaceImages.secure_url}
+                    title={product.title}
+                    price={product.maxPrice}
+                    discount={product.minPrice}
+                    wishAndCart={false}
+                    deleteAndUpdate={true}
+                    id={product.id}
+                  />
+                ))}
+              </div>
+              {/* Pagination Controls */}
+              <div className="flex justify-center items-center gap-3 mt-10">
+                <Button
+                  onClick={() => dispatch(setPage((currentPage ?? 1) - 1))}
+                  disabled={(currentPage ?? 1) === 1}
+                  className=" disabled:opacity-50"
+                >
+                  Prev
+                </Button>
+
+                <span className="font-semibold">
+                  Page {currentPage ?? 1} of {totalPages ?? 1}
+                </span>
+
+                <Button
+                  onClick={() => dispatch(setPage((currentPage ?? 1) + 1))}
+                  disabled={(currentPage ?? 1) === (totalPages ?? 1)}
+                  className="disabled:opacity-50 "
+                >
+                  Next
+                </Button>
+              </div>
+            </>
+          ) : (
             <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
-              {productsData?.map((product, idx) => (
+              {categoryData?.products?.products?.map((product, idx) => (
                 <Card
                   key={idx}
                   img={product?.interfaceImages.secure_url}
@@ -122,45 +163,8 @@ const ProductsOverview = () => {
                 />
               ))}
             </div>
-            {/* Pagination Controls */}
-            <div className="flex justify-center items-center gap-3 mt-10">
-              <Button
-                onClick={() => dispatch(setPage((currentPage ?? 1) - 1))}
-                disabled={(currentPage ?? 1) === 1}
-                className=" disabled:opacity-50"
-              >
-                Prev
-              </Button>
-
-              <span className="font-semibold">
-                Page {currentPage ?? 1} of {totalPages ?? 1}
-              </span>
-
-              <Button
-                onClick={() => dispatch(setPage((currentPage ?? 1) + 1))}
-                disabled={(currentPage ?? 1) === (totalPages ?? 1)}
-                className="disabled:opacity-50 "
-              >
-                Next
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="flex justify-center gap-6 lg:gap-10 flex-wrap mt-8 lg:mt-15">
-            {categoryData?.products?.products?.map((product, idx) => (
-              <Card
-                key={idx}
-                img={product?.interfaceImages.secure_url}
-                title={product.title}
-                price={product.maxPrice}
-                discount={product.minPrice}
-                wishAndCart={false}
-                deleteAndUpdate={true}
-                id={product.id}
-              />
-            ))}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
