@@ -1,15 +1,16 @@
 // =========================================
 //                  Imports
 // =========================================
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SyncLoader } from "react-spinners";
 
-import type { RootState } from "@/store/store";
+import type { AppDispatch, RootState } from "@/store/store";
+import { actGetProductById } from "@/store/slices/products/act/actGetProductById";
 
 const ProductDetails = () => {
   const [size, setSize] = useState("L");
@@ -22,11 +23,23 @@ const ProductDetails = () => {
     // add logic
   };
   const { id } = useParams();
-  const { data, loading } = useSelector((state: RootState) => state.products);
-  const productId = Number(id);
-  const product = data.find((item) => Number(item.id) === productId);
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: product, loading } = useSelector(
+    (state: RootState) => state.productId
+  );
+  useEffect(() => {
+    if (id) {
+      dispatch(actGetProductById({ id }));
+    }
+  }, [dispatch, id]);
 
-  const [image, setImage] = useState(product?.img[0]);
+  const [image, setImage] = useState<string>("");
+
+  useEffect(() => {
+    if (product?.interfaceImages) {
+      setImage(product.interfaceImages.secure_url);
+    }
+  }, [product]);
 
   if (loading !== "fulfilled") {
     return (
@@ -51,26 +64,30 @@ const ProductDetails = () => {
       <div className="content flex mt-8 lg:mt-10">
         <div className="img-section w-1/2 flex  justify-center">
           <div className="switchImages w-1/3">
-            {product?.img.map((productImage, idx) => (
+            {product?.images?.map((productImage, idx) => (
               <div
+                key={idx}
                 className={`image ${
-                  image === productImage
+                  image === productImage.secure_url
                     ? "bg-txt-secondary2/85"
                     : "bg-txt-secondary hover:bg-gray-200"
-                } my-3 w-3/4 p-2 flex justify-center items-center rounded-lg cursor-pointer `}
-                key={idx}
-                onClick={() => setImage(productImage)}
+                } my-3 w-3/4 p-2 flex justify-center items-center rounded-lg cursor-pointer`}
+                onClick={() => setImage(productImage.secure_url)}
               >
                 <img
-                  src={productImage}
+                  src={productImage.secure_url}
                   alt="product image"
-                  className=" w-1/2  sm:h-20 md:h-24 lg:h-22 object-contain"
+                  className="w-1/2 sm:h-20 md:h-24 lg:h-22 object-contain"
                 />
               </div>
             ))}
           </div>
           <div className="main-image w-2/3 p-10 rounded-lg bg-txt-secondary h-3/4 flex justify-center items-center">
-            <img src={image} alt="main-img" className="w-full h-3/4 " />
+            <img
+              src={image || "null"}
+              alt="main-img"
+              className="max-w-full max-h-full object-contain"
+            />
           </div>
         </div>
 
@@ -78,19 +95,47 @@ const ProductDetails = () => {
           <h1 className="product-title text-3xl font-bold ">
             {product?.title}
           </h1>
-          <p className="product-condition text-green-400 ">In stock</p>
-          <p className="price text-2xl ">${product?.price}</p>
-
-          {product?.description.slice(0, 2).map((desc) => (
-            <p className="description w-5/6 pb-1">{desc}</p>
-          ))}
-
+          <div className="rate flex items-center gap-5">
+            <div className="rates flex gap-2 border-r-1 pr-5 border-gray-700">
+              {[1, 2, 3, 4, 5].map((_, idx) => (
+                <Star
+                  key={idx}
+                  size={18}
+                  className={
+                    idx + 1 <= Math.floor(product?.ratings?.average ?? 0)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "fill-gray-300 text-gray-300"
+                  }
+                />
+              ))}
+              <p className="text-gray-500 ml-2">
+                ({product?.ratings.count} Reviews)
+              </p>
+            </div>
+            {product?.totalStock == 0 ? (
+              <p className="product-condition text-red-500 ">Out of stock</p>
+            ) : (
+              <p className="product-condition text-green-400 ">
+                ({product?.totalStock}) In stock
+              </p>
+            )}
+          </div>
+          <div className="price flex gap-3  ">
+            <p className="price text-2xl ">${product?.maxPrice}</p>
+            {product?.maxPrice === product?.minPrice ? (
+              ""
+            ) : (
+              <p className="price text-lg line-through text-gray-600">
+                ${product?.minPrice}
+              </p>
+            )}
+          </div>
+          <p className="description w-5/6 pb-1">{product?.description}</p>
           <div className="colors flex gap-2 items-center my-2 border-t-1 pt-5 border-black/60 border-solid">
             <h2 className="mr-3">Colors:</h2>
             <span className="bg-txt-secondary2 w-5 h-5 rounded-full"></span>
             <span className="bg-blue-700 w-5 h-5 rounded-full "></span>
           </div>
-
           <div className="sizes flex gap-2 items-center">
             <h2 className="mr-3">Sizes:</h2>
             <span
@@ -144,7 +189,6 @@ const ProductDetails = () => {
               XL
             </span>
           </div>
-
           <div className="buyPro flex gap-5 w-full mt-10">
             <div className="quantity  flex justify-between items-center w-[23%] rounded-sm bg-gray-100">
               <Button

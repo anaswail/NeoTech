@@ -1,5 +1,5 @@
 const ProductCRUD = () => {
-  return <div>ProductCRUD</div>;
+  return <>Crud</>;
 };
 
 export default ProductCRUD;

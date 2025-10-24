@@ -99,7 +99,6 @@ const MyProfile = () => {
     try {
       const promises: Promise<IApiResponse>[] = [];
 
-      // ✅ لو المستخدم غيّر الاسم أو الصورة
       if (file || name) {
         const formData = new FormData();
 
@@ -132,10 +131,8 @@ const MyProfile = () => {
         return;
       }
 
-      // ✅ نشغّل كل العمليات في نفس الوقت
       const results = await Promise.allSettled(promises);
 
-      // نجهز arrays لتجميع النتائج
       const successMessages: string[] = [];
       const errorMessages: string[] = [];
 
@@ -143,7 +140,6 @@ const MyProfile = () => {
         if (res.status === "fulfilled") {
           successMessages.push(res.value.message || "Updated successfully");
         } else if (res.status === "rejected") {
-          // نوع rejected بيرجع أي Error، نتحقق منه
           const reason =
             (res.reason as { message?: string })?.message ||
             "Something went wrong";
@@ -151,7 +147,6 @@ const MyProfile = () => {
         }
       });
 
-      // ✅ نعرض النتيجة النهائية
       if (successMessages.length && !errorMessages.length) {
         Swal.fire({
           icon: "success",

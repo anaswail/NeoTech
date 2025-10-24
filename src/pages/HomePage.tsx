@@ -7,17 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import {
   ArrowRight,
-  Camera,
   ChevronLeft,
   ChevronRight,
-  Gamepad2,
-  Headphones,
   Headset,
-  LaptopMinimal,
   ShieldCheck,
-  Smartphone,
   Truck,
-  Watch,
 } from "lucide-react";
 import { SyncLoader } from "react-spinners";
 
@@ -28,11 +22,12 @@ import Frame600 from "../assets/Frame600.png";
 import Card from "@/components/Card";
 import SectionTitle from "@/utils/SectionTitle";
 import { Button } from "@/components/ui/button";
-import { banners, categories } from "@/utils/Repeated";
+import { banners } from "@/utils/Repeated";
 
 import type { AppDispatch, RootState } from "@/store/store";
-import { actFetchProducts } from "@/store/slices/products/actProducts";
+import { actFetchProducts } from "@/store/slices/products/act/actProducts";
 import { actGetHomeData } from "@/store/slices/products/act/actGetHomeData";
+import { actGetCategoryBySlug } from "@/store/slices/products/act/actGetCategoryBySlug";
 
 // =========================================
 //        Custom Arrows (with types)
@@ -78,15 +73,6 @@ const servicesData = [
     title: "MONEY BACK GUARANTEE",
     desc: "We return money within 30 days",
   },
-];
-
-const categoriesData = [
-  { name: "smartphones", icon: <Smartphone size={40} /> },
-  { name: "laptops", icon: <LaptopMinimal size={40} /> },
-  { name: "cameras", icon: <Camera size={40} /> },
-  { name: "headphones", icon: <Headphones size={40} /> },
-  { name: "games", icon: <Gamepad2 size={40} /> },
-  { name: "smartwatches", icon: <Watch size={40} /> },
 ];
 
 // =========================================
@@ -137,7 +123,7 @@ const discountSettingsMobile = {
 const categoriesSettings = {
   dots: true,
   infinite: true,
-  slidesToShow: 2,
+  slidesToShow: 5,
   slidesToScroll: 1,
   autoplay: true,
   autoplaySpeed: 5000,
@@ -147,6 +133,14 @@ const categoriesSettings = {
     {
       breakpoint: 480,
       settings: { slidesToShow: 1 },
+    },
+    {
+      breakpoint: 720,
+      settings: { slidesToShow: 3 },
+    },
+    {
+      breakpoint: 1020,
+      settings: { slidesToShow: 4 },
     },
   ],
 };
@@ -165,16 +159,20 @@ const servicesSettings = {
 // =========================================
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading } = useSelector((state: RootState) => state.products);
-  const { data: homeData, loading: homeLoading } = useSelector(
+  const { data: homeData, loading } = useSelector(
     (state: RootState) => state.home
   );
 
   // Fetch data from API
   useEffect(() => {
-    dispatch(actFetchProducts());
+    dispatch(actFetchProducts({ page: 1, limit: 12 }));
     dispatch(actGetHomeData());
   }, [dispatch]);
+
+  const handleActCategory = (slug: string) => {
+    dispatch(actGetCategoryBySlug({ slug }));
+  };
+  
 
   // Loading Screen
   if (loading !== "fulfilled") {
@@ -197,17 +195,16 @@ const HomePage: React.FC = () => {
       {/* ================= Hero Section ================= */}
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {/* Categories Sidebar */}
-        <div className="hidden lg:block w-full lg:w-1/4 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="hidden lg:block w-full lg:w-1/4 h-90 overflow-y-scroll bg-white border border-gray-200 rounded-lg shadow-sm">
           <div className="p-2">
-            {categories.map((category, index) => (
+            {homeData?.categories.map((category, index) => (
               <div
                 key={index}
                 className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 transition-colors last:border-b-0"
               >
                 <Link
-                  to={`/category/${category.name
-                    .toLowerCase()
-                    .replace(/\s+/g, "")}`}
+                  to={`/category/${category.slug}`}
+                  onClick={() => handleActCategory(category.slug)}
                   className="text-gray-700 hover:text-txt-secondary2 flex justify-between items-center"
                 >
                   {category.name}
@@ -239,12 +236,11 @@ const HomePage: React.FC = () => {
       {/* ================= Mobile Categories ================= */}
       <div className="lg:hidden my-8">
         <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
-          {categories.slice(0, 8).map((category, index) => (
+          {homeData?.categories.map((category, index) => (
             <Link
               key={index}
-              to={`/category/${category.name
-                .toLowerCase()
-                .replace(/\s+/g, "")}`}
+              to={`/category/${category.slug}`}
+              onClick={() => handleActCategory(category.slug)}
               className="flex-shrink-0 bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 transition-colors whitespace-nowrap text-sm"
             >
               {category.name}
@@ -266,14 +262,14 @@ const HomePage: React.FC = () => {
                 ? discountSettings
                 : discountSettingsMobile)}
             >
-              {homeData?.flashSales.products.map((product) => (
+              {homeData?.flashSales?.products?.map((product) => (
                 <div key={product.id} className="px-2">
                   <Card
-                    img={product.images[0].secure_url}
+                    img={product?.images?.[0]?.secure_url || "not found"}
                     title={product.title}
-                    price={product.priceRange.max}
-                    discount={product.priceRange.min}
-                    wishAndCart
+                    price={product?.priceRange?.max}
+                    discount={product?.priceRange?.min}
+                    wishAndCart={true}
                     id={product.id}
                   />
                 </div>
@@ -290,30 +286,20 @@ const HomePage: React.FC = () => {
           Shop by Category
         </h1>
 
-        {/* Desktop */}
-        <div className="hidden lg:flex justify-between mt-15">
-          {categoriesData.map((cat, index) => (
-            <Link
-              key={index}
-              to={`/category/${cat.name}`}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              <div className="category h-40 w-46 rounded-lg border-2 border-txt-gray flex flex-col justify-center items-center gap-2 cursor-pointer hover:bg-txt-secondary2 hover:text-white transition-all duration-300">
-                {cat.icon}
-                <h1 className="text-center text-sm capitalize">{cat.name}</h1>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Mobile */}
-        <div className="lg:hidden mt-8">
+        {/* Cat slider */}
+        <div className=" mt-10">
           <Slider {...categoriesSettings}>
-            {categoriesData.map((cat, index) => (
-              <div key={index} className="px-2">
-                <Link to={`/category/${cat.name}`}>
+            {homeData?.categories.map((cat, index) => (
+              <div
+                key={index}
+                className="px-2 mb-3 max-md:mb-6"
+                onClick={() => handleActCategory(cat.slug)}
+              >
+                <Link to={`/category/${cat.slug}`}>
                   <div className="category h-32 sm:h-36 rounded-lg border-2 border-txt-gray flex flex-col justify-center items-center gap-2 mx-2 hover:bg-txt-secondary2 hover:text-white transition-all duration-300">
-                    <div className="scale-75 sm:scale-90">{cat.icon}</div>
+                    <div className="scale-75 sm:scale-90">
+                      <img src={cat.icon} alt={cat.name} />
+                    </div>
                     <h1 className="text-center text-xs sm:text-sm px-2 capitalize">
                       {cat.name}
                     </h1>
@@ -344,7 +330,7 @@ const HomePage: React.FC = () => {
                   title={product.title}
                   price={product.maxPrice}
                   discount={product.minPrice}
-                  wishAndCart
+                  wishAndCart={true}
                   id={product.id}
                 />
               </div>
@@ -377,7 +363,7 @@ const HomePage: React.FC = () => {
               title={product.title}
               price={product.maxPrice}
               discount={product.minPrice}
-              wishAndCart
+              wishAndCart={true}
               id={product.id}
             />
           ))}
@@ -399,7 +385,7 @@ const HomePage: React.FC = () => {
       <section className="mb-16 sm:mb-20 lg:mb-10">
         {/* Desktop */}
         <div className="hidden md:flex justify-between items-center w-full lg:w-10/12 mx-auto">
-          {servicesData.map((el, index) => (
+          {servicesData?.map((el, index) => (
             <div
               key={index}
               className="flex flex-col justify-center items-center gap-2 text-center"

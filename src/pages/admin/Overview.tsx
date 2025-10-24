@@ -67,7 +67,7 @@ const Overview = () => {
   ];
 
   return (
-    <div>
+    <div className="my-8">
       <div className="header flex justify-between ">
         <div className="left-side">
           <h1 className="text-3xl font-medium">
@@ -95,8 +95,8 @@ const Overview = () => {
         </div>
       </div>
 
-      <div className="statistics flex gap-5 mt-10">
-        <div className="total-orders bg-txt-secondary2 text-white p-5 relative rounded-sm w-90 h-40 shadow-lg">
+      <div className="statistics flex  mt-10 gap-10">
+        <div className="total-orders bg-txt-secondary2 text-white p-5 relative rounded-sm w-96 h-40 shadow-lg">
           <h1 className="text-xl font-semibold">
             Total Orders{" "}
             <span className="text-[10px] font-normal ">this month</span>
@@ -111,7 +111,7 @@ const Overview = () => {
           </span>
         </div>
 
-        <div className="total-sales group bg-white  p-5 relative rounded-sm w-90 h-40 shadow-lg ">
+        <div className="total-sales group bg-white  p-5 relative rounded-sm w-96 h-40 shadow-lg ">
           <h1 className="text-xl font-semibold">
             Total sales{" "}
             <span className="text-[10px] font-normal ">this month</span>
@@ -126,7 +126,7 @@ const Overview = () => {
           </span>
         </div>
 
-        <div className="total-orders group bg-white  p-5 relative rounded-sm w-90 h-40 shadow-lg">
+        <div className="total-orders group bg-white  p-5 relative rounded-sm w-96 h-40 shadow-lg">
           <h1 className="text-xl font-semibold">
             Customers{" "}
             <span className="text-[10px] font-normal ">this month</span>

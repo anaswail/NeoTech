@@ -1,4 +1,4 @@
-import { Eye, Heart, Trash } from "lucide-react";
+import { Edit, Eye, Heart, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 import type { cardProps } from "@/types";
@@ -15,6 +15,14 @@ const removeFromWishList = () => {
   // Logic to add the item to the wishlist
 };
 
+const deleteProduct = () => {
+  // Logic to delete product
+};
+
+const updateProduct = () => {
+  // Logic to update product
+};
+
 const Card = ({
   img,
   title,
@@ -23,6 +31,7 @@ const Card = ({
   id,
   deleteIcon = false,
   wishAndCart = false,
+  deleteAndUpdate = false,
 }: cardProps) => {
   const handleProductClick = () => {
     scrollTo({ top: 0, behavior: "smooth" });
@@ -69,15 +78,38 @@ const Card = ({
         />
 
         {/* Add to Cart Button */}
-        <Button
-          onClick={handleAddToCart}
-          className="bg-black hover:bg-txt-secondary2 transition-all duration-400 w-full absolute -bottom-10 left-0 group-hover:bottom-0 text-xs sm:text-sm md:text-base py-2 sm:py-3"
-        >
-          Add To Cart
-        </Button>
+        {wishAndCart && (
+          <Button
+            onClick={handleAddToCart}
+            className="bg-black hover:bg-txt-secondary2 transition-all duration-400 w-full absolute -bottom-10 left-0 group-hover:bottom-0 text-xs sm:text-sm md:text-base py-2 sm:py-3"
+          >
+            Add To Cart
+          </Button>
+        )}
 
         {/* Action Icons */}
         <div className="icons absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col justify-center items-center gap-2 sm:gap-3">
+          {deleteAndUpdate && (
+            <>
+              <div
+                onClick={deleteProduct}
+                className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
+              >
+                <Trash size={16} className="sm:w-5 sm:h-5" />
+              </div>
+              <div
+                onClick={updateProduct}
+                className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
+              >
+                <Edit size={16} className="sm:w-5 sm:h-5" />
+              </div>
+              <Link to={`/product/${id}`} onClick={handleProductClick}>
+                <div className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm">
+                  <Eye size={16} className="sm:w-5 sm:h-5" />
+                </div>
+              </Link>
+            </>
+          )}
           {wishAndCart && (
             <>
               <div
@@ -106,7 +138,7 @@ const Card = ({
         {/* Discount Badge */}
         {discount && discount !== price && (
           <Button className="rounded-sm absolute top-2 sm:top-3 md:top-4 left-2 sm:left-3 md:left-4 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5">
-            -{discount && Math.round(100 - (price / discount) * 100)}%
+            {discount && Math.round(100 - (price / discount) * 100)}%
           </Button>
         )}
       </div>

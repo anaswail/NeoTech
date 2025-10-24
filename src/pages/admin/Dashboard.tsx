@@ -76,9 +76,9 @@ const Dashboard = () => {
   return (
     <div className="absolute top-0 left-0 w-full bg-gray-100 z-50 flex">
       {closeMenu && (
-        <div className="w-[10%]">
+        <div className="w-[5%]">
           <PanelLeftOpen
-            className=" m-10 cursor-pointer"
+            className="m-10 cursor-pointer"
             onClick={() => {
               setCloseMenu(false);
             }}
@@ -86,7 +86,7 @@ const Dashboard = () => {
         </div>
       )}
       <div
-        className={`"sidebar h-screen bg-white w-1/4 py-10 px-5 relative " ${
+        className={`sidebar h-screen bg-white w-1/4 py-10 px-5 relative ${
           closeMenu ? "hidden" : "block"
         }`}
       >
@@ -108,7 +108,7 @@ const Dashboard = () => {
           {sidebarItems.map((item, idx) => (
             <li
               key={idx}
-              className=" hover:text-white px-5 py-3 rounded-sm cursor-pointer hover:bg-txt-secondary2 duration-200 mt-5"
+              className="hover:text-white px-5 py-3 rounded-sm cursor-pointer hover:bg-txt-secondary2 duration-200 mt-5"
             >
               <Link
                 to={item.path}
@@ -120,13 +120,13 @@ const Dashboard = () => {
           ))}
           <Button
             onClick={handleLogout}
-            className="cursor-pointer font-semibold flex gap-10 items-center text-xl w-3/4 rounded-sm p-5 absolute bottom-5 "
+            className="cursor-pointer font-semibold flex gap-10 items-center text-xl w-3/4 rounded-sm p-5 absolute bottom-5"
           >
             <LogOut size={25} /> Log Out
           </Button>
         </ul>
       </div>
-      <div className="p-8 w-3/4">
+      <div className={`px-8 ${closeMenu ? "w-[95%]" : "w-3/4"}`}>
         <Outlet />
       </div>
     </div>
