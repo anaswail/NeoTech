@@ -223,3 +223,13 @@ export interface productsType {
   };
   statusCode?: number;
 }
+
+/* ===============================
+    🗂️ Category Levels
+================================= */
+export interface CategoryLevels {
+  id: string;
+  name: string;
+  description: string;
+  subCategories?: CategoryLevels[];
+}

@@ -33,3 +33,5 @@ const addProductSlice = createSlice({
       });
   },
 });
+
+export default addProductSlice.reducer;

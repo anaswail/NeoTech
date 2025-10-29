@@ -15,6 +15,7 @@ import VerifyEmail from "./slices/auth/verifyEmailSlice";
 import refreshToken from "./slices/auth/refreshTokenSlice";
 import editEmail from "./slices/profile/editEmailSlice";
 import category from "./slices/products/getCategoryBySlugSlice";
+import newProduct from "./slices/products/addProductSlice";
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     refreshToken,
     editEmail,
     category,
+    newProduct,
   },
 });
 
