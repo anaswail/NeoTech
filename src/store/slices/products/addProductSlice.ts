@@ -4,7 +4,7 @@ import { actAddProduct } from "./act/actAddProduct";
 interface initialTypes {
   data: FormData | null;
   loading: "idle" | "pending" | "rejected" | "fulfilled";
-  error: string | null;
+  error: string | null | any;
 }
 
 const initialState: initialTypes = {

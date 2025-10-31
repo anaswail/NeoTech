@@ -161,7 +161,7 @@ const ProductsOverview = () => {
           </div>
 
           {/* Pagination Controls */}
-          {products.length >= 20 && (
+          {selectedCat === "all" && (
             <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mt-8 sm:mt-10 px-4">
               <Button
                 onClick={() => dispatch(setPage((currentPage ?? 1) - 1))}

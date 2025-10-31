@@ -83,11 +83,6 @@ const MyProfile = () => {
   };
 
   // Handle form submission
-  interface EditProfileSchemaType {
-    name?: string;
-    email?: string;
-  }
-
   interface IApiResponse {
     message: string;
   }

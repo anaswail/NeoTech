@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import DevelopedWithAnas from "../assets/developedWithAnas.webp";
 import { socialLinks } from "@/utils/Repeated";
+import { Button } from "./ui/button";
 
 const footerLinks = [
   {
@@ -39,8 +40,14 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <div className="footer bg-black flex flex-col justify-center items-center w-full">
+    <div className="relative not-first:footer bg-black flex flex-col justify-center items-center w-full">
       {/* Main Footer Content */}
+      <Button
+        className="rounded-t-2xl absolute -top-5 right-10 p-5 cursor-pointer hover:-top-10 duration-300 z-10 bg-black hover:bg-txt-secondary2"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        Scroll To Top
+      </Button>
       <div className="w-full container mx-auto text-txt-white p-4 sm:p-6 lg:p-12">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 lg:gap-12 xl:gap-36">
           {/* Logo and Developer Section */}

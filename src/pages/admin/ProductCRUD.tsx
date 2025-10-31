@@ -1,13 +1,15 @@
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import { ImageUp, X, Plus, Trash2, Loader } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { type AppDispatch } from "@/store/store";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { type AppDispatch, type RootState } from "@/store/store";
+import { useEffect, useState } from "react";
 import { actAddProduct } from "@/store/slices/products/act/actAddProduct";
 import Swal from "sweetalert2";
 import { categoriesLevels } from "@/utils/Repeated";
 import type { CategoryLevels } from "@/types";
+import { actGetProductById } from "@/store/slices/products/act/actGetProductById";
+import { useLocation } from "react-router";
 
 // Types
 interface Variation {
@@ -21,6 +23,18 @@ interface Variation {
 
 const ProductCRUD = () => {
   const dispatch = useDispatch<AppDispatch>();
+
+  const productId = localStorage.getItem("productId");
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (productId) {
+      setIsEditing(true);
+      dispatch(actGetProductById({ id: productId }));
+    }
+  }, [productId]);
+
+  const { data, loading } = useSelector((state: RootState) => state.productId);
 
   // Form basic fields
   const [formData, setFormData] = useState({
@@ -157,6 +171,8 @@ const ProductCRUD = () => {
 
     // Basic fields
     if (!formData.title.trim()) newErrors.title = "Title is required";
+    if (formData.title.length > 50)
+      newErrors.title = "Title must be at most 50 characters";
     if (!formData.description.trim() || formData.description.length < 10) {
       newErrors.description = "Description must be at least 10 characters";
     }
@@ -182,6 +198,10 @@ const ProductCRUD = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const { error: addProductError } = useSelector(
+    (state: RootState) => state.newProduct
+  );
 
   // ===== SUBMIT HANDLER =====
   const handleAddProduct = async (e: React.FormEvent) => {
@@ -261,7 +281,7 @@ const ProductCRUD = () => {
       Swal.fire({
         position: "top",
         icon: "error",
-        title: error?.message || "Failed to create product",
+        title: addProductError?.message || "Failed to create product",
         showConfirmButton: false,
         timer: 2000,
       });
@@ -270,10 +290,39 @@ const ProductCRUD = () => {
     }
   };
 
+  useEffect(() => {
+    if (data && isEditing) {
+      setFormData({
+        title: data.title ?? "",
+        description: data.description ?? "",
+      });
+      setVariations([
+        {
+          id: crypto.randomUUID(),
+          price: data.minPrice?.toString() || "",
+          comparePrice: data.maxPrice?.toString() || "",
+          stock: data.totalStock?.toString() || "",
+          colorName: "",
+          hex: "#000000",
+        },
+      ]);
+      const imageUrls = data.images?.map((img) => img.secure_url) || [];
+      const filledPreviews = [
+        ...imageUrls,
+        ...Array(4 - imageUrls.length).fill(null),
+      ];
+      setImagePreviews(filledPreviews);
+    }
+  }, [data, productId]);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-8">
-        <Heading title="Create Product" />
+        {data && isEditing ? (
+          <Heading title="Update Product" />
+        ) : (
+          <Heading title="Create Product" />
+        )}
         <p className="mt-2 text-gray-600">Enter product details below</p>
 
         <form className="mt-8" onSubmit={handleAddProduct}>
@@ -630,8 +679,12 @@ const ProductCRUD = () => {
                 {isSubmitting ? (
                   <>
                     <Loader className="animate-spin mr-2" size={20} />
-                    Creating Product...
+                    {data && isEditing
+                      ? "Updating Product..."
+                      : "Creating Product..."}
                   </>
+                ) : data && isEditing ? (
+                  "Update Product"
                 ) : (
                   "Create Product"
                 )}
