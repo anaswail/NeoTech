@@ -1,4 +1,3 @@
-import { userToken } from "@/utils/Repeated";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosApi from "@/axios/axiosApi";
 
@@ -10,9 +9,6 @@ export const actRefreshToken = createAsyncThunk(
         "api/auth/refresh-token",
         {},
         {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
           withCredentials: true,
         }
       );

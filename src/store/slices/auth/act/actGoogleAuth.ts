@@ -7,8 +7,8 @@ export const actGoogleAuth = createAsyncThunk(
     try {
       const response = await axiosApi.get("api/auth/social/google");
       return response.data;
-    } catch (error) {
-      return rejectWithValue("SomeThing went wrong");
+    } catch (err: any) {
+      return rejectWithValue(err?.response?.data || "SomeThing went wrong");
     }
   }
 );

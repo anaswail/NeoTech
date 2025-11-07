@@ -10,6 +10,9 @@ import { categoriesLevels } from "@/utils/Repeated";
 import type { CategoryLevels } from "@/types";
 import { actGetProductById } from "@/store/slices/products/act/actGetProductById";
 import { useLocation } from "react-router";
+import { actUpdateMainProductInfo } from "@/store/slices/products/act/actUpdateMainProductInfo";
+import { actUpdateProductImg } from "@/store/slices/products/act/actUpdateProductImg";
+import { actUpdateVariations } from "@/store/slices/products/act/actUpdateVariations";
 
 // Types
 interface Variation {
@@ -19,6 +22,7 @@ interface Variation {
   stock: string;
   colorName: string;
   hex: string;
+  sku?: string;
 }
 
 const ProductCRUD = () => {
@@ -84,7 +88,6 @@ const ProductCRUD = () => {
   const handleLevel1Change = (value: string) => {
     setSelectedCategories({ level1: value, level2: "", level3: "" });
 
-    // اجيب الـ subcategories بتاعت الـ level 1 المختار
     const selectedCategory = categoriesLevels.find((cat) => cat.id === value);
     setAvailableLevel2(selectedCategory?.subCategories || []);
     setAvailableLevel3([]);
@@ -93,7 +96,6 @@ const ProductCRUD = () => {
   const handleLevel2Change = (value: string) => {
     setSelectedCategories({ ...selectedCategories, level2: value, level3: "" });
 
-    // اجيب الـ subcategories بتاعت الـ level 2 المختار
     const level2Category = availableLevel2.find((cat) => cat.id === value);
     setAvailableLevel3(level2Category?.subCategories || []);
   };
@@ -109,12 +111,10 @@ const ProductCRUD = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Store the actual File object (this is what gets sent to backend)
       const newFiles = [...imageFiles];
       newFiles[index] = file;
       setImageFiles(newFiles);
 
-      // Create preview URL for display
       const reader = new FileReader();
       reader.onloadend = () => {
         const newPreviews = [...imagePreviews];
@@ -169,7 +169,6 @@ const ProductCRUD = () => {
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Basic fields
     if (!formData.title.trim()) newErrors.title = "Title is required";
     if (formData.title.length > 50)
       newErrors.title = "Title must be at most 50 characters";
@@ -177,12 +176,10 @@ const ProductCRUD = () => {
       newErrors.description = "Description must be at least 10 characters";
     }
 
-    // Category validation
     if (!selectedCategories.level1) {
       newErrors.category = "Please select at least main category";
     }
 
-    // Validate each variation
     variations.forEach((v, idx) => {
       if (!v.price || Number(v.price) <= 0) {
         newErrors[`price-${idx}`] = "Required";
@@ -205,8 +202,6 @@ const ProductCRUD = () => {
 
   // ===== SUBMIT HANDLER =====
   const handleAddProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-
     if (!validate()) {
       return;
     }
@@ -216,25 +211,21 @@ const ProductCRUD = () => {
     try {
       const formDataToSend = new FormData();
 
-      // 1. Add basic fields
       formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
 
-      // 2. Add category ID - send the most specific level selected (ID not name)
       const categoryId =
         selectedCategories.level3 ||
         selectedCategories.level2 ||
         selectedCategories.level1;
       formDataToSend.append("categoryId", categoryId);
 
-      // 3. Add actual image File objects (NOT base64!)
       imageFiles.forEach((file) => {
         if (file) {
           formDataToSend.append("images", file);
         }
       });
 
-      // 4. Add variations as JSON string
       const variationsData = variations.map((v) => ({
         price: Number(v.price),
         comparePrice: v.comparePrice ? Number(v.comparePrice) : undefined,
@@ -248,10 +239,8 @@ const ProductCRUD = () => {
       }));
       formDataToSend.append("variations", JSON.stringify(variationsData));
 
-      // 5. Dispatch to Redux
       await dispatch(actAddProduct(formDataToSend)).unwrap();
 
-      // Success handling
       Swal.fire({
         position: "top",
         icon: "success",
@@ -260,7 +249,6 @@ const ProductCRUD = () => {
         timer: 1500,
       });
 
-      // Reset form
       setFormData({ title: "", description: "" });
       setSelectedCategories({ level1: "", level2: "", level3: "" });
       setAvailableLevel2([]);
@@ -315,26 +303,177 @@ const ProductCRUD = () => {
     }
   }, [data, productId]);
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-8">
-        {data && isEditing ? (
-          <Heading title="Update Product" />
-        ) : (
-          <Heading title="Create Product" />
-        )}
-        <p className="mt-2 text-gray-600">Enter product details below</p>
+  const handleUpdating = async (): Promise<void> => {
+    try {
+      const promises: Promise<any>[] = [];
 
-        <form className="mt-8" onSubmit={handleAddProduct}>
-          <div className="space-y-8">
+      if ((formData.title || formData.description) && productId) {
+        promises.push(
+          dispatch(
+            actUpdateMainProductInfo({
+              title: formData.title,
+              description: formData.description,
+            })
+          ).unwrap()
+        );
+      }
+
+      const hasImagesToUpload = imageFiles.some((f) => f instanceof File);
+      if (hasImagesToUpload) {
+        const imagesFormData = new FormData();
+        imageFiles.forEach((file) => {
+          if (file instanceof File) {
+            imagesFormData.append("images", file);
+          }
+        });
+
+        promises.push(
+          dispatch(actUpdateProductImg({ images: imagesFormData })).unwrap()
+        );
+      }
+
+      if (variations.length > 0) {
+        variations.forEach((variation) => {
+          const variationData = {
+            price: Number(variation.price),
+            comparePrice: variation.comparePrice
+              ? Number(variation.comparePrice)
+              : undefined,
+            stock: Number(variation.stock),
+            attributes: {
+              color: {
+                name: variation.colorName,
+                hex: variation.hex,
+              },
+            },
+          };
+
+          const sku = variation.sku || data?.variations?.[0]?.sku;
+
+          if (sku) {
+            promises.push(
+              dispatch(
+                actUpdateVariations({
+                  sku,
+                  variations: variationData,
+                })
+              ).unwrap()
+            );
+          }
+        });
+      }
+
+      if (promises.length === 0) {
+        Swal.fire({
+          position: "top",
+          icon: "info",
+          title: "No changes made",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        return;
+      }
+
+      const results = await Promise.allSettled(promises);
+      const successMessages: string[] = [];
+      const errorMessages: string[] = [];
+
+      results.forEach((res) => {
+        if (res.status === "fulfilled") {
+          successMessages.push(res.value.message || "Updated successfully");
+        } else if (res.status === "rejected") {
+          const reason =
+            (res.reason as { message?: string })?.message ||
+            "Something went wrong";
+          errorMessages.push(reason);
+        }
+      });
+
+      if (successMessages.length && !errorMessages.length) {
+        setIsEditing(false);
+        localStorage.removeItem("productId");
+        Swal.fire({
+          icon: "success",
+          title: successMessages.join(" & "),
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      } else if (errorMessages.length && !successMessages.length) {
+        Swal.fire({
+          icon: "error",
+          title: errorMessages.join(" & "),
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      } else if (successMessages.length && errorMessages.length) {
+        Swal.fire({
+          icon: "warning",
+          title: "Some updates succeeded, some failed",
+          html: `
+          <p>✅ ${successMessages.join("<br>✅ ")}</p>
+          <p>❌ ${errorMessages.join("<br>❌ ")}</p>
+        `,
+          showConfirmButton: true,
+        });
+      }
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: error.message || "Unexpected error occurred",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isEditing) {
+      await handleUpdating();
+    } else {
+      await handleAddProduct(e);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6">
+      <div className="relative max-w-6xl mx-auto bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8">
+        {/* Header Section */}
+        <div className="mb-6 sm:mb-8">
+          {data && isEditing ? (
+            <Heading title="Update Product" />
+          ) : (
+            <Heading title="Create Product" />
+          )}
+          <p className="mt-2 text-sm sm:text-base text-gray-600">
+            Enter product details below
+          </p>
+        </div>
+
+        {/* Toggle Button for Edit Mode */}
+        {isEditing && data && (
+          <Button
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 text-xs sm:text-sm"
+            onClick={() => {
+              setIsEditing(false);
+              localStorage.removeItem("productId");
+            }}
+          >
+            Create New?
+          </Button>
+        )}
+
+        <form className="mt-6 sm:mt-8" onSubmit={handleSubmit}>
+          <div className="space-y-6 sm:space-y-8">
             {/* ===== BASIC INFORMATION ===== */}
-            <div className="space-y-5">
-              <h2 className="text-xl font-semibold text-gray-800">
+            <div className="space-y-4 sm:space-y-5">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                 Basic Information
               </h2>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Product Title *
                 </label>
                 <input
@@ -343,15 +482,17 @@ const ProductCRUD = () => {
                     setFormData({ ...formData, title: e.target.value })
                   }
                   placeholder="Enter product title"
-                  className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
+                  className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                 />
                 {errors.title && (
-                  <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+                  <p className="text-red-500 text-xs sm:text-sm mt-1">
+                    {errors.title}
+                  </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Description *
                 </label>
                 <textarea
@@ -361,32 +502,32 @@ const ProductCRUD = () => {
                   }
                   placeholder="Enter product description"
                   rows={4}
-                  className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors resize-none"
+                  className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors resize-none"
                 />
                 {errors.description && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-xs sm:text-sm mt-1">
                     {errors.description}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* ===== CATEGORY SELECTION (3 LEVELS) ===== */}
-            <div className="space-y-5">
-              <h2 className="text-xl font-semibold text-gray-800">
+            {/* ===== CATEGORY SELECTION ===== */}
+            <div className="space-y-4 sm:space-y-5">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                 Category *
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                 {/* Level 1: Main Category */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                     Main Category
                   </label>
                   <select
                     value={selectedCategories.level1}
                     onChange={(e) => handleLevel1Change(e.target.value)}
-                    className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
+                    className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                   >
                     <option value="">Select main category...</option>
                     {categoriesLevels.map((cat) => (
@@ -399,7 +540,7 @@ const ProductCRUD = () => {
 
                 {/* Level 2: Sub Category */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                     Sub Category
                   </label>
                   <select
@@ -408,7 +549,7 @@ const ProductCRUD = () => {
                     disabled={
                       !selectedCategories.level1 || availableLevel2.length === 0
                     }
-                    className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Select sub category...</option>
                     {availableLevel2.map((cat) => (
@@ -421,7 +562,7 @@ const ProductCRUD = () => {
 
                 {/* Level 3: Specific Model */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                     Specific Model (Optional)
                   </label>
                   <select
@@ -430,7 +571,7 @@ const ProductCRUD = () => {
                     disabled={
                       !selectedCategories.level2 || availableLevel3.length === 0
                     }
-                    className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Select model...</option>
                     {availableLevel3.map((cat) => (
@@ -443,22 +584,24 @@ const ProductCRUD = () => {
               </div>
 
               {errors.category && (
-                <p className="text-red-500 text-sm">{errors.category}</p>
+                <p className="text-red-500 text-xs sm:text-sm">
+                  {errors.category}
+                </p>
               )}
             </div>
 
             {/* ===== PRODUCT IMAGES ===== */}
-            <div className="space-y-5">
-              <h2 className="text-xl font-semibold text-gray-800">
+            <div className="space-y-4 sm:space-y-5">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                 Product Images (Up to 4)
               </h2>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {imagePreviews.map((preview, index) => (
                   <div key={index} className="relative">
                     <label
                       htmlFor={`upload-${index}`}
-                      className="cursor-pointer flex flex-col items-center justify-center w-full h-32 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 transition-colors bg-gray-50 hover:bg-gray-100"
+                      className="cursor-pointer flex flex-col items-center justify-center w-full h-28 sm:h-32 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 transition-colors bg-gray-50 hover:bg-gray-100"
                     >
                       {preview ? (
                         <>
@@ -475,13 +618,15 @@ const ProductCRUD = () => {
                             }}
                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                           >
-                            <X size={16} />
+                            <X size={14} className="sm:w-4 sm:h-4" />
                           </button>
                         </>
                       ) : (
                         <div className="flex flex-col items-center justify-center text-gray-500">
-                          <ImageUp size={24} />
-                          <span className="text-xs mt-1">Upload Image</span>
+                          <ImageUp size={20} className="sm:w-6 sm:h-6" />
+                          <span className="text-[10px] sm:text-xs mt-1">
+                            Upload Image
+                          </span>
                         </div>
                       )}
                     </label>
@@ -497,30 +642,30 @@ const ProductCRUD = () => {
               </div>
             </div>
 
-            {/* ===== PRODUCT VARIATIONS (DYNAMIC) ===== */}
-            <div className="space-y-5">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-800">
+            {/* ===== PRODUCT VARIATIONS ===== */}
+            <div className="space-y-4 sm:space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                   Product Variations *
                 </h2>
                 <Button
                   type="button"
                   onClick={addVariation}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm w-full sm:w-auto"
                 >
-                  <Plus size={16} className="mr-2" />
+                  <Plus size={14} className="sm:w-4 sm:h-4 mr-2" />
                   Add Variation
                 </Button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {variations.map((variation, idx) => (
                   <div
                     key={variation.id}
-                    className="p-5 border-2 border-gray-200 rounded-lg bg-gray-50"
+                    className="p-3 sm:p-4 md:p-5 border-2 border-gray-200 rounded-lg bg-gray-50"
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-medium text-gray-700">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <h3 className="font-medium text-sm sm:text-base text-gray-700">
                         Variation {idx + 1}
                       </h3>
                       {variations.length > 1 && (
@@ -529,15 +674,18 @@ const ProductCRUD = () => {
                           onClick={() => removeVariation(variation.id)}
                           className="text-red-500 hover:text-red-700 transition-colors"
                         >
-                          <Trash2 size={18} />
+                          <Trash2
+                            size={16}
+                            className="sm:w-[18px] sm:h-[18px]"
+                          />
                         </button>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                       {/* Price */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                           Selling Price *
                         </label>
                         <input
@@ -551,10 +699,10 @@ const ProductCRUD = () => {
                             )
                           }
                           placeholder="130"
-                          className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
+                          className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                         />
                         {errors[`price-${idx}`] && (
-                          <p className="text-red-500 text-xs mt-1">
+                          <p className="text-red-500 text-[10px] sm:text-xs mt-1">
                             {errors[`price-${idx}`]}
                           </p>
                         )}
@@ -562,7 +710,7 @@ const ProductCRUD = () => {
 
                       {/* Compare Price */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                           Compare Price
                         </label>
                         <input
@@ -576,13 +724,13 @@ const ProductCRUD = () => {
                             )
                           }
                           placeholder="150"
-                          className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
+                          className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                         />
                       </div>
 
                       {/* Stock */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                           Stock *
                         </label>
                         <input
@@ -596,10 +744,10 @@ const ProductCRUD = () => {
                             )
                           }
                           placeholder="10"
-                          className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
+                          className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                         />
                         {errors[`stock-${idx}`] && (
-                          <p className="text-red-500 text-xs mt-1">
+                          <p className="text-red-500 text-[10px] sm:text-xs mt-1">
                             {errors[`stock-${idx}`]}
                           </p>
                         )}
@@ -607,7 +755,7 @@ const ProductCRUD = () => {
 
                       {/* Color Name */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                           Color Name *
                         </label>
                         <input
@@ -621,18 +769,18 @@ const ProductCRUD = () => {
                             )
                           }
                           placeholder="Red"
-                          className="w-full outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
+                          className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                         />
                         {errors[`colorName-${idx}`] && (
-                          <p className="text-red-500 text-xs mt-1">
+                          <p className="text-red-500 text-[10px] sm:text-xs mt-1">
                             {errors[`colorName-${idx}`]}
                           </p>
                         )}
                       </div>
 
                       {/* HEX Color */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <div className="sm:col-span-2 lg:col-span-1">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                           HEX Color
                         </label>
                         <div className="flex gap-2">
@@ -646,7 +794,7 @@ const ProductCRUD = () => {
                                 e.target.value
                               )
                             }
-                            className="w-6 h-12 rounded border-2 border-gray-300 cursor-pointer"
+                            className="w-10 sm:w-12 h-10 sm:h-12 rounded border-2 border-gray-300 cursor-pointer"
                           />
                           <input
                             type="text"
@@ -659,7 +807,7 @@ const ProductCRUD = () => {
                               )
                             }
                             placeholder="#FF0000"
-                            className="flex-1 outline-none p-3 border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors w-full"
+                            className="flex-1 outline-none p-2.5 sm:p-3 text-sm sm:text-base border-2 rounded-md border-gray-300 focus:border-blue-500 transition-colors"
                           />
                         </div>
                       </div>
@@ -670,15 +818,15 @@ const ProductCRUD = () => {
             </div>
 
             {/* ===== SUBMIT BUTTON ===== */}
-            <div className="pt-4">
+            <div className="pt-2 sm:pt-4">
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full sm:w-auto px-8 py-6 bg-blue-600 hover:bg-blue-700"
+                className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader className="animate-spin mr-2" size={20} />
+                    <Loader className="animate-spin mr-2" size={18} />
                     {data && isEditing
                       ? "Updating Product..."
                       : "Creating Product..."}

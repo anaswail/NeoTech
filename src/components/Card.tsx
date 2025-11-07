@@ -38,6 +38,8 @@ const Card = ({
     localStorage.setItem("productId", id);
   };
 
+  const { error } = useSelector((state: RootState) => state.deleteProduct);
+
   const deleteProduct = (productId: any) => {
     Swal.fire({
       title: "Are you sure?",
@@ -49,14 +51,36 @@ const Card = ({
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await dispatch(actDeleteProduct(productId));
-        Swal.fire({
-          title: "Success!",
-          text: "Product deleted successfully.",
-          icon: "success",
-        }).then(() => {
-          window.location.reload();
-        });
+        try {
+          // Dispatch returns a promise with the action result
+          const resultAction = await dispatch(actDeleteProduct(productId));
+
+          // Check if the action was fulfilled or rejected
+          if (actDeleteProduct.fulfilled.match(resultAction)) {
+            Swal.fire({
+              title: "Success!",
+              text: "Product deleted successfully.",
+              icon: "success",
+            }).then(() => {
+              window.location.reload();
+            });
+          } else if (actDeleteProduct.rejected.match(resultAction)) {
+            Swal.fire({
+              title: "Error!",
+              text:
+                error.message ||
+                resultAction.error.message ||
+                "Failed to delete product.",
+              icon: "error",
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: "An unexpected error occurred.",
+            icon: "error",
+          });
+        }
       }
     });
   };

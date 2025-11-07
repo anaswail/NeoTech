@@ -8,8 +8,8 @@ export interface Product {
   title: string;
   slug: string;
   description?: string;
-  images?: ProductImage[]; // ممكن تبقى موجودة أو لا
-  interfaceImages: ProductImage; // الصورة الأساسية
+  images?: ProductImage[];
+  interfaceImages: ProductImage;
   discount?: Discount;
   category?: Category;
   totalStock?: number;
@@ -17,6 +17,7 @@ export interface Product {
   minPrice: number;
   maxPrice: number;
   ratings: Ratings;
+  variations?: Variation[];
 }
 
 export interface ProductImage {

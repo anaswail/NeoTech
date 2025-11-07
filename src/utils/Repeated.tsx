@@ -153,6 +153,7 @@ export const products = [
 
 export const userToken = localStorage.getItem("token");
 export const user = JSON.parse(localStorage.getItem("user") || "null");
+export const productId = localStorage.getItem("productId");
 
 export const categoriesLevels: CategoryLevels[] = [
   {

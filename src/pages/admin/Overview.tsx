@@ -1,9 +1,7 @@
 import { user } from "@/utils/Repeated";
 import profileImg from "../../assets/profile.png";
 import { Clipboard, Dot, Ellipsis, Percent, User } from "lucide-react";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
-import { useState } from "react";
+
 import productImg from "../../assets/product1.png";
 import productImg2 from "../../assets/product2.png";
 import productImg3 from "../../assets/product3.png";

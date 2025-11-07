@@ -16,6 +16,7 @@ export const actLogin = createAsyncThunk(
           password,
         },
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },

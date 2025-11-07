@@ -17,6 +17,9 @@ import editEmail from "./slices/profile/editEmailSlice";
 import category from "./slices/products/getCategoryBySlugSlice";
 import newProduct from "./slices/products/addProductSlice";
 import deleteProduct from "./slices/products/deleteProductSlice";
+import upMainProductInfo from "./slices/products/updateMainProductInfoSlice";
+import updateProductImg from "./slices/products/updateProductImgSlice";
+import updateVariations from "./slices/products/updateProductVariations";
 
 export const store = configureStore({
   reducer: {
@@ -38,6 +41,9 @@ export const store = configureStore({
     category,
     newProduct,
     deleteProduct,
+    upMainProductInfo,
+    updateProductImg,
+    updateVariations,
   },
 });
 

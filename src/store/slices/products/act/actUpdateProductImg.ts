@@ -2,19 +2,13 @@ import axiosApi from "@/axios/axiosApi";
 import { productId, userToken } from "@/utils/Repeated";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const actUpdateMainProductInfo = createAsyncThunk(
-  "products/updateMainProductInfo",
-  async (
-    { title, description }: { title: string; description: string },
-    { rejectWithValue }
-  ) => {
+export const actUpdateProductImg = createAsyncThunk(
+  "products/updateProductImg",
+  async ({ images }: { images: FormData }, { rejectWithValue }) => {
     try {
-      const response = await axiosApi.put(
-        `/api/admin/products/${productId}`,
-        {
-          title,
-          description,
-        },
+      const response = await axiosApi.patch(
+        `api/admin/products/${productId}/images`,
+        images,
         {
           headers: {
             Authorization: `Bearer ${userToken}`,

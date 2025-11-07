@@ -19,6 +19,7 @@ export const actRegister = createAsyncThunk(
           confirmPassword,
         },
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
