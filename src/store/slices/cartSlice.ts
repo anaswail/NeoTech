@@ -1,8 +1,6 @@
 import type { CartItem } from "@/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-
-
 interface CartState {
   items: CartItem[];
 }
@@ -21,7 +19,7 @@ export const cartSlice = createSlice({
       );
 
       if (itemIndex >= 0) {
-        state.items[itemIndex].quantity === action.payload.quantity;
+        state.items[itemIndex].quantity = action.payload.quantity;
       } else {
         state.items.push(action.payload);
       }

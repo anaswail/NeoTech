@@ -26,6 +26,7 @@ import Orders from "@/pages/admin/Orders";
 import Customers from "@/pages/admin/Customers";
 import ProductCRUD from "@/pages/admin/ProductCRUD";
 import ProductsOverview from "@/pages/admin/ProductsOverview";
+import Checkout from "@/pages/Checkout";
 
 const isEmailVerified = user?.isEmailVerified;
 
@@ -103,7 +104,7 @@ const router = createBrowserRouter([
       },
       {
         path: "products",
-        element: <AllProducts />,
+        element: <AllProducts heading={true} />,
       },
       {
         path: "reset-password",
@@ -134,9 +135,7 @@ const router = createBrowserRouter([
       },
       {
         path: "verify-email",
-        element: 
-          <VerifyEmail />
-        
+        element: <VerifyEmail />,
       },
       {
         path: "dashboard",
@@ -172,6 +171,10 @@ const router = createBrowserRouter([
             element: <Customers />,
           },
         ],
+      },
+      {
+        path: "checkout",
+        element: userToken ? <Checkout /> : <Navigate to="/" replace />,
       },
     ],
   },

@@ -125,7 +125,7 @@ const Login = () => {
                 <p className="text-red-500 mt-2 ">{errors.password?.message}</p>
               )}
 
-              <Link to="/forget-password" className="mt-5 text-sm  ">
+              <Link to="forget-password" className="mt-5 text-sm  ">
                 <p>Forget Password?</p>
               </Link>
 

@@ -2,7 +2,7 @@
 //                  Imports
 // =========================================
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Heart, ShoppingCart, Star } from "lucide-react";
@@ -11,35 +11,93 @@ import { SyncLoader } from "react-spinners";
 
 import type { AppDispatch, RootState } from "@/store/store";
 import { actGetProductById } from "@/store/slices/products/act/actGetProductById";
+import { addToCart, removeFromCart } from "@/store/slices/cartSlice";
+import type { CartItem } from "@/types";
+import toast from "react-hot-toast";
 
 const ProductDetails = () => {
-  const [size, setSize] = useState("L");
   const [count, setCount] = useState(1);
+  const [image, setImage] = useState<string>("");
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   const addToWishlist = () => {
     // add logic
   };
-  const addToCart = () => {
-    // add logic
-  };
+
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { data: product, loading } = useSelector(
     (state: RootState) => state.productId
   );
+
+  // Fetch product by ID
   useEffect(() => {
     if (id) {
       dispatch(actGetProductById({ id }));
     }
   }, [dispatch, id]);
 
-  const [image, setImage] = useState<string>("");
-
+  // Set initial image
   useEffect(() => {
     if (product?.interfaceImages) {
       setImage(product.interfaceImages.secure_url);
     }
   }, [product]);
+
+  // Check if product is already in cart
+  useEffect(() => {
+    const checkIfAddedToCart = localStorage.getItem("cart");
+    if (checkIfAddedToCart && product?.id) {
+      const cartItems = JSON.parse(checkIfAddedToCart);
+      const isInCart = cartItems.some(
+        (item: { id: string }) => item.id === product.id
+      );
+      setIsAddedToCart(isInCart);
+    }
+  }, [product]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      if (isAddedToCart) {
+        // Remove from cart if already added
+        dispatch(removeFromCart({ id: product.id } as CartItem));
+        setIsAddedToCart(false);
+        toast.success(`${product.title} has been deleted from the cart`, {
+          style: {
+            border: "1px solid #713200",
+            padding: "16px",
+            color: "#00000",
+          },
+          iconTheme: {
+            primary: "green",
+            secondary: "#FFFAEE",
+          },
+        });
+      } else {
+        // Add to cart if not added
+        const cartItem: CartItem = {
+          id: product.id,
+          title: product.title,
+          price: product.maxPrice,
+          quantity: count,
+          img: product?.images?.[0]?.secure_url ?? "",
+        };
+        dispatch(addToCart(cartItem));
+        setIsAddedToCart(true);
+        toast.success(`${product.title} added to cart successfully`, {
+          style: {
+            border: "1px solid #713200",
+            padding: "16px",
+            color: "#00000",
+          },
+          iconTheme: {
+            primary: "green",
+            secondary: "#FFFAEE",
+          },
+        });
+      }
+    }
+  };
 
   if (loading !== "fulfilled") {
     return (
@@ -124,60 +182,70 @@ const ProductDetails = () => {
               </p>
             </div>
             {product?.totalStock == 0 ? (
-              <p className="product-condition text-red-500 text-sm sm:text-base">
+              <p className="product-condition text-red-500 text-sm sm:text-base font-medium">
                 Out of stock
               </p>
             ) : (
-              <p className="product-condition text-green-400 text-sm sm:text-base">
-                ({product?.totalStock}) In stock
+              <p className="product-condition text-green-500 text-sm sm:text-base font-medium">
+                In stock ({product?.totalStock} available)
               </p>
             )}
           </div>
 
           {/* Price */}
-          <div className="price flex gap-3 items-baseline">
-            <p className="price text-xl sm:text-2xl font-semibold">
+          <div className="price flex gap-3 items-baseline border-b-1 pb-4 border-gray-200">
+            <p className="price text-2xl sm:text-3xl font-bold text-txt-secondary2">
               ${product?.maxPrice}
             </p>
             {product?.maxPrice !== product?.minPrice && (
-              <p className="price text-base sm:text-lg line-through text-gray-600">
+              <p className="price text-lg sm:text-xl line-through text-gray-500">
                 ${product?.minPrice}
               </p>
             )}
           </div>
 
           {/* Description */}
-          <p className="description text-sm sm:text-base w-full lg:w-5/6 pb-1 leading-relaxed">
-            {product?.description}
-          </p>
-
-          {/* Colors */}
-          <div className="colors flex flex-wrap gap-2 items-center my-2 border-t-1 pt-4 sm:pt-5 border-black/60 border-solid">
-            <h2 className="mr-1 sm:mr-3 text-sm sm:text-base font-medium">
-              Colors:
+          <div className="description-section border-b-1 pb-4 border-gray-200">
+            <h2 className="text-base sm:text-lg font-semibold mb-2">
+              Description
             </h2>
-            <span className="bg-txt-secondary2 w-6 h-6 sm:w-7 sm:h-7 rounded-full cursor-pointer hover:scale-110 transition-transform"></span>
-            <span className="bg-blue-700 w-6 h-6 sm:w-7 sm:h-7 rounded-full cursor-pointer hover:scale-110 transition-transform"></span>
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              {product?.description}
+            </p>
           </div>
 
-          {/* Sizes */}
-          <div className="sizes flex flex-wrap gap-2 items-center">
-            <h2 className="mr-1 sm:mr-3 text-sm sm:text-base font-medium w-full sm:w-auto mb-2 sm:mb-0">
-              Sizes:
-            </h2>
-            {["XS", "S", "M", "L", "XL"].map((sizeOption) => (
-              <span
-                key={sizeOption}
-                className={`rounded-sm p-2 sm:p-2.5 flex justify-center border-solid border-1 items-center hover:bg-txt-secondary2 hover:border-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm w-12 sm:w-14 h-9 sm:h-10 text-sm sm:text-base font-medium ${
-                  size === sizeOption
-                    ? "bg-txt-secondary2 text-white border-txt-secondary2"
-                    : "bg-white border-black"
-                }`}
-                onClick={() => setSize(sizeOption)}
-              >
-                {sizeOption}
-              </span>
-            ))}
+          {/* Product Details */}
+          <div className="product-details flex flex-col gap-3 border-b-1 pb-4 border-gray-200">
+            {/* Colors */}
+            {product?.variations && product.variations.length > 0 && (
+              <div className="colors flex flex-wrap gap-2 items-center">
+                <h2 className="mr-1 sm:mr-3 text-sm sm:text-base font-semibold min-w-20">
+                  Colors:
+                </h2>
+                <div className="flex gap-2">
+                  {product?.variations?.map((pro, idx) => (
+                    <span
+                      key={idx}
+                      style={{ backgroundColor: pro.attributes.color.hex }}
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer hover:scale-110 transition-transform border-2 border-gray-300"
+                      title={pro.attributes.color.name || "Color option"}
+                    ></span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Weight */}
+            {product?.variations?.[0]?.weight && (
+              <div className="weight flex items-center gap-2">
+                <h2 className="text-sm sm:text-base font-semibold min-w-20">
+                  Weight:
+                </h2>
+                <p className="text-sm sm:text-base text-gray-700">
+                  {product?.variations?.[0]?.weight} Kg
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Buy Section */}
@@ -203,9 +271,14 @@ const ProductDetails = () => {
 
             {/* Action Buttons */}
             <div className="flex gap-3 sm:gap-4 flex-1">
-              <Button className="flex-1 sm:flex-none sm:min-w-32 rounded-sm text-sm sm:text-base h-10 sm:h-11">
-                Buy Now
-              </Button>
+              <Link to="/cart">
+                <Button
+                  onClick={handleAddToCart}
+                  className="flex-1 sm:flex-none sm:min-w-32 rounded-sm text-sm sm:text-base h-10 sm:h-11"
+                >
+                  Buy Now
+                </Button>
+              </Link>
 
               <div className="icons flex items-center gap-2 sm:gap-3">
                 <div
@@ -216,8 +289,12 @@ const ProductDetails = () => {
                   <Heart size={18} className="sm:w-5 sm:h-5" />
                 </div>
                 <div
-                  onClick={addToCart}
-                  className="bg-white rounded-sm border-1 border-black border-solid p-2 sm:p-2.5 flex justify-center items-center hover:bg-txt-secondary2 hover:border-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
+                  onClick={handleAddToCart}
+                  className={`rounded-sm border-1 border-solid p-2 sm:p-2.5 flex justify-center items-center transition-all duration-300 shadow-sm ${
+                    isAddedToCart
+                      ? "bg-txt-secondary2 border-txt-secondary2 text-white"
+                      : "bg-white border-black hover:bg-txt-secondary2 hover:border-txt-secondary2 hover:text-white cursor-pointer"
+                  }`}
                   aria-label="Add to cart"
                 >
                   <ShoppingCart size={18} className="sm:w-5 sm:h-5" />

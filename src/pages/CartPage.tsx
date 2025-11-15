@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
+import type { AppDispatch, RootState } from "@/store/store";
 import { Trash2Icon } from "lucide-react";
 import { removeFromCart } from "@/store/slices/cartSlice";
 import toast from "react-hot-toast";
 import Heading from "@/components/Heading";
 import type { CartItem } from "@/types";
+import { Link } from "react-router";
 
 const CartPage = () => {
   const [quantity, setQuantity] = useState<Record<string, number>>({});
@@ -29,10 +30,10 @@ const CartPage = () => {
   };
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const handleDeleteProduct = (id: number, title: string) => {
-    dispatch(removeFromCart({ id } as unknown as CartItem));
+  const handleDeleteProduct = (id: string, title: string) => {
+    dispatch(removeFromCart({ id } as CartItem));
     toast.success(`${title} has been deleted`, {
       style: {
         border: "1px solid #713200",
@@ -114,7 +115,7 @@ const CartPage = () => {
                         className="cursor-pointer text-red-500 hover:text-red-700 transition-colors mx-auto"
                         size={20}
                         onClick={() =>
-                          handleDeleteProduct(Number(product.id), product.title)
+                          handleDeleteProduct(product.id, product.title)
                         }
                       />
                     </td>
@@ -164,7 +165,7 @@ const CartPage = () => {
                     className="cursor-pointer text-red-500 hover:text-red-700 transition-colors flex-shrink-0"
                     size={20}
                     onClick={() =>
-                      handleDeleteProduct(Number(product.id), product.title)
+                      handleDeleteProduct(product.id, product.title)
                     }
                   />
                 </div>
@@ -229,9 +230,11 @@ const CartPage = () => {
                 .toFixed(2)}
             </p>
           </div>
-          <button className="w-full sm:w-auto bg-txt-secondary2 hover:bg-txt-secondary2/90 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base transition-colors duration-300 shadow-sm hover:shadow-md">
-            Proceed to Checkout
-          </button>
+          <Link to="/checkout">
+            <button className="w-full sm:w-auto cursor-pointer bg-txt-secondary2 hover:bg-txt-secondary2/90 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base transition-colors duration-300 shadow-sm hover:shadow-md">
+              Proceed to Checkout
+            </button>
+          </Link>
         </div>
       )}
     </div>

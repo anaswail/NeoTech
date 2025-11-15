@@ -1,21 +1,30 @@
-import { Edit, Eye, Heart, Trash } from "lucide-react";
-import { Link } from "react-router";
-import { Button } from "./ui/button";
-import type { cardProps } from "@/types";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "@/store/slices/cartSlice";
-import toast from "react-hot-toast";
-import { userToken } from "@/utils/Repeated";
+import { useEffect, useState } from "react";
+import type { cardProps, CartItem } from "@/types";
 import { actDeleteProduct } from "@/store/slices/products/act/actDeleteProduct";
 import type { AppDispatch, RootState } from "@/store/store";
+import { Link } from "react-router";
+import { Button } from "./ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart } from "@/store/slices/cartSlice";
+import { userToken } from "@/utils/Repeated";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
+import { Edit, Eye, Heart, Trash, ShoppingCart } from "lucide-react";
 
 const addToWishlist = () => {
   // Logic to add the item to the wishlist
+  toast("Wishlist feature coming soon!", {
+    icon: "ℹ️",
+    style: {
+      border: "1px solid #3b82f6",
+      padding: "16px",
+      color: "#000000",
+    },
+  });
 };
 
 const removeFromWishList = () => {
-  // Logic to add the item to the wishlist
+  // Logic to remove the item from the wishlist
 };
 
 const Card = ({
@@ -28,6 +37,8 @@ const Card = ({
   wishAndCart = false,
   deleteAndUpdate = false,
 }: cardProps) => {
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+
   const handleProductClick = () => {
     scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -39,6 +50,16 @@ const Card = ({
   };
 
   const { error } = useSelector((state: RootState) => state.deleteProduct);
+
+  // Check if product is already in cart
+  useEffect(() => {
+    const checkIfAddedToCart = localStorage.getItem("cart");
+    if (checkIfAddedToCart && id) {
+      const cartItems = JSON.parse(checkIfAddedToCart);
+      const isInCart = cartItems.some((item: { id: string }) => item.id === id);
+      setIsAddedToCart(isInCart);
+    }
+  }, [id]);
 
   const deleteProduct = (productId: any) => {
     Swal.fire({
@@ -52,10 +73,8 @@ const Card = ({
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Dispatch returns a promise with the action result
           const resultAction = await dispatch(actDeleteProduct(productId));
 
-          // Check if the action was fulfilled or rejected
           if (actDeleteProduct.fulfilled.match(resultAction)) {
             Swal.fire({
               title: "Success!",
@@ -86,36 +105,30 @@ const Card = ({
   };
 
   const handleAddToCart = () => {
-    if (userToken) {
-      dispatch(addToCart({ id, title, price, img, quantity: 1 }));
-      toast.success(`${title} added to cart successfully`, {
-        style: {
-          border: "1px solid #713200",
-          padding: "16px",
-          color: "#00000",
-        },
-        iconTheme: {
-          primary: "green",
-          secondary: "#FFFAEE",
-        },
-      });
+    if (!userToken) {
+      toast.error(
+        "You must be logged in. Please log in to add items to your cart."
+      );
+      return;
+    }
+
+    if (isAddedToCart) {
+      // Remove from cart
+      dispatch(removeFromCart({ id } as CartItem));
+      setIsAddedToCart(false);
+
+      toast.success(`${title} has been removed from your cart.`);
     } else {
-      toast.error("You must be Loged In", {
-        style: {
-          border: "1px solid #db4444",
-          padding: "16px",
-          color: "#00000",
-        },
-        iconTheme: {
-          primary: "#713200",
-          secondary: "#FFFAEE",
-        },
-      });
+      // Add to cart
+      dispatch(addToCart({ id, title, price, img, quantity: 1 }));
+      setIsAddedToCart(true);
+
+      toast.success(`${title} has been added to your cart.`);
     }
   };
 
   return (
-    <div className="w-full max-w-[150px]  sm:max-w-[250px] md:max-w-[270px] group bg-txt-secondary/40 mx-auto">
+    <div className="w-full max-w-[150px] sm:max-w-[250px] md:max-w-[270px] group bg-txt-secondary/40 mx-auto">
       <div className="img-sec bg-txt-gray/10 flex justify-center items-center p-6 sm:p-8 md:p-10 lg:p-12 relative overflow-hidden aspect-square sm:aspect-[4/3] md:aspect-square">
         <img
           src={img}
@@ -123,13 +136,18 @@ const Card = ({
           className="w-full h-20 sm:h-24 md:h-28 lg:h-32 object-contain"
         />
 
-        {/* Add to Cart Button */}
+        {/* Add to Cart Button - Desktop */}
         {wishAndCart && (
           <Button
             onClick={handleAddToCart}
-            className="bg-black hover:bg-txt-secondary2 transition-all duration-400 w-full absolute -bottom-10 left-0 group-hover:bottom-0 text-xs sm:text-sm md:text-base py-2 sm:py-3"
+            disabled={isAddedToCart}
+            className={`hidden sm:flex transition-all duration-400 w-full absolute -bottom-10 left-0 group-hover:bottom-0 text-xs sm:text-sm md:text-base py-2 sm:py-3 ${
+              isAddedToCart
+                ? "bg-txt-secondary2 hover:bg-txt-secondary2 cursor-not-allowed opacity-90"
+                : "bg-black hover:bg-txt-secondary2"
+            }`}
           >
-            Add To Cart
+            {isAddedToCart ? "In Cart" : "Add To Cart"}
           </Button>
         )}
 
@@ -160,6 +178,17 @@ const Card = ({
           )}
           {wishAndCart && (
             <>
+              {/* Cart Icon - Mobile Only */}
+              <div
+                onClick={handleAddToCart}
+                className={`sm:hidden rounded-full p-1.5 flex justify-center items-center transition-all cursor-pointer duration-300 shadow-sm ${
+                  isAddedToCart
+                    ? "bg-txt-secondary2 text-white"
+                    : "bg-white hover:bg-txt-secondary2 hover:text-white"
+                }`}
+              >
+                <ShoppingCart size={16} />
+              </div>
               <div
                 onClick={addToWishlist}
                 className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
@@ -192,7 +221,7 @@ const Card = ({
       </div>
       {/* Card Content */}
       <div className="text p-2 sm:p-3">
-        <h2 className=" truncate my-2 sm:my-3 text-sm sm:text-base md:text-regular font-bold line-clamp-2 leading-tight">
+        <h2 className="truncate my-2 sm:my-3 text-sm sm:text-base md:text-regular font-bold line-clamp-2 leading-tight">
           {title}
         </h2>
         <div className="price-container flex items-center gap-3 sm:gap-5">
