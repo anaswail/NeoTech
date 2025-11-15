@@ -1,192 +1,344 @@
-# E-Store — Electronics E-Commerce Platform (Training Project)
+# 🛒 NeoTech
 
-A fully responsive e-commerce web application specialized in selling electronic devices.  
-Developed collaboratively by:  
-- **Anas Wael** — Front-end Developer  
-- **Hager Gamal** — Back-end Developer  
+<div align="center">
 
-> **Note:** This is a training project.  
-> Payment functionality (Visa checkout) is fully implemented in code and API structure, but **disabled** in the demo environment.  
-> The payment function is ready to be activated once deployed to a real production backend.
+**A Modern Electronics E-Commerce Platform**
 
----
+*A full-stack e-commerce solution for electronics retail with comprehensive user and admin features*
 
-## 🚀 Overview
+[Live Demo](https://neotech-anas.vercel.app/) 
 
-E-Store is a modern and dynamic online store that allows users to:
-
-- Browse products and filter by categories  
-- Search for products  
-- Add items to the cart or wishlist  
-- View detailed product pages with images, variations, and stock  
-- Create an account, log in, manage profile details  
-- Receive an email verification link and activate the account  
-- Proceed to checkout (static in training mode)
-
-The platform includes a complete **User Profile System** and a **basic Admin Dashboard** for managing products, orders, and customers.
+</div>
 
 ---
 
-## 🖥️ Main User Pages
+## 📋 Table of Contents
 
-1. **Home Page** — Best-selling products, deals, categories, and featured items  
-2. **All Products Page** — Displays all products with pagination (20 per page)  
-3. **Category Page** — Shows products filtered by category with pagination  
-4. **Product Details Page** — Images, variations, stock, add to cart/wishlist  
-5. **Cart Page** — Review selected products before checkout  
-6. **Wishlist Page** — Currently static; will be dynamic in phase 2  
-7. **Checkout Page** — Displays cart summary (payment disabled)  
-8. **About Page** — Information about Anas & Hager + contact details  
-9. **Contact Page** — Sends a message/email  
-10. **Profile Page** — User details + links to dashboard, orders, wishlist  
-11. **Edit Profile Page** — Update name, email, and profile picture  
-12. **Email Verification Page** — Activate the user email  
-13. **Last Orders Page** — Static for now; dynamic in phase 2  
-14. **Admin Dashboard** — Access restricted to admin accounts  
-    - Overview (analytics — will be dynamic in phase 2)  
-    - Add Product  
-    - View/Edit/Delete Products + search & pagination  
-    - Orders (static — to be dynamic in phase 2)  
-    - Customers (static — to be dynamic in phase 2)  
-15. **Forgot Password + Reset Password Pages**  
-    - User receives an email with a verification link to reset the password.
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Getting Started](#-getting-started)
+- [Project Structure](#-project-structure)
+- [API Integration](#-api-integration)
+- [Roadmap](#-roadmap)
+- [Contributors](#-contributors)
+- [License](#-license)
 
 ---
 
-## ⚙️ Technologies Used
+## 🎯 Overview
 
-- **React (Vite + TypeScript)**
-- **TailwindCSS**
-- **shadcn/ui**
-- **Redux Toolkit**
-- **react-hook-form + zod**
-- **lucide-react**
-- **react-hot-toast**
-- **sweetalert**
-- **axios**
+E-Store is a sophisticated, fully responsive e-commerce platform designed specifically for electronics retail. Built with modern web technologies and best practices, it delivers a seamless shopping experience across all devices while providing robust administrative capabilities.
 
-Fully responsive across all screen sizes.
+**Development Team:**
+- **Anas Wael** — Frontend Architecture & Development
+- **Hager Gamal** — Backend Architecture & API Development
+
+🎨 Design Philosophy
+The UI/UX design was inspired by this Figma e-commerce template and extensively customized to align with our project requirements, brand identity, and technical architecture. We adapted and enhanced the original design concept to create a unique, flexible interface optimized for electronics retail.
+> **🎓 Project Status:** This is a training/portfolio project demonstrating full-stack development capabilities. Payment integration is implemented but disabled in the demo environment for security purposes.
+
+---
+
+## ✨ Key Features
+
+### 🛍️ Customer Experience
+
+<table>
+<tr>
+<td width="50%">
+
+**Shopping Features**
+- 🔍 Advanced product search and filtering
+- 📂 Category-based navigation
+- 🛒 Real-time cart management
+- ❤️ Wishlist functionality
+- 📱 Fully responsive design
+- 🖼️ Product image galleries with variations
+
+</td>
+<td width="50%">
+
+**Account Management**
+- 🔐 Secure authentication system
+- ✉️ Email verification
+- 👤 Profile customization
+- 📦 Order history tracking
+- 🔄 Password recovery
+- 📊 User dashboard
+
+</td>
+</tr>
+</table>
+
+### 🎛️ Admin Dashboard
+
+- **Product Management** — Create, edit, and delete products with image upload
+- **Order Tracking** — Monitor and manage customer orders
+- **Customer Insights** — View and manage user accounts
+- **Analytics Overview** — Business metrics and performance indicators
+- **Search & Pagination** — Efficient data browsing capabilities
+
+### 💳 Payment System (Staged for Production)
+
+- Fully implemented Visa checkout API integration
+- Secure payment processing architecture
+- Ready for activation in production environment
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+```typescript
+{
+  "framework": "React 18.x",
+  "language": "TypeScript 5.x",
+  "build": "Vite 5.x",
+  "styling": "TailwindCSS 3.x",
+  "ui-components": "shadcn/ui",
+  "state-management": "Redux Toolkit",
+  "form-handling": "react-hook-form + zod",
+  "http-client": "axios",
+  "notifications": "react-hot-toast",
+  "icons": "lucide-react"
+}
+```
+
+### Backend Integration
+
+- RESTful API architecture
+- JWT-based authentication
+- Role-based access control
+- File upload handling
+- Email service integration
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    E-Store Platform                      │
+├─────────────────────────────────────────────────────────┤
+│                                                           │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │   React UI   │  │    Redux     │  │   Routing    │  │
+│  │  Components  │◄─┤    Store     │◄─┤   System     │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────────────┘  │
+│         │                  │                             │
+│         ▼                  ▼                             │
+│  ┌──────────────────────────────┐                       │
+│  │      Axios HTTP Client       │                       │
+│  └─────────────┬────────────────┘                       │
+│                │                                         │
+└────────────────┼─────────────────────────────────────────┘
+                 │
+                 ▼
+         ┌───────────────┐
+         │   Backend API │
+         │   (REST)      │
+         └───────────────┘
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+```bash
+Node.js >= 18.0.0
+npm >= 9.0.0 (or pnpm >= 8.0.0)
+```
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/anaswail/e-store.git
+   cd e-store
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
+
+3. **Configure environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_API_BASE_URL=your_backend_api_url
+   VITE_STRIPE_PUBLIC_KEY=your_stripe_key
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+   
+   Application will be available at `http://localhost:5173`
+
+5. **Build for production**
+   ```bash
+   npm run build
+   npm run preview  # Preview production build
+   ```
 
 ---
 
 ## 📁 Project Structure
 
-Root Level Files
-├─ package.json
-├─ tsconfig.json
-├─ vite.config.ts
-├─ index.html
-├─ components.json
-├─ eslint.config.js
-├─ src/
-│ ├─ assets/
-│ ├─ axios/
-│ │ └─ axiosApi.ts
-│ ├─ components/
-│ ├─ ui/
-│ ├─ hooks/
-│ ├─ layouts/
-│ ├─ lib/
-│ ├─ pages/
-│ │ ├─ HomePage.tsx
-│ │ ├─ AllProducts.tsx
-│ │ ├─ ProductDetails.tsx
-│ │ ├─ CartPage.tsx
-│ │ ├─ Checkout.tsx
-│ │ ├─ CategoryPage.tsx
-│ │ └─ ...
-│ ├─ admin/
-│ ├─ auth/
-│ ├─ profile/
-│ ├─ routes/
-│ ├─ store/
-│ └─ types/
-└─ public/
-
-yaml
-Copy code
-
----
-
-## 🔌 Backend Integration
-
-Developed in collaboration with **Hager Gamal**, who built the backend API.
-
-- Authentication  
-- Products  
-- Cart  
-- Profile  
-- Admin features  
-
-Some sections (orders, wishlist, customers) currently use static data and will be connected to dynamic endpoints in phase 2.
-
----
-
-## 🧪 Features Not Yet Activated
-
-- Visa payment (function ready but disabled in training mode)  
-- Dynamic Wishlist  
-- Dynamic Orders  
-- Full Admin Analytics  
-- Multiple admin roles (will be added in phase 2)
+```
+e-store/
+│
+├── public/                 # Static assets
+│
+├── src/
+│   ├── assets/            # Images, fonts, and media
+│   │
+│   ├── axios/             # HTTP client configuration
+│   │   └── axiosApi.ts
+│   │
+│   ├── components/        # Reusable React components
+│   │   ├── ui/           # shadcn/ui components
+│   │   ├── cart/         # Cart-related components
+│   │   ├── product/      # Product display components
+│   │   └── layout/       # Layout components
+│   │
+│   ├── hooks/            # Custom React hooks
+│   │
+│   ├── layouts/          # Page layout templates
+│   │
+│   ├── lib/              # Utility functions and helpers
+│   │
+│   ├── pages/            # Route pages
+│   │   ├── admin/       # Admin dashboard pages
+│   │   ├── auth/        # Authentication pages
+│   │   ├── profile/     # User profile pages
+│   │   ├── HomePage.tsx
+│   │   ├── AllProducts.tsx
+│   │   ├── ProductDetails.tsx
+│   │   └── ...
+│   │
+│   ├── routes/           # Route configuration
+│   │
+│   ├── store/            # Redux store configuration
+│   │   ├── slices/      # Redux slices
+│   │   └── store.ts
+│   │
+│   ├── types/            # TypeScript type definitions
+│   │
+│   ├── App.tsx
+│   └── main.tsx
+│
+├── .env.example          # Environment variables template
+├── components.json       # shadcn/ui configuration
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── tailwind.config.js
+```
 
 ---
 
-## 🛠️ Running the Project Locally
+## 🔌 API Integration
 
-### 1. Clone the repository
-```bash
-git clone <repo-url>
-cd <repo-folder>
-2. Install dependencies
-bash
-Copy code
-npm install
-# or
-pnpm install
-3. Add environment variables
-Create a .env file:
+The frontend communicates with a custom-built REST API developed by **Hager Gamal**.
 
-ini
-Copy code
-VITE_API_BASE_URL=your_api_url
-(Add payment keys later when activating payment.)
+### Current Endpoints
 
-4. Start development server
-bash
-Copy code
-npm run dev
-5. Build for production
-bash
-Copy code
-npm run build
-🚀 Future Enhancements (Phase 2)
-Activate real online payment
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Authentication | ✅ Active | Login, register, email verification |
+| Products | ✅ Active | CRUD operations, search, filtering |
+| Cart | ✅ Active | Add, update, remove items |
+| User Profile | ✅ Active | Update details, avatar upload |
+| Admin Panel | ✅ Active | Product management |
+| Orders | 🔄 Static | Dynamic implementation in Phase 2 |
+| Wishlist | 🔄 Static | Dynamic implementation in Phase 2 |
+| Payment | 🔒 Disabled | Fully coded, staged for production |
 
-Dynamic wishlist & order history
+---
 
-Advanced admin analytics
+## 🗺️ Roadmap
 
-Role-based admin access
+### Phase 2 — Advanced Features
 
-Performance optimization and caching
+- [ ] **Payment Activation** — Enable secure Visa/Mastercard processing
+- [ ] **Dynamic Wishlist** — Real-time wishlist synchronization
+- [ ] **Order Management** — Complete order lifecycle tracking
+- [ ] **Advanced Analytics** — Revenue, conversion, and customer insights
+- [ ] **Role-Based Access** — Multiple admin permission levels
+- [ ] **Performance Optimization** — Code splitting, lazy loading, caching
+- [ ] **Testing Suite** — Unit tests, integration tests, E2E tests
+- [ ] **Multi-language Support** — Internationalization (i18n)
+- [ ] **Product Reviews** — Customer ratings and feedback system
+- [ ] **Live Chat Support** — Real-time customer service
 
-Unit tests & integration tests
+---
 
-👥 Contributors
-Anas Wael — Front-end Developer
+## 👥 Contributors
 
-Hager Gamal — Back-end Developer
+<table>
+<tr>
+<td align="center">
+<a href="https://github.com/anaswail">
+<img src="https://github.com/anaswail.png" width="100px;" alt="Anas Wael"/><br />
+<sub><b>Anas Wael</b></sub>
+</a><br />
+<sub>Frontend Developer</sub>
+</td>
+<td align="center">
+    <a href="https://github.com/Hagar-Elessawy0">
+<img src="https://avatars.githubusercontent.com/u/175347500?v=4" width="100px;" alt="Hager Gamal"/><br />
+<sub><b>Hager Gamal</b></sub>
+<br />
+<sub>Backend Developer</sub>
+</td>
+</tr>
+</table>
 
-📬 Contact
-Email: your-email@example.com
+---
 
-GitHub: https://github.com/anaswail
+## 📬 Contact & Support
 
-📄 License
-This project is for training and educational purposes.
-Can be published under MIT or any license you prefer.
+**Anas Wael**
+- 📧 Email: anaswail246@gmail.com
+- 🐙 GitHub: [@anaswail](https://github.com/anaswail)
+- 💼 LinkedIn: [Anas Wael](https://www.linkedin.com/in/anas-wael/)
 
-yaml
-Copy code
+For bug reports or feature requests, please open an issue on GitHub.
 
+---
+
+## 📄 License
+
+This project is developed for educational and portfolio purposes.
+
+```
+MIT License
+
+Copyright (c) 2025 Anas Wael & Hager Gamal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software.
+```
+
+---
+
+<div align="center">
+
+**Built with ❤️ by Anas Wael & Hager Gamal**
+
+⭐ Star this repository if you find it helpful!
+
+</div>
