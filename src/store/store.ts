@@ -20,6 +20,11 @@ import deleteProduct from "./slices/products/deleteProductSlice";
 import upMainProductInfo from "./slices/products/updateMainProductInfoSlice";
 import updateProductImg from "./slices/products/updateProductImgSlice";
 import updateVariations from "./slices/products/updateProductVariations";
+import analysis from "./slices/admin/getAnalysicsSlice";
+import users from "./slices/admin/getUsersSlice";
+import banUser from "./slices/admin/banUsersSlice";
+import unBanUser from "./slices/admin/unBanUsersSlice";
+import deleteUser from "./slices/admin/deleteUsersSlice";
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +49,11 @@ export const store = configureStore({
     upMainProductInfo,
     updateProductImg,
     updateVariations,
+    analysis,
+    users,
+    banUser,
+    unBanUser,
+    deleteUser,
   },
 });
 

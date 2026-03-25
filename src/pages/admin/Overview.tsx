@@ -2,40 +2,18 @@ import { user } from "@/utils/Repeated";
 import profileImg from "../../assets/profile.png";
 import { Clipboard, Dot, Ellipsis, Percent, User } from "lucide-react";
 
-import productImg from "../../assets/product1.png";
-import productImg2 from "../../assets/product2.png";
-import productImg3 from "../../assets/product3.png";
+import { useDispatch, useSelector } from "react-redux";
+import { type AppDispatch, type RootState } from "@/store/store";
+import { useEffect } from "react";
+import { actGetAnalysis } from "@/store/slices/admin/act/actGetAnalysis";
 
 const Overview = () => {
-  const topProducts = [
-    {
-      id: 0,
-      title: "ASUS Vivobook S16 laptops",
-      img: productImg,
-      sales: 1234,
-      price: 124,
-      orderCount: 110,
-      remaining: 50,
-    },
-    {
-      id: 1,
-      title: "Fastrack FS1 Pro Smartwatch",
-      img: productImg2,
-      sales: 1530,
-      price: 412,
-      orderCount: 231,
-      remaining: 23,
-    },
-    {
-      id: 2,
-      title: "Acer Chromebook Plus 515",
-      img: productImg3,
-      sales: 2530,
-      price: 212,
-      orderCount: 143,
-      remaining: 43,
-    },
-  ];
+  const { data } = useSelector((state: RootState) => state.analysis);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(actGetAnalysis());
+  }, [dispatch]);
 
   const latestOrders = [
     {
@@ -105,7 +83,7 @@ const Overview = () => {
             <span className="text-[10px] font-normal">this month</span>
           </h1>
           <p className="mt-4 sm:mt-6 mb-2 text-xl sm:text-2xl font-semibold">
-            1,050
+            {data?.stats?.totalOrders}
           </p>
           <p className="text-xs">
             <span className="text-green-300 font-semibold">+10%</span> From last
@@ -123,7 +101,7 @@ const Overview = () => {
             <span className="text-[10px] font-normal">this month</span>
           </h1>
           <p className="mt-4 sm:mt-6 mb-2 text-xl sm:text-2xl font-semibold">
-            $56,093
+            ${data?.stats?.totalSales?.toFixed(2)}
           </p>
           <p className="text-xs">
             <span className="text-green-700 font-semibold">+5%</span> From last
@@ -141,7 +119,7 @@ const Overview = () => {
             <span className="text-[10px] font-normal">this month</span>
           </h1>
           <p className="mt-4 sm:mt-6 mb-2 text-xl sm:text-2xl font-semibold">
-            300
+            {data?.stats?.newCustomers}
           </p>
           <p className="text-xs">
             <span className="text-green-700 font-semibold">+15%</span> From last
@@ -173,48 +151,42 @@ const Overview = () => {
             </tr>
           </thead>
           <tbody>
-            {topProducts.length > 0 &&
-              topProducts.map((product, id) => {
-                return (
-                  <tr
-                    key={id}
-                    className="bg-white hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-3 sm:py-4 px-3 sm:px-4">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <img
-                          src={product.img}
-                          alt={product.title}
-                          className="w-10 h-10 sm:w-12 sm:h-12 rounded object-cover flex-shrink-0"
-                        />
-                        <div>
-                          <p className="text-sm sm:text-base font-medium">
-                            {product.title}
-                          </p>
-                          <p className="text-gray-600 mt-1 text-xs sm:text-sm">
-                            {product.sales} sales
-                          </p>
-                        </div>
+            {data?.topSellingProducts.map((product, id) => {
+              return (
+                <tr
+                  key={id}
+                  className="bg-white hover:bg-gray-50 transition-colors"
+                >
+                  <td className="py-3 sm:py-4 px-3 sm:px-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div>
+                        <p className="text-sm sm:text-base font-medium">
+                          {product.name}
+                        </p>
+                        <p className="text-gray-600 mt-1 text-xs sm:text-sm">
+                          {product.subTotal} sales
+                        </p>
                       </div>
-                    </td>
-                    <td className="text-center py-3 sm:py-4 px-3 sm:px-4 text-sm sm:text-base">
-                      ${product.price}
-                    </td>
-                    <td className="text-center py-3 sm:py-4 px-3 sm:px-4 text-sm sm:text-base">
-                      {product.orderCount}
-                    </td>
-                    <td className="text-center py-3 sm:py-4 px-3 sm:px-4">
-                      <p className="flex justify-center items-center text-green-600 text-xs sm:text-sm">
-                        <Dot size={24} />
-                        Available
-                      </p>
-                      <p className="text-gray-600 mt-1 text-xs">
-                        {product.remaining} stocks
-                      </p>
-                    </td>
-                  </tr>
-                );
-              })}
+                    </div>
+                  </td>
+                  <td className="text-center py-3 sm:py-4 px-3 sm:px-4 text-sm sm:text-base">
+                    ${product.price}
+                  </td>
+                  <td className="text-center py-3 sm:py-4 px-3 sm:px-4 text-sm sm:text-base">
+                    {product.ordersCount}
+                  </td>
+                  <td className="text-center py-3 sm:py-4 px-3 sm:px-4">
+                    <p className="flex justify-center items-center text-green-600 text-xs sm:text-sm">
+                      <Dot size={24} />
+                      Available
+                    </p>
+                    {/* <p className="text-gray-600 mt-1 text-xs">
+                        {product.} stocks
+                      </p> */}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -249,8 +221,8 @@ const Overview = () => {
             </tr>
           </thead>
           <tbody>
-            {latestOrders.length > 0 ? (
-              latestOrders.map((product, id) => {
+            {data?.latestOrders && data?.latestOrders.length > 0 ? (
+              data.latestOrders.map((product, id) => {
                 return (
                   <tr
                     key={id}
@@ -260,7 +232,7 @@ const Overview = () => {
                       {product.orderId}
                     </td>
                     <td className="text-center py-3 sm:py-4 px-3 sm:px-4 text-sm sm:text-base">
-                      {product.title}
+                      {product.product}
                     </td>
                     <td className="text-center py-3 sm:py-4 px-3 sm:px-4 text-xs sm:text-sm text-gray-600">
                       {product.orderDate}
@@ -273,12 +245,12 @@ const Overview = () => {
                     </td>
                     <td
                       className={`text-center py-3 sm:py-4 px-3 sm:px-4 text-sm sm:text-base font-medium ${
-                        product.Status === "Completed"
+                        product.status === "Completed"
                           ? "text-green-600"
                           : "text-blue-600"
                       }`}
                     >
-                      {product.Status}
+                      {product.status}
                     </td>
                     <td className="text-center py-3 sm:py-4 px-3 sm:px-4 cursor-pointer">
                       <Ellipsis

@@ -57,6 +57,12 @@ export interface Pagination {
   hasPrev: boolean;
 }
 
+export interface AsyncState<T = any> {
+  data: T | null;
+  loading: "idle" | "pending" | "fulfilled" | "rejected";
+  error: string | any | null;
+}
+
 /* ===============================
    🧾 Variations
 ================================= */
@@ -94,6 +100,16 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface CartState {
+  items: CartItem[];
+}
+
+export interface ProductsState extends AsyncState<Product[]> {
+  currentPage?: number;
+  totalPages?: number;
+  totalProducts?: number;
+}
+
 /* ===============================
    👤 Auth
 ================================= */
@@ -107,6 +123,30 @@ export interface IRegisterUser {
 export interface ILoginUser {
   email: string;
   password: string;
+}
+
+export interface IForgetPassword {
+  email: string;
+}
+
+export interface IResetPassword {
+  newPassword: string;
+  message: string;
+}
+
+export interface AuthRegisterData {
+  user: IRegisterUser | null;
+  token: string | null;
+  message?: string;
+}
+
+export interface AuthLoginData {
+  user: any | null;
+  token: string | null;
+}
+
+export interface RefreshTokenState extends AsyncState<any> {
+  lastRefreshed?: number | null;
 }
 
 /* ===============================
@@ -199,7 +239,147 @@ export interface FlashSalesProduct {
 }
 
 /* ===============================
-   💳 Card Props (Reusable UI)
+   � Admin Dashboard Analysis
+================================= */
+export interface AnalysisStats {
+  totalSales: number;
+  totalOrders: number;
+  newCustomers: number;
+}
+
+export interface TopSellingProduct {
+  name: string;
+  price: number;
+  ordersCount: number;
+  subTotal: number;
+  productId: string;
+}
+
+export interface LatestOrder {
+  orderId: string;
+  product: string;
+  orderDate: string;
+  price: number;
+  payment: "completed" | "pending" | "failed" | string;
+  status: "pending" | "completed" | "cancelled" | string;
+  customer: string;
+}
+
+export interface AnalysisData {
+  stats: AnalysisStats;
+  topSellingProducts: TopSellingProduct[];
+  latestOrders: LatestOrder[];
+}
+
+export interface AnalysisResponse {
+  success?: boolean;
+  message?: string;
+  data: AnalysisData;
+  statusCode?: number;
+}
+
+/* ===============================
+   🧾 Get Orders Response
+================================= */
+export interface ShippingAddress {
+  name: string;
+  companyName: string;
+  streetAddress: string;
+  city: string;
+  phoneNumber: string;
+  email: string;
+}
+
+export interface ProductSnapshot {
+  title: string;
+  images: string[];
+  category: string;
+}
+
+export interface OrderItem {
+  productId: string;
+  variationSku: string;
+  name: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+  productSnapshot: ProductSnapshot;
+}
+
+export interface Order {
+  _id: string;
+  userId: string;
+  shippingAddress: ShippingAddress;
+  items: OrderItem[];
+  paymentMethod: string;
+  paymentStatus: string;
+  orderStatus: string;
+  shipmentStatus: string;
+  subtotal: number;
+  itemsDiscount: number;
+  shippingCost: number;
+  taxAmount: number;
+  couponDiscount: number;
+  totalAmount: number;
+  totalItems: number;
+  currency: string;
+  trackingHistory: any[];
+  transactionId: string;
+  paymentUrl: string;
+  orderNumber: string;
+  createdAt: string;
+  updatedAt: string;
+  paidAt: string;
+  isCancellable: boolean;
+  isEditable: boolean;
+}
+
+export type GetOrdersPagination = Pagination;
+
+export interface GetOrdersData {
+  orders: Order[];
+  pagination: Pagination;
+}
+
+export interface GetOrdersResponse {
+  success: boolean;
+  message: string;
+  data: GetOrdersData;
+  statusCode: number;
+}
+
+/* ===============================
+    👥 Admin Users
+================================= */
+export type IPagination = Pagination;
+
+export interface IUser {
+  _id: string;
+  email: string;
+  name: string;
+  role: string;
+  avatar: {
+    secure_url: string | null;
+    public_id: string | null;
+  };
+  address: string;
+  provider: string;
+  providerId: string;
+  isEmailVerified: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type Profile = IUser;
+
+export interface IUserData {
+  users: IUser[];
+  pagination: IPagination;
+}
+
+/* ===============================
+   �💳 Card Props (Reusable UI)
 ================================= */
 export interface cardProps {
   id: string;
@@ -233,4 +413,40 @@ export interface CategoryLevels {
   name: string;
   description: string;
   subCategories?: CategoryLevels[];
+}
+
+export interface BanUserData {
+  success: boolean;
+  message: string;
+  data: any;
+  statusCode: number;
+}
+
+export type BanUserState = AsyncState<BanUserData | string>;
+
+/* ===============================
+    🛒 Create Order Type
+================================= */
+export interface ICreateOrder {
+  items:
+    | {
+        productId: string;
+        variationSku: string;
+        quantity: string;
+      }[]
+    | null;
+  shippingAddress: {
+    name: string | null;
+    companyName: string | null;
+    streetAddress: string | null;
+    city: string | null;
+    phoneNumber: string | null;
+    email: string | null;
+  };
+  paymentMethod:
+    | "credit_card"
+    | "paypal"
+    | "bank_transfer"
+    | "cash_on_delivery";
+  shippingCost: number | null;
 }

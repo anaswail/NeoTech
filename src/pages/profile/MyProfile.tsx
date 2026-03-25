@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { logout } from "@/store/slices/auth/registerSlice";
 import { actEditProfile } from "@/store/slices/profile/act/actEditProfile";
 import type { AppDispatch } from "@/store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,31 +13,6 @@ import { actRefreshToken } from "@/store/slices/auth/act/actRefreshToken";
 
 const MyProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
-
-  // Logout function
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to log out from this device!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, Log Out!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "Success!",
-          text: "Your account logged out from this device successfully.",
-          icon: "success",
-        });
-        setTimeout(() => {
-          dispatch(logout());
-          window.location.reload();
-        }, 1500);
-      }
-    });
-  };
 
   // Form validation schema
   const editProfileSchema = z.object({
@@ -177,10 +151,6 @@ const MyProfile = () => {
     }
   };
 
-  const refreshToken = () => {
-    dispatch(actRefreshToken());
-  };
-
   return (
     <div className="w-full md:max-md-4xl mx-auto px-4 sm:px-6 lg:px-0">
       <h1 className="text-lg sm:text-xl lg:text-2xl mt-4 lg:mt-6 text-txt-secondary2 font-semibold">
@@ -258,22 +228,6 @@ const MyProfile = () => {
           )}
         </Button>
       </form>
-
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 pb-8">
-        <Button
-          className="w-full sm:w-auto text-sm sm:text-base py-4 sm:py-5 px-6"
-          onClick={handleLogout}
-        >
-          Log out
-        </Button>
-        <Button
-          className="w-full sm:w-auto text-sm sm:text-base py-4 sm:py-5 px-6 bg-blue-800 hover:bg-blue-600"
-          onClick={refreshToken}
-        >
-          Refresh Token
-        </Button>
-      </div>
     </div>
   );
 };

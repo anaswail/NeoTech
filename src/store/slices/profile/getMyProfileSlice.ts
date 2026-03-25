@@ -47,7 +47,7 @@ export const profileSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           state.loading = "rejected";
           state.error = action.payload;
-        }
+        },
       );
   },
 });

@@ -29,6 +29,7 @@ import ProductsOverview from "@/pages/admin/ProductsOverview";
 import Checkout from "@/pages/Checkout";
 
 const isEmailVerified = user?.isEmailVerified;
+const role = user?.role;
 
 const router = createBrowserRouter([
   {
@@ -140,7 +141,7 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element:
-          userToken && user !== "null" && isEmailVerified ? (
+          (userToken && user !== "null" && role == "superadmin") || "admin" ? (
             <Dashboard />
           ) : (
             <Navigate to="/" replace />

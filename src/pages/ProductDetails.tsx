@@ -53,6 +53,14 @@ const ProductDetails = () => {
         (item: { id: string }) => item.id === product.id
       );
       setIsAddedToCart(isInCart);
+      const foundItem = cartItems.find(
+        (item: { id: string; quantity: number }) => {
+          return item.id === product.id;
+        }
+      );
+      if (foundItem) {
+        setCount(foundItem.quantity);
+      }
     }
   }, [product]);
 
@@ -273,7 +281,7 @@ const ProductDetails = () => {
             <div className="flex gap-3 sm:gap-4 flex-1">
               <Link to="/cart">
                 <Button
-                  onClick={handleAddToCart}
+                  onClick={isAddedToCart ? undefined : handleAddToCart}
                   className="flex-1 sm:flex-none sm:min-w-32 rounded-sm text-sm sm:text-base h-10 sm:h-11"
                 >
                   Buy Now

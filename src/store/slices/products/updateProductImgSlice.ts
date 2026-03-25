@@ -32,7 +32,7 @@ const updateProductImgSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           state.loading = "failed";
           state.error = action.payload;
-        }
+        },
       );
   },
 });

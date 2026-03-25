@@ -32,7 +32,7 @@ const resendEmailVerificationSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           state.loading = "rejected";
           state.error = action.payload;
-        }
+        },
       );
   },
 });

@@ -3,6 +3,7 @@ import type { AppDispatch, RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useNavigate } from "react-router";
+import { logout } from "@/store/slices/auth/registerSlice";
 import profileImg from "../../assets/profile.png";
 import {
   BadgeAlert,
@@ -13,21 +14,48 @@ import {
   Settings,
   ShoppingBag,
   Heart,
-  LogOut,
 } from "lucide-react";
 import { actResendEmailVerification } from "@/store/slices/auth/act/actResendEmailVerification";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
+import { Button } from "@/components/ui/button";
+import { user } from "@/utils/Repeated";
 
 const Profile = () => {
+  const role = user?.role || "user";
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const profile = useSelector((state: RootState) => state?.profile.data);
   const { error: err, loading } = useSelector(
-    (state: RootState) => state.resendEmail
+    (state: RootState) => state.resendEmail,
   );
+
+  // Logout function
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to log out from this device!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, Log Out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Success!",
+          text: "Your account logged out from this device successfully.",
+          icon: "success",
+        });
+        setTimeout(() => {
+          dispatch(logout());
+          window.location.reload();
+        }, 1500);
+      }
+    });
+  };
 
   useEffect(() => {
     dispatch(actGetMyProfile());
@@ -97,7 +125,9 @@ const Profile = () => {
       icon: Settings,
       items: [
         { label: "My Profile", path: "my-profile", icon: User },
-        { label: "Admin Dashboard", path: "/dashboard", icon: Settings },
+        ...(role === "superadmin" || role === "admin"
+          ? [{ label: "Admin Dashboard", path: "/dashboard", icon: Settings }]
+          : []),
       ],
     },
     {
@@ -116,7 +146,7 @@ const Profile = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleSidebar}
-          className="lg:hidden fixed bottom-6 left-5 z-50 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300"
+          className="lg:hidden fixed bottom-6 left-5 z-50 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300 cursor-pointer"
           aria-label="Toggle menu"
         >
           {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -181,6 +211,12 @@ const Profile = () => {
                     </ul>
                   </div>
                 ))}
+                <Button
+                  className="w-full sm:w-full text-sm sm:text-base py-4 sm:py-5 px-6 mt-4 rounded-md"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </Button>
               </div>
             </div>
           </aside>

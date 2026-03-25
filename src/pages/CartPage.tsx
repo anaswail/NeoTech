@@ -2,21 +2,21 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store/store";
 import { Trash2Icon } from "lucide-react";
-import { removeFromCart } from "@/store/slices/cartSlice";
+import {
+  removeFromCart,
+  updateQuantity as updateCartQuantity,
+} from "@/store/slices/cartSlice";
 import toast from "react-hot-toast";
 import Heading from "@/components/Heading";
 import type { CartItem } from "@/types";
 import { Link } from "react-router";
 
 const CartPage = () => {
-  const [quantity, setQuantity] = useState<Record<string, number>>({});
+  const dispatch = useDispatch<AppDispatch>();
 
   const updateQuantity = (value: number, id: string, min = 1, max = 99) => {
     const newValue = Math.max(min, Math.min(max, value));
-    setQuantity((prev) => ({
-      ...prev,
-      [id]: newValue,
-    }));
+    dispatch(updateCartQuantity({ id, quantity: newValue }));
   };
 
   const handleInputChange = (
@@ -30,7 +30,6 @@ const CartPage = () => {
   };
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const dispatch = useDispatch<AppDispatch>();
 
   const handleDeleteProduct = (id: string, title: string) => {
     dispatch(removeFromCart({ id } as CartItem));
@@ -76,7 +75,7 @@ const CartPage = () => {
           <tbody>
             {cartItems.length > 0 ? (
               cartItems.map((product, id) => {
-                const currentQuantity = quantity[id] ?? 1;
+                const currentQuantity = product.quantity;
                 return (
                   <tr
                     key={id}
@@ -101,7 +100,7 @@ const CartPage = () => {
                       <input
                         type="number"
                         value={currentQuantity.toString().padStart(2, "0")}
-                        onChange={(e) => handleInputChange(e, id.toString())}
+                        onChange={(e) => handleInputChange(e, product.id)}
                         className="w-16 text-center text-gray-800 border border-gray-300 rounded py-1 focus:outline-none focus:border-blue-500"
                         min="1"
                         max="99"
@@ -139,7 +138,7 @@ const CartPage = () => {
       <div className="lg:hidden mt-6 sm:mt-8 space-y-4 sm:space-y-5">
         {cartItems.length > 0 ? (
           cartItems.map((product, id) => {
-            const currentQuantity = quantity[id] ?? 1;
+            const currentQuantity = product.quantity;
             return (
               <div
                 key={id}
@@ -179,7 +178,7 @@ const CartPage = () => {
                     <input
                       type="number"
                       value={currentQuantity.toString().padStart(2, "0")}
-                      onChange={(e) => handleInputChange(e, id.toString())}
+                      onChange={(e) => handleInputChange(e, product.id)}
                       className="w-14 sm:w-16 text-center text-sm sm:text-base text-gray-800 border border-gray-300 rounded py-1.5 sm:py-2 focus:outline-none focus:border-blue-500"
                       min="1"
                       max="99"
@@ -224,7 +223,7 @@ const CartPage = () => {
               {cartItems
                 .reduce(
                   (total, product, id) =>
-                    total + product.price * (quantity[id] ?? 1),
+                    total + product.price * product.quantity,
                   0
                 )
                 .toFixed(2)}

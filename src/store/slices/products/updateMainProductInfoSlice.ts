@@ -27,10 +27,13 @@ const updateMainProductInfoSlice = createSlice({
         state.loading = "fulfilled";
         state.data = action.payload.data;
       })
-      .addCase(actUpdateMainProductInfo.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = "rejected";
-        state.error = action.payload ;
-      });
+      .addCase(
+        actUpdateMainProductInfo.rejected,
+        (state, action: PayloadAction<any>) => {
+          state.loading = "rejected";
+          state.error = action.payload;
+        },
+      );
   },
 });
 
