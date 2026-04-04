@@ -25,6 +25,10 @@ import users from "./slices/admin/getUsersSlice";
 import banUser from "./slices/admin/banUsersSlice";
 import unBanUser from "./slices/admin/unBanUsersSlice";
 import deleteUser from "./slices/admin/deleteUsersSlice";
+import getOrders from "./slices/admin/getOrdersSlice";
+import shipmentStatus from "./slices/admin/updateOrderStatusSlice";
+import orderStatus from "./slices/admin/updateOrderStatusSlice";
+import paymentStatus from "./slices/admin/updatePaymentStatusSlice";
 
 export const store = configureStore({
   reducer: {
@@ -54,6 +58,10 @@ export const store = configureStore({
     banUser,
     unBanUser,
     deleteUser,
+    getOrders,
+    shipmentStatus,
+    orderStatus,
+    paymentStatus,
   },
 });
 

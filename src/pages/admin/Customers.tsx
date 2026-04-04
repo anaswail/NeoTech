@@ -113,6 +113,7 @@ const Customers = () => {
               : "The user has been unbanned successfully.",
         icon: "success",
       });
+      dispatch(actGetUsers());
     } catch (error: any) {
       const errMessage =
         action === "delete"

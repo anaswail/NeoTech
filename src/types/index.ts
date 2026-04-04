@@ -348,6 +348,40 @@ export interface GetOrdersResponse {
   statusCode: number;
 }
 
+/* =============================== 
+   📊 Order Status Types
+================================= */
+export interface IOrderStatus {
+  status:
+    | "confirmed"
+    | "processing"
+    | "shipped"
+    | "out_for_delivery"
+    | "delivered"
+    | "cancelled"
+    | "refunded";
+}
+
+export interface IShipmentStatus {
+  status:
+    | "pending"
+    | "shipped"
+    | "in_transit"
+    | "out_for_delivery"
+    | "delivered"
+    | "delayed"
+    | "returned";
+}
+
+export interface IPaymentStatus {
+  status:
+    | "pending"
+    | "completed"
+    | "failed"
+    | "refunded"
+    | "partially_refunded";
+}
+
 /* ===============================
     👥 Admin Users
 ================================= */

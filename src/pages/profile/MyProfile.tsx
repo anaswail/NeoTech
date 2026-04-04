@@ -10,6 +10,7 @@ import z from "zod";
 import { useEffect, useState } from "react";
 import { actEditEmail } from "@/store/slices/profile/act/actEditEmail";
 import { actRefreshToken } from "@/store/slices/auth/act/actRefreshToken";
+import { actGetMyProfile } from "@/store/slices/profile/act/actGetMyProfile";
 
 const MyProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -141,6 +142,7 @@ const MyProfile = () => {
           showConfirmButton: true,
         });
       }
+      dispatch(actGetMyProfile());
     } catch (error: any) {
       Swal.fire({
         icon: "error",
