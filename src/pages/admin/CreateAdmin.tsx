@@ -2,22 +2,23 @@ import { useNavigate } from "react-router";
 
 import { useDispatch, useSelector } from "react-redux";
 import { type AppDispatch, type RootState } from "@/store/store";
-import { actRegister } from "@/store/slices/auth/act/actRegister";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import AuthFormSubmit from "@/components/AuthForm";
 import type { IRegisterUser } from "@/types";
+import { actCreateAdmin } from "@/store/slices/superAdmin/act/actCreateAdmin";
+import { actGetAllAdmins } from "@/store/slices/superAdmin/act/actGetAllAdmins";
 // import { actGoogleAuth } from "../../store/slices/auth/act/actGoogleAuth";
 
-const SignUp = () => {
+const CreateAdmin = () => {
   const navigate = useNavigate();
 
-  // signup store
+  // CreateAdmin store
   const {
     loading,
     data,
     error: registerError,
-  } = useSelector((state: RootState) => state.register);
+  } = useSelector((state: RootState) => state.createAdmin);
   const dispatch = useDispatch<AppDispatch>();
 
   // handle errors and success
@@ -26,13 +27,13 @@ const SignUp = () => {
       Swal.fire({
         position: "top",
         icon: "success",
-        title: "Registered Successfully, Verified link sent to your email",
+        title: "Admin created Successfully",
         showConfirmButton: false,
         timer: 2000,
       });
       setTimeout(() => {
-        navigate("/login/email-message", { replace: true });
-        window.location.reload();
+        navigate("/dashboard/admins", { replace: true });
+        dispatch(actGetAllAdmins());
       }, 2000);
     } else if (loading === "rejected") {
       Swal.fire({
@@ -43,24 +44,18 @@ const SignUp = () => {
         timer: 3000,
       });
     }
-  }, [data.token, data.user, registerError, loading]);
+  }, [data.user, registerError, loading]);
 
-  // Handlers
-  const handleGoogleAuth = () => {
-    window.location.href = "http://localhost:8000/api/auth/social/google";
-    // dispatch(actGoogleAuth());
-  };
-  const registerSubmit = (data: IRegisterUser) => {
-    dispatch(actRegister(data)).unwrap();
+  const createAdminSubmit = (data: IRegisterUser) => {
+    dispatch(actCreateAdmin(data)).unwrap();
   };
   return (
     <AuthFormSubmit
-      onSubmit={registerSubmit}
-      authType="signup"
+      onSubmit={createAdminSubmit}
+      authType="createAdmin"
       loading={loading}
-      googleAuth={handleGoogleAuth}
     />
   );
 };
 
-export default SignUp;
+export default CreateAdmin;

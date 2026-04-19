@@ -1,13 +1,12 @@
 import axiosApi from "@/axios/axiosApi";
-import type { ICreateOrder } from "@/types";
 import { userToken } from "@/utils/Repeated";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const actCreateOrder = createAsyncThunk(
-  "orders/createOrder",
-  async (orderData: ICreateOrder, { rejectWithValue }) => {
+export const actGetAllAdmins = createAsyncThunk(
+  "superadmin/GetAllAdmins",
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosApi.post("/api/orders/new", orderData, {
+      const response = await axiosApi.get("api/superadmin/admins", {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },

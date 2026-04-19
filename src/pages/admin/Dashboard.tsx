@@ -12,6 +12,7 @@ import {
   UsersRound,
   Menu,
   X,
+  ShieldUser,
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -43,6 +44,11 @@ const sidebarItems = [
     name: "Orders",
     path: "orders",
     icon: <ShoppingBag size={25} />,
+  },
+  {
+    name: "Admins",
+    path: "admins",
+    icon: <ShieldUser size={25} />,
   },
 ];
 

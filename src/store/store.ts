@@ -29,6 +29,11 @@ import getOrders from "./slices/admin/getOrdersSlice";
 import shipmentStatus from "./slices/admin/updateOrderStatusSlice";
 import orderStatus from "./slices/admin/updateOrderStatusSlice";
 import paymentStatus from "./slices/admin/updatePaymentStatusSlice";
+import getAllAdmins from "./slices/superAdmin/getAllAdminsSlice";
+import banAdmin from "./slices/superAdmin/banAdminSlice";
+import unBanAdmin from "./slices/superAdmin/unBanAdminSlice";
+import deleteAdmin from "./slices/superAdmin/deleteAdminSlice";
+import createAdmin from "./slices/superAdmin/createAdminSlice";
 
 export const store = configureStore({
   reducer: {
@@ -62,6 +67,11 @@ export const store = configureStore({
     shipmentStatus,
     orderStatus,
     paymentStatus,
+    getAllAdmins,
+    banAdmin,
+    unBanAdmin,
+    deleteAdmin,
+    createAdmin,
   },
 });
 

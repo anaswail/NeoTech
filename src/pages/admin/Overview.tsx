@@ -66,7 +66,12 @@ const Overview = () => {
             />
           </div>
           <div className="text">
-            <p className="font-semibold text-base sm:text-xl">{user?.name}</p>
+            <p className="font-semibold text-base sm:text-xl">
+              {user?.name}{" "}
+              <span className="text-[10px] sm:text-[12px] text-gray-500">
+                ({user?.role})
+              </span>
+            </p>
             <p className="text-xs sm:text-sm text-gray-600 truncate max-w-[200px]">
               {user?.email}
             </p>

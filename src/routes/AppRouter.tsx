@@ -27,6 +27,8 @@ import Customers from "@/pages/admin/Customers";
 import ProductCRUD from "@/pages/admin/ProductCRUD";
 import ProductsOverview from "@/pages/admin/ProductsOverview";
 import Checkout from "@/pages/Checkout";
+import Admins from "@/pages/admin/Admins";
+import CreateAdmin from "@/pages/admin/CreateAdmin";
 
 const isEmailVerified = user?.isEmailVerified;
 const role = user?.role;
@@ -170,6 +172,25 @@ const router = createBrowserRouter([
           {
             path: "customers",
             element: <Customers />,
+          },
+
+          {
+            path: "admins",
+            element:
+              userToken && role === "superadmin" ? (
+                <Admins />
+              ) : (
+                <Navigate to="/dashboard/overview" replace />
+              ),
+          },
+          {
+            path: "create-admin",
+            element:
+              userToken && role === "superadmin" ? (
+                <CreateAdmin />
+              ) : (
+                <Navigate to="/dashboard/overview" replace />
+              ),
           },
         ],
       },

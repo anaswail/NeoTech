@@ -1,4 +1,9 @@
 /* ===============================
+    General Types for E-commerce Application
+================================= */
+export type ILoadingTypes = "idle" | "pending" | "fulfilled" | "rejected";
+
+/* ===============================
    🛒 Product & Related Types
 ================================= */
 
@@ -59,7 +64,7 @@ export interface Pagination {
 
 export interface AsyncState<T = any> {
   data: T | null;
-  loading: "idle" | "pending" | "fulfilled" | "rejected";
+  loading: ILoadingTypes;
   error: string | any | null;
 }
 
@@ -172,7 +177,7 @@ export interface HomeData {
 ================================= */
 export interface CategoryResponse {
   data: CategoryData;
-  loading: "idle" | "pending" | "fulfilled" | "rejected";
+  loading: ILoadingTypes;
   error: string | null;
 }
 
@@ -483,4 +488,39 @@ export interface ICreateOrder {
     | "bank_transfer"
     | "cash_on_delivery";
   shippingCost: number | null;
+}
+
+/* ===============================
+    👤 Admin Users Types
+================================= */
+
+interface IAdminAvatar {
+  secure_url: string;
+  public_id: string;
+}
+
+interface IAdmin {
+  _id: string;
+  email: string;
+  name: string;
+  role: string;
+  avatar: IAdminAvatar;
+  address: string;
+  provider: string;
+  isEmailVerified: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface IGetAllAdminsData {
+  pagination: IPagination;
+  admins: IAdmin[];
+}
+
+export interface IGetAllAdminsResponse {
+  success: boolean;
+  message: string;
+  data: IGetAllAdminsData;
+  statusCode: number;
 }
