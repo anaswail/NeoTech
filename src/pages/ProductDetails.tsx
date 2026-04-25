@@ -27,7 +27,7 @@ const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { data: product, loading } = useSelector(
-    (state: RootState) => state.productId
+    (state: RootState) => state.productId,
   );
 
   // Fetch product by ID
@@ -50,13 +50,13 @@ const ProductDetails = () => {
     if (checkIfAddedToCart && product?.id) {
       const cartItems = JSON.parse(checkIfAddedToCart);
       const isInCart = cartItems.some(
-        (item: { id: string }) => item.id === product.id
+        (item: { id: string }) => item.id === product.id,
       );
       setIsAddedToCart(isInCart);
       const foundItem = cartItems.find(
         (item: { id: string; quantity: number }) => {
           return item.id === product.id;
-        }
+        },
       );
       if (foundItem) {
         setCount(foundItem.quantity);
@@ -89,6 +89,7 @@ const ProductDetails = () => {
           price: product.maxPrice,
           quantity: count,
           img: product?.images?.[0]?.secure_url ?? "",
+          variationSku: product?.variations?.[0]?.sku ?? "",
         };
         dispatch(addToCart(cartItem));
         setIsAddedToCart(true);

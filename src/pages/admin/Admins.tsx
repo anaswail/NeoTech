@@ -13,6 +13,8 @@ import {
   ShieldCheck,
   WifiOff,
   CircleChevronDown,
+  ShieldUser,
+  XCircle,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { actBanAdmin } from "@/store/slices/superAdmin/act/actBanAdmin";
@@ -120,6 +122,38 @@ const Admins = () => {
   };
 
   const admins = data?.data?.admins;
+
+  if (loading === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center animate-pulse">
+          <ShieldUser size={20} className="text-indigo-300" />
+        </div>
+        <p className="text-sm text-gray-400 font-medium">
+          Loading your orders…
+        </p>
+      </div>
+    );
+  }
+
+  if (loading === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+          <XCircle size={20} className="text-red-400" />
+        </div>
+        <p className="text-sm text-gray-500 font-medium">
+          Failed to load orders
+        </p>
+        <button
+          onClick={() => dispatch(actGetAllAdmins())}
+          className="text-xs text-indigo-500 hover:text-indigo-700 font-semibold transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">

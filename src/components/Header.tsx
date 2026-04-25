@@ -73,6 +73,8 @@ const Header = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const { data } = useSelector((state: RootState) => state.getWishlist);
+
   return (
     <>
       <header
@@ -175,6 +177,11 @@ const Header = () => {
                       size={20}
                       className="hover:fill-red-500 hover:text-red-500 transition-all"
                     />
+                    {(data?.products?.length ?? 0) > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-txt-secondary2 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {data?.products?.length}
+                      </span>
+                    )}
                   </Link>
 
                   {/* Cart with Badge */}

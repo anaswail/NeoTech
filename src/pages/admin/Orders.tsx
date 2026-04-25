@@ -14,6 +14,7 @@ import {
   Box,
   Check,
   Loader2,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,31 +79,110 @@ const paymentConfig: Record<
 
 /* ─── Status option definitions ──────────────────────────────────────────── */
 const ORDER_STATUS_OPTIONS = [
-  { value: "confirmed", label: "Confirmed", color: "text-blue-600 bg-blue-50 ring-blue-200 hover:bg-blue-100" },
-  { value: "processing", label: "Processing", color: "text-purple-600 bg-purple-50 ring-purple-200 hover:bg-purple-100" },
-  { value: "shipped", label: "Shipped", color: "text-indigo-600 bg-indigo-50 ring-indigo-200 hover:bg-indigo-100" },
-  { value: "out_for_delivery", label: "Out for Delivery", color: "text-cyan-600 bg-cyan-50 ring-cyan-200 hover:bg-cyan-100" },
-  { value: "delivered", label: "Delivered", color: "text-emerald-600 bg-emerald-50 ring-emerald-200 hover:bg-emerald-100" },
-  { value: "cancelled", label: "Cancelled", color: "text-red-600 bg-red-50 ring-red-200 hover:bg-red-100" },
-  { value: "refunded", label: "Refunded", color: "text-orange-600 bg-orange-50 ring-orange-200 hover:bg-orange-100" },
+  {
+    value: "confirmed",
+    label: "Confirmed",
+    color: "text-blue-600 bg-blue-50 ring-blue-200 hover:bg-blue-100",
+  },
+  {
+    value: "processing",
+    label: "Processing",
+    color: "text-purple-600 bg-purple-50 ring-purple-200 hover:bg-purple-100",
+  },
+  {
+    value: "shipped",
+    label: "Shipped",
+    color: "text-indigo-600 bg-indigo-50 ring-indigo-200 hover:bg-indigo-100",
+  },
+  {
+    value: "out_for_delivery",
+    label: "Out for Delivery",
+    color: "text-cyan-600 bg-cyan-50 ring-cyan-200 hover:bg-cyan-100",
+  },
+  {
+    value: "delivered",
+    label: "Delivered",
+    color:
+      "text-emerald-600 bg-emerald-50 ring-emerald-200 hover:bg-emerald-100",
+  },
+  {
+    value: "cancelled",
+    label: "Cancelled",
+    color: "text-red-600 bg-red-50 ring-red-200 hover:bg-red-100",
+  },
+  {
+    value: "refunded",
+    label: "Refunded",
+    color: "text-orange-600 bg-orange-50 ring-orange-200 hover:bg-orange-100",
+  },
 ] as const;
 
 const PAYMENT_STATUS_OPTIONS = [
-  { value: "pending", label: "Pending", color: "text-amber-600 bg-amber-50 ring-amber-200 hover:bg-amber-100" },
-  { value: "completed", label: "Completed", color: "text-emerald-600 bg-emerald-50 ring-emerald-200 hover:bg-emerald-100" },
-  { value: "failed", label: "Failed", color: "text-red-600 bg-red-50 ring-red-200 hover:bg-red-100" },
-  { value: "refunded", label: "Refunded", color: "text-orange-600 bg-orange-50 ring-orange-200 hover:bg-orange-100" },
-  { value: "partially_refunded", label: "Partial Refund", color: "text-yellow-600 bg-yellow-50 ring-yellow-200 hover:bg-yellow-100" },
+  {
+    value: "pending",
+    label: "Pending",
+    color: "text-amber-600 bg-amber-50 ring-amber-200 hover:bg-amber-100",
+  },
+  {
+    value: "completed",
+    label: "Completed",
+    color:
+      "text-emerald-600 bg-emerald-50 ring-emerald-200 hover:bg-emerald-100",
+  },
+  {
+    value: "failed",
+    label: "Failed",
+    color: "text-red-600 bg-red-50 ring-red-200 hover:bg-red-100",
+  },
+  {
+    value: "refunded",
+    label: "Refunded",
+    color: "text-orange-600 bg-orange-50 ring-orange-200 hover:bg-orange-100",
+  },
+  {
+    value: "partially_refunded",
+    label: "Partial Refund",
+    color: "text-yellow-600 bg-yellow-50 ring-yellow-200 hover:bg-yellow-100",
+  },
 ] as const;
 
 const SHIPMENT_STATUS_OPTIONS = [
-  { value: "pending", label: "Pending", color: "text-amber-600 bg-amber-50 ring-amber-200 hover:bg-amber-100" },
-  { value: "shipped", label: "Shipped", color: "text-indigo-600 bg-indigo-50 ring-indigo-200 hover:bg-indigo-100" },
-  { value: "in_transit", label: "In Transit", color: "text-blue-600 bg-blue-50 ring-blue-200 hover:bg-blue-100" },
-  { value: "out_for_delivery", label: "Out for Delivery", color: "text-cyan-600 bg-cyan-50 ring-cyan-200 hover:bg-cyan-100" },
-  { value: "delivered", label: "Delivered", color: "text-emerald-600 bg-emerald-50 ring-emerald-200 hover:bg-emerald-100" },
-  { value: "delayed", label: "Delayed", color: "text-orange-600 bg-orange-50 ring-orange-200 hover:bg-orange-100" },
-  { value: "returned", label: "Returned", color: "text-red-600 bg-red-50 ring-red-200 hover:bg-red-100" },
+  {
+    value: "pending",
+    label: "Pending",
+    color: "text-amber-600 bg-amber-50 ring-amber-200 hover:bg-amber-100",
+  },
+  {
+    value: "shipped",
+    label: "Shipped",
+    color: "text-indigo-600 bg-indigo-50 ring-indigo-200 hover:bg-indigo-100",
+  },
+  {
+    value: "in_transit",
+    label: "In Transit",
+    color: "text-blue-600 bg-blue-50 ring-blue-200 hover:bg-blue-100",
+  },
+  {
+    value: "out_for_delivery",
+    label: "Out for Delivery",
+    color: "text-cyan-600 bg-cyan-50 ring-cyan-200 hover:bg-cyan-100",
+  },
+  {
+    value: "delivered",
+    label: "Delivered",
+    color:
+      "text-emerald-600 bg-emerald-50 ring-emerald-200 hover:bg-emerald-100",
+  },
+  {
+    value: "delayed",
+    label: "Delayed",
+    color: "text-orange-600 bg-orange-50 ring-orange-200 hover:bg-orange-100",
+  },
+  {
+    value: "returned",
+    label: "Returned",
+    color: "text-red-600 bg-red-50 ring-red-200 hover:bg-red-100",
+  },
 ] as const;
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
@@ -227,9 +307,10 @@ const StatusSelector = <T extends string>({
               className={`
                 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold
                 ring-1 transition-all duration-150
-                ${isActive
-                  ? `${opt.color} ring-current opacity-100 cursor-default`
-                  : `${opt.color} opacity-60 hover:opacity-100 cursor-pointer`
+                ${
+                  isActive
+                    ? `${opt.color} ring-current opacity-100 cursor-default`
+                    : `${opt.color} opacity-60 hover:opacity-100 cursor-pointer`
                 }
                 disabled:cursor-not-allowed
               `}
@@ -247,7 +328,7 @@ const StatusSelector = <T extends string>({
 /* ─── Main Component ──────────────────────────────────────────────────────── */
 const Orders = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { data } = useSelector((state: RootState) => state.getOrders);
+  const { data, loading } = useSelector((state: RootState) => state.getOrders);
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
 
   // Per-order loading state for each status type
@@ -309,6 +390,38 @@ const Orders = () => {
     dispatch(actGetOrders());
     setLoading(orderId, "shipment", false);
   };
+
+  if (loading === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center animate-pulse">
+          <ShoppingBag size={20} className="text-indigo-300" />
+        </div>
+        <p className="text-sm text-gray-400 font-medium">
+          Loading your orders…
+        </p>
+      </div>
+    );
+  }
+
+  if (loading === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+          <XCircle size={20} className="text-red-400" />
+        </div>
+        <p className="text-sm text-gray-500 font-medium">
+          Failed to load orders
+        </p>
+        <button
+          onClick={() => dispatch(actGetOrders())}
+          className="text-xs text-indigo-500 hover:text-indigo-700 font-semibold transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#F7F8FC] min-h-screen p-4 sm:p-6 font-[system-ui]">
@@ -515,7 +628,10 @@ const Orders = () => {
                               {/* Shipping */}
                               <InfoCard
                                 icon={
-                                  <MapPin size={13} className="text-indigo-500" />
+                                  <MapPin
+                                    size={13}
+                                    className="text-indigo-500"
+                                  />
                                 }
                                 title="Shipping To"
                                 iconBg="bg-indigo-50"
@@ -546,7 +662,10 @@ const Orders = () => {
                               {/* Items */}
                               <InfoCard
                                 icon={
-                                  <Package size={13} className="text-amber-500" />
+                                  <Package
+                                    size={13}
+                                    className="text-amber-500"
+                                  />
                                 }
                                 title="Order Items"
                                 iconBg="bg-amber-50"
@@ -595,21 +714,40 @@ const Orders = () => {
                               {/* Breakdown */}
                               <InfoCard
                                 icon={
-                                  <Receipt size={13} className="text-emerald-500" />
+                                  <Receipt
+                                    size={13}
+                                    className="text-emerald-500"
+                                  />
                                 }
                                 title="Breakdown"
                                 iconBg="bg-emerald-50"
                               >
                                 <div className="space-y-2">
                                   {[
-                                    { label: "Subtotal", value: order.subtotal },
-                                    { label: "Shipping", value: order.shippingCost },
+                                    {
+                                      label: "Subtotal",
+                                      value: order.subtotal,
+                                    },
+                                    {
+                                      label: "Shipping",
+                                      value: order.shippingCost,
+                                    },
                                     { label: "Tax", value: order.taxAmount },
                                     ...(order.itemsDiscount > 0
-                                      ? [{ label: "Item Discount", value: -order.itemsDiscount }]
+                                      ? [
+                                          {
+                                            label: "Item Discount",
+                                            value: -order.itemsDiscount,
+                                          },
+                                        ]
                                       : []),
                                     ...(order.couponDiscount > 0
-                                      ? [{ label: "Coupon", value: -order.couponDiscount }]
+                                      ? [
+                                          {
+                                            label: "Coupon",
+                                            value: -order.couponDiscount,
+                                          },
+                                        ]
                                       : []),
                                   ].map(({ label, value }) => (
                                     <div
@@ -621,7 +759,9 @@ const Orders = () => {
                                       </span>
                                       <span
                                         className={`text-xs font-semibold tabular-nums ${
-                                          value < 0 ? "text-emerald-600" : "text-gray-700"
+                                          value < 0
+                                            ? "text-emerald-600"
+                                            : "text-gray-700"
                                         }`}
                                       >
                                         {value < 0 ? "−" : ""}
@@ -643,7 +783,10 @@ const Orders = () => {
                               {/* Transaction */}
                               <InfoCard
                                 icon={
-                                  <CreditCard size={13} className="text-blue-500" />
+                                  <CreditCard
+                                    size={13}
+                                    className="text-blue-500"
+                                  />
                                 }
                                 title="Transaction"
                                 iconBg="bg-blue-50"
@@ -695,7 +838,8 @@ const Orders = () => {
                                       </div>
                                     )}
                                   </div>
-                                  {(order.isCancellable || order.isEditable) && (
+                                  {(order.isCancellable ||
+                                    order.isEditable) && (
                                     <div className="flex gap-2 flex-wrap pt-0.5">
                                       {order.isCancellable && (
                                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-600 ring-1 ring-red-100 uppercase tracking-wide">
@@ -718,7 +862,12 @@ const Orders = () => {
                               {/* Order Status */}
                               <StatusSelector
                                 label="Order Status"
-                                icon={<Package size={12} className="text-gray-500" />}
+                                icon={
+                                  <Package
+                                    size={12}
+                                    className="text-gray-500"
+                                  />
+                                }
                                 currentStatus={order.orderStatus}
                                 options={ORDER_STATUS_OPTIONS}
                                 loading={!!loading.order}
@@ -730,7 +879,12 @@ const Orders = () => {
                               {/* Payment Status */}
                               <StatusSelector
                                 label="Payment Status"
-                                icon={<CreditCard size={12} className="text-gray-500" />}
+                                icon={
+                                  <CreditCard
+                                    size={12}
+                                    className="text-gray-500"
+                                  />
+                                }
                                 currentStatus={order.paymentStatus}
                                 options={PAYMENT_STATUS_OPTIONS}
                                 loading={!!loading.payment}
@@ -742,7 +896,9 @@ const Orders = () => {
                               {/* Shipment Status */}
                               <StatusSelector
                                 label="Shipment Status"
-                                icon={<Truck size={12} className="text-gray-500" />}
+                                icon={
+                                  <Truck size={12} className="text-gray-500" />
+                                }
                                 currentStatus={order.shipmentStatus}
                                 options={SHIPMENT_STATUS_OPTIONS}
                                 loading={!!loading.shipment}

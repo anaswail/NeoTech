@@ -13,6 +13,8 @@ import {
   ShieldCheck,
   WifiOff,
   CircleChevronDown,
+  User,
+  XCircle,
 } from "lucide-react";
 import { actBanUsers } from "@/store/slices/admin/act/actBanUsers";
 import { actUnBanUsers } from "@/store/slices/admin/act/actUnBanUsers";
@@ -38,7 +40,7 @@ const getRoleBadgeStyle = (role: string) => {
 };
 
 const Customers = () => {
-  const { data } = useSelector((state: RootState) => state.users);
+  const { data, loading } = useSelector((state: RootState) => state.users);
   const dispatch = useDispatch<AppDispatch>();
   const { error: banUserError } = useSelector(
     (state: RootState) => state.banUser,
@@ -129,6 +131,36 @@ const Customers = () => {
       });
     }
   };
+
+  if (loading === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center animate-pulse">
+          <User size={20} className="text-indigo-300" />
+        </div>
+        <p className="text-sm text-gray-400 font-medium">Loading your users…</p>
+      </div>
+    );
+  }
+
+  if (loading === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+          <XCircle size={20} className="text-red-400" />
+        </div>
+        <p className="text-sm text-gray-500 font-medium">
+          Failed to load Users
+        </p>
+        <button
+          onClick={() => dispatch(actGetUsers())}
+          className="text-xs text-indigo-500 hover:text-indigo-700 font-semibold transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">

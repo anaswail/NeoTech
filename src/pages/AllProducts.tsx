@@ -11,11 +11,13 @@ import { SyncLoader } from "react-spinners";
 const AllProducts = ({ heading = true }: { heading: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { data, currentPage, totalPages, loading } = useSelector(
-    (state: RootState) => state?.products
+    (state: RootState) => state?.products,
   );
   useEffect(() => {
-    dispatch(actFetchProducts({ page: currentPage, limit: 20 }));
-  }, [currentPage, dispatch]);
+    if (loading === "idle" || loading === "rejected") {
+      dispatch(actFetchProducts({ page: currentPage, limit: 20 }));
+    }
+  }, [currentPage, dispatch, loading]);
 
   if (loading !== "fulfilled") {
     window.scrollTo({ top: 0, behavior: "smooth" });

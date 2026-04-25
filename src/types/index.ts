@@ -9,20 +9,24 @@ export type ILoadingTypes = "idle" | "pending" | "fulfilled" | "rejected";
 
 export interface Product {
   _id: string;
-  id: string;
+  id?: string;
   title: string;
   slug: string;
   description?: string;
   images?: ProductImage[];
-  interfaceImages: ProductImage;
+  interfaceImages?: ProductImage;
   discount?: Discount;
   category?: Category;
+  variations?: Variation[];
+  sold?: number;
+  ratings: Ratings;
+  isActive?: boolean;
   totalStock?: number;
-  originalMinPrice?: number;
   minPrice: number;
   maxPrice: number;
-  ratings: Ratings;
-  variations?: Variation[];
+  originalMinPrice?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ProductImage {
@@ -79,6 +83,7 @@ export interface Variation {
     };
     storage?: string;
     ram?: string;
+    size?: string;
   };
   dimensions?: {
     length: number;
@@ -95,6 +100,21 @@ export interface Variation {
 }
 
 /* ===============================
+   ⭐ Wishlist Response
+================================= */
+export interface WishlistData {
+  userId: string;
+  products: Product[];
+}
+
+export interface WishlistResponse {
+  success: boolean;
+  message: string;
+  data: WishlistData;
+  statusCode: number;
+}
+
+/* ===============================
    🛍️ Cart
 ================================= */
 export interface CartItem {
@@ -103,6 +123,7 @@ export interface CartItem {
   img: string;
   price: number;
   quantity: number;
+  variationSku: string;
 }
 
 export interface CartState {
@@ -339,6 +360,13 @@ export interface Order {
   isEditable: boolean;
 }
 
+export interface CreateOrderResponse {
+  success: boolean;
+  message: string;
+  data: Order;
+  statusCode: number;
+}
+
 export type GetOrdersPagination = Pagination;
 
 export interface GetOrdersData {
@@ -471,7 +499,7 @@ export interface ICreateOrder {
     | {
         productId: string;
         variationSku: string;
-        quantity: string;
+        quantity: number;
       }[]
     | null;
   shippingAddress: {

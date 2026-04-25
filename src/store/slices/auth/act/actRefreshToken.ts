@@ -8,15 +8,17 @@ export const actRefreshToken = createAsyncThunk(
       const response = await axiosApi.post(
         "api/auth/refresh-token",
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true },
       );
-      console.log("data: ", response.data);
+
+      const newToken = response.headers.authorization.replace("Bearer ", "");
+      if (newToken) {
+        localStorage.setItem("token", newToken);
+      }
 
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err?.response?.data || "SomeThing went wrong");
+      return rejectWithValue(err?.response?.data || "Something went wrong");
     }
-  }
+  },
 );

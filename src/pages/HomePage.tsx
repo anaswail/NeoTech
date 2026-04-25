@@ -28,6 +28,7 @@ import type { AppDispatch, RootState } from "@/store/store";
 import { actFetchProducts } from "@/store/slices/products/act/actProducts";
 import { actGetHomeData } from "@/store/slices/products/act/actGetHomeData";
 import { actGetCategoryBySlug } from "@/store/slices/products/act/actGetCategoryBySlug";
+import { actGetMyProfile } from "@/store/slices/profile/act/actGetMyProfile";
 
 // =========================================
 //        Custom Arrows (with types)
@@ -160,13 +161,14 @@ const servicesSettings = {
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data: homeData, loading } = useSelector(
-    (state: RootState) => state.home
+    (state: RootState) => state.home,
   );
 
   // Fetch data from API
   useEffect(() => {
     dispatch(actFetchProducts({ page: 1, limit: 12 }));
     dispatch(actGetHomeData());
+    dispatch(actGetMyProfile());
   }, [dispatch]);
 
   const handleActCategory = (slug: string) => {

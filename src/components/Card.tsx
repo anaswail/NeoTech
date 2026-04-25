@@ -10,22 +10,9 @@ import { userToken } from "@/utils/Repeated";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { Edit, Eye, Heart, Trash, ShoppingCart } from "lucide-react";
-
-const addToWishlist = () => {
-  // Logic to add the item to the wishlist
-  toast("Wishlist feature coming soon!", {
-    icon: "ℹ️",
-    style: {
-      border: "1px solid #3b82f6",
-      padding: "16px",
-      color: "#000000",
-    },
-  });
-};
-
-const removeFromWishList = () => {
-  // Logic to remove the item from the wishlist
-};
+import { actGetProductById } from "@/store/slices/products/act/actGetProductById";
+import { actToggleWishlist } from "@/store/slices/products/act/actToggleWishlist";
+import { actGetMyWishlist } from "@/store/slices/products/act/actGetMyWishlist";
 
 const Card = ({
   img,
@@ -38,6 +25,7 @@ const Card = ({
   deleteAndUpdate = false,
 }: cardProps) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
 
   const handleProductClick = () => {
     scrollTo({ top: 0, behavior: "smooth" });
@@ -49,9 +37,18 @@ const Card = ({
     localStorage.setItem("productId", id);
   };
 
+  const { data: getWishlist } = useSelector(
+    (state: RootState) => state.getWishlist,
+  );
+
+  const { loading: toggleWishlistLoad, error: toggleWishlistErr } = useSelector(
+    (state: RootState) => state.toggleWishlist,
+  );
+
   const { error } = useSelector((state: RootState) => state.deleteProduct);
 
-  // Check if product is already in cart
+  const productId = id;
+
   useEffect(() => {
     const checkIfAddedToCart = localStorage.getItem("cart");
     if (checkIfAddedToCart && id) {
@@ -59,7 +56,31 @@ const Card = ({
       const isInCart = cartItems.some((item: { id: string }) => item.id === id);
       setIsAddedToCart(isInCart);
     }
-  }, [id]);
+    const isInWishlist = getWishlist?.products.some(
+      (product) => product._id === id || product.id === id,
+    );
+    setIsAddedToWishlist(isInWishlist ?? false);
+  }, [id, getWishlist]);
+
+  const toggleWishlist = async () => {
+    if (!userToken) {
+      toast.error("You must be logged in to manage your wishlist.");
+      return;
+    }
+
+    const result = await dispatch(actToggleWishlist({ productId }));
+
+    if (actToggleWishlist.fulfilled.match(result)) {
+      toast.success(
+        result.payload?.message || "Wishlist updated successfully.",
+      );
+      dispatch(actGetMyWishlist());
+    } else if (actToggleWishlist.rejected.match(result)) {
+      toast.error(
+        result.payload?.message || "Something went wrong. Please try again.",
+      );
+    }
+  };
 
   const deleteProduct = (productId: any) => {
     Swal.fire({
@@ -87,7 +108,7 @@ const Card = ({
             Swal.fire({
               title: "Error!",
               text:
-                error.message ||
+                error?.message ||
                 resultAction.error.message ||
                 "Failed to delete product.",
               icon: "error",
@@ -104,25 +125,23 @@ const Card = ({
     });
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!userToken) {
       toast.error(
-        "You must be logged in. Please log in to add items to your cart."
+        "You must be logged in. Please log in to add items to your cart.",
       );
       return;
     }
 
     if (isAddedToCart) {
-      // Remove from cart
       dispatch(removeFromCart({ id } as CartItem));
       setIsAddedToCart(false);
-
       toast.success(`${title} has been removed from your cart.`);
     } else {
-      // Add to cart
-      dispatch(addToCart({ id, title, price, img, quantity: 1 }));
+      const result = await dispatch(actGetProductById({ id }));
+      const variationSku = result.payload?.variations?.[0]?.sku || "";
+      dispatch(addToCart({ id, title, price, img, quantity: 1, variationSku }));
       setIsAddedToCart(true);
-
       toast.success(`${title} has been added to your cart.`);
     }
   };
@@ -190,8 +209,14 @@ const Card = ({
                 <ShoppingCart size={16} />
               </div>
               <div
-                onClick={addToWishlist}
-                className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
+                onClick={toggleWishlist}
+                className={`rounded-full p-1.5 sm:p-2 flex justify-center items-center transition-all cursor-pointer duration-300 shadow-sm ${
+                  toggleWishlistLoad === "pending"
+                    ? "opacity-50 pointer-events-none"
+                    : isAddedToWishlist
+                      ? "bg-txt-secondary2 text-white"
+                      : "bg-white hover:bg-txt-secondary2 hover:text-white"
+                }`}
               >
                 <Heart size={16} className="sm:w-5 sm:h-5" />
               </div>
@@ -202,14 +227,6 @@ const Card = ({
               </Link>
             </>
           )}
-          {deleteIcon && (
-            <div
-              onClick={removeFromWishList}
-              className="bg-white rounded-full p-1.5 sm:p-2 flex justify-center items-center hover:bg-txt-secondary2 hover:text-white transition-all cursor-pointer duration-300 shadow-sm"
-            >
-              <Trash size={16} className="sm:w-5 sm:h-5" />
-            </div>
-          )}
         </div>
 
         {/* Discount Badge */}
@@ -219,6 +236,7 @@ const Card = ({
           </Button>
         )}
       </div>
+
       {/* Card Content */}
       <div className="text p-2 sm:p-3">
         <h2 className="truncate my-2 sm:my-3 text-sm sm:text-base md:text-regular font-bold line-clamp-2 leading-tight">

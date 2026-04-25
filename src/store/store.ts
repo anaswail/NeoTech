@@ -20,6 +20,9 @@ import deleteProduct from "./slices/products/deleteProductSlice";
 import upMainProductInfo from "./slices/products/updateMainProductInfoSlice";
 import updateProductImg from "./slices/products/updateProductImgSlice";
 import updateVariations from "./slices/products/updateProductVariations";
+import getWishlist from "./slices/products/getMyWishlist";
+import clearWishlist from "./slices/products/clearWishlistSlice";
+import toggleWishlist from "./slices/products/toggleWishlistSlice";
 import analysis from "./slices/admin/getAnalysicsSlice";
 import users from "./slices/admin/getUsersSlice";
 import banUser from "./slices/admin/banUsersSlice";
@@ -34,6 +37,10 @@ import banAdmin from "./slices/superAdmin/banAdminSlice";
 import unBanAdmin from "./slices/superAdmin/unBanAdminSlice";
 import deleteAdmin from "./slices/superAdmin/deleteAdminSlice";
 import createAdmin from "./slices/superAdmin/createAdminSlice";
+import createOrder from "./slices/orders/createOrderSlice";
+import getMyOrders from "./slices/orders/getMyOrdersSlice";
+import cancelOrder from "./slices/orders/cancelOrderSlice";
+import refundOrder from "./slices/orders/refundOrderSlice";
 
 export const store = configureStore({
   reducer: {
@@ -72,6 +79,13 @@ export const store = configureStore({
     unBanAdmin,
     deleteAdmin,
     createAdmin,
+    createOrder,
+    getMyOrders,
+    cancelOrder,
+    refundOrder,
+    getWishlist,
+    toggleWishlist,
+    clearWishlist,
   },
 });
 

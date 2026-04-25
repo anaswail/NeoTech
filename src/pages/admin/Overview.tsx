@@ -1,6 +1,14 @@
 import { user } from "@/utils/Repeated";
 import profileImg from "../../assets/profile.png";
-import { Clipboard, Dot, Ellipsis, Percent, User } from "lucide-react";
+import {
+  Clipboard,
+  Dot,
+  Ellipsis,
+  Percent,
+  ShoppingBag,
+  User,
+  XCircle,
+} from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { type AppDispatch, type RootState } from "@/store/store";
@@ -8,39 +16,44 @@ import { useEffect } from "react";
 import { actGetAnalysis } from "@/store/slices/admin/act/actGetAnalysis";
 
 const Overview = () => {
-  const { data } = useSelector((state: RootState) => state.analysis);
+  const { data, loading } = useSelector((state: RootState) => state.analysis);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(actGetAnalysis());
   }, [dispatch]);
 
-  const latestOrders = [
-    {
-      orderId: "#2456JL",
-      title: "Nike Sportswear",
-      orderDate: "Jan 12, 12:23 pm",
-      price: "134.00",
-      payment: "Transfer",
-      Status: "Processing",
-    },
-    {
-      orderId: "#3456AC",
-      title: "Acqua di parma",
-      orderDate: "Jan 01, 09:13 pm",
-      price: "234.00",
-      payment: "Credit Card",
-      Status: "Completed",
-    },
-    {
-      orderId: "#3566L",
-      title: "Nike Aqua",
-      orderDate: "May 12, 12:23 am",
-      price: "313.00",
-      payment: "Transfer",
-      Status: "Completed",
-    },
-  ];
+  if (loading === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center animate-pulse">
+          <ShoppingBag size={20} className="text-indigo-300" />
+        </div>
+        <p className="text-sm text-gray-400 font-medium">
+          Loading Dashboard overview…
+        </p>
+      </div>
+    );
+  }
+
+  if (loading === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+          <XCircle size={20} className="text-red-400" />
+        </div>
+        <p className="text-sm text-gray-500 font-medium">
+          Failed to load orders
+        </p>
+        <button
+          onClick={() => dispatch(actGetAnalysis())}
+          className="text-xs text-indigo-500 hover:text-indigo-700 font-semibold transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="my-4 sm:my-6 lg:my-8 max-w-[90%] md:max-w-7xl mx-auto">

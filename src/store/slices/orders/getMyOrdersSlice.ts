@@ -1,34 +1,34 @@
 import type { AsyncState, Order } from "@/types";
 import { createSlice } from "@reduxjs/toolkit";
-import { actCreateOrder } from "./act/actCreateOrder";
+import { actGetMyOrders } from "./act/actGetMyOrders";
 
-type CreateOrderState = AsyncState<Order>;
+type GetMyOrdersState = AsyncState<Order[]>;
 
-const initialState: CreateOrderState = {
+const initialState: GetMyOrdersState = {
   data: null,
   loading: "idle",
   error: null,
 };
 
-const createOrderSlice = createSlice({
-  name: "createOrder",
+const getMyOrdersSlice = createSlice({
+  name: "getMyOrders",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(actCreateOrder.pending, (state) => {
+      .addCase(actGetMyOrders.pending, (state) => {
         state.loading = "pending";
         state.error = null;
       })
-      .addCase(actCreateOrder.fulfilled, (state, action) => {
+      .addCase(actGetMyOrders.fulfilled, (state, action) => {
         state.loading = "fulfilled";
         state.data = action.payload;
       })
-      .addCase(actCreateOrder.rejected, (state, action) => {
+      .addCase(actGetMyOrders.rejected, (state, action) => {
         state.loading = "rejected";
         state.error = action.payload as string;
       });
   },
 });
 
-export default createOrderSlice.reducer;
+export default getMyOrdersSlice.reducer;

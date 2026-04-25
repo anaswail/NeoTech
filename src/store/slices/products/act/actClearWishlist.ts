@@ -2,17 +2,17 @@ import axiosApi from "@/axios/axiosApi";
 import { userToken } from "@/utils/Repeated";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const actGetMyProfile = createAsyncThunk(
-  "profile/MyProfile",
+export const actClearWishlist = createAsyncThunk(
+  "wishlist/clearWishlist",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosApi.get("api/users/me", {
+      const response = await axiosApi.delete("api/wishlist/clear", {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
       });
 
-      return response.data.data;
+      return response.data;
     } catch (err: any) {
       return rejectWithValue(err?.response?.data || "SomeThing went wrong");
     }

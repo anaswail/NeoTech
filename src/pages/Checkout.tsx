@@ -2,10 +2,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import Heading from "@/components/Heading";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "@/store/store";
+import { user } from "@/utils/Repeated";
+import { actCreateOrder } from "@/store/slices/orders/act/actCreateOrder";
+import type { ICreateOrder } from "@/types";
+import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 const Checkout = () => {
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.createOrder,
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
   const CheckoutSchema = z.object({
     name: z
       .string()
@@ -39,18 +49,70 @@ const Checkout = () => {
     formState: { errors, isSubmitting },
   } = useForm<CheckoutSchemaType>({
     resolver: zodResolver(CheckoutSchema),
+    defaultValues: {
+      name: user?.name || "",
+      email: user?.email || "",
+    },
   });
 
-  const onSubmit = (data: CheckoutSchemaType) => {
-    console.log(data);
-    alert("Order placed successfully! Check console for details.");
+  const onSubmit = (formData: CheckoutSchemaType) => {
+    const paymentMethodMap: Record<
+      string,
+      "credit_card" | "paypal" | "bank_transfer" | "cash_on_delivery"
+    > = {
+      card: "credit_card",
+      bank: "bank_transfer",
+      cash: "cash_on_delivery",
+    };
+
+    const orderPayload: ICreateOrder = {
+      shippingAddress: {
+        name: formData.name,
+        companyName: null,
+        streetAddress: formData.streetAddress,
+        city: formData.city,
+        phoneNumber: formData.phoneNumber,
+        email: formData.email,
+      },
+      items: cartItems.map((item) => ({
+        productId: item.id,
+        variationSku: item.variationSku,
+        quantity: item.quantity,
+      })),
+      paymentMethod:
+        paymentMethodMap[formData.paymentMethod] || "cash_on_delivery",
+      shippingCost: shipping,
+    };
+
+    dispatch(actCreateOrder(orderPayload));
   };
+  useEffect(() => {
+    if (loading === "fulfilled" && data) {
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        title: "Order Created Successfully",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      window.location.href = data.paymentUrl;
+      localStorage.removeItem("cart");
+    } else if (loading === "rejected") {
+      Swal.fire({
+        position: "top",
+        icon: "error",
+        title: error.message || "Unexpected error occurred",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    }
+  }, [loading, data, error]);
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const subtotal = cartItems.reduce(
     (total, product) => total + product.price * product.quantity,
-    0
+    0,
   );
 
   const shipping = 0; // Free shipping
@@ -75,6 +137,7 @@ const Checkout = () => {
                 </label>
                 <input
                   {...register("name")}
+                  disabled
                   type="text"
                   placeholder="John Doe"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
@@ -155,6 +218,7 @@ const Checkout = () => {
                 </label>
                 <input
                   {...register("email")}
+                  disabled
                   type="email"
                   placeholder="john@example.com"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
