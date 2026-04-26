@@ -139,7 +139,7 @@ const Card = ({
       toast.success(`${title} has been removed from your cart.`);
     } else {
       const result = await dispatch(actGetProductById({ id }));
-      const variationSku = result.payload?.variations?.[0]?.sku || "";
+      const variationSku = result.payload?.data?.variations?.[0]?.sku || "";
       dispatch(addToCart({ id, title, price, img, quantity: 1, variationSku }));
       setIsAddedToCart(true);
       toast.success(`${title} has been added to your cart.`);
