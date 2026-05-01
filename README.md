@@ -1,344 +1,222 @@
-# 🛒 NeoTech
-
 <div align="center">
 
-**A Modern Electronics E-Commerce Platform**
+<h1>🛒 NeoTech — Full-Stack E-Commerce Platform</h1>
 
-*A full-stack e-commerce solution for electronics retail with comprehensive user and admin features*
+<p>A production-ready, full-featured e-commerce platform built with React (Vite) + TypeScript, featuring a powerful admin dashboard, secure authentication, real-time order management, and seamless payment integration.</p>
 
-[Live Demo](https://neotech-anas.vercel.app/) 
+<p>
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Redux_Toolkit-2-764ABC?style=for-the-badge&logo=redux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Deployment-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
+</p>
+
+<p>
+  <a href="https://github.com/anaswail/NeoTech"><strong>GitHub Repository</strong></a> ·
+  <a href="https://www.linkedin.com/in/anas-wael/"><strong>Developer — Anas Wael</strong></a>
+</p>
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📌 Overview
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Getting Started](#-getting-started)
-- [Project Structure](#-project-structure)
-- [API Integration](#-api-integration)
-- [Roadmap](#-roadmap)
-- [Contributors](#-contributors)
-- [License](#-license)
+**NeoTech** is a full-stack e-commerce application built as a portfolio project in collaboration with backend engineer **Hagar Gamal**. It covers the complete shopping lifecycle — from browsing products and managing a cart, to checkout with payment, order tracking, and a full-featured admin dashboard.
+
+The platform is designed to reflect real-world production standards: clean architecture, token-based authentication with automatic refresh, role-based access control, and a responsive UI.
 
 ---
 
-## 🎯 Overview
+## ✨ Features
 
-E-Store is a sophisticated, fully responsive e-commerce platform designed specifically for electronics retail. Built with modern web technologies and best practices, it delivers a seamless shopping experience across all devices while providing robust administrative capabilities.
+### 🧑‍💻 Customer Side
+- **Authentication** — Register, login, email verification, forgot/reset password, Google OAuth
+- **Product Browsing** — All products, category filtering, product detail pages, slick carousels
+- **Cart & Wishlist** — Add/remove items, persist state with Redux
+- **Checkout** — Integrated with **Paymob** payment gateway
+- **User Profile**
+  - Edit name, email, password, and avatar
+  - View order history with live status tracking
+  - Cancel or request refunds on orders
+  - Manage wishlist
 
-**Development Team:**
-- **Anas Wael** — Frontend Architecture & Development
-- **Hager Gamal** — Backend Architecture & API Development
-
-🎨 Design Philosophy
-The UI/UX design was inspired by this Figma e-commerce template and extensively customized to align with our project requirements, brand identity, and technical architecture. We adapted and enhanced the original design concept to create a unique, flexible interface optimized for electronics retail.
-> **🎓 Project Status:** This is a training/portfolio project demonstrating full-stack development capabilities. Payment integration is implemented but disabled in the demo environment for security purposes.
-
----
-
-## ✨ Key Features
-
-### 🛍️ Customer Experience
-
-<table>
-<tr>
-<td width="50%">
-
-**Shopping Features**
-- 🔍 Advanced product search and filtering
-- 📂 Category-based navigation
-- 🛒 Real-time cart management
-- ❤️ Wishlist functionality
-- 📱 Fully responsive design
-- 🖼️ Product image galleries with variations
-
-</td>
-<td width="50%">
-
-**Account Management**
-- 🔐 Secure authentication system
-- ✉️ Email verification
-- 👤 Profile customization
-- 📦 Order history tracking
-- 🔄 Password recovery
-- 📊 User dashboard
-
-</td>
-</tr>
-</table>
-
-### 🎛️ Admin Dashboard
-
-- **Product Management** — Create, edit, and delete products with image upload
-- **Order Tracking** — Monitor and manage customer orders
-- **Customer Insights** — View and manage user accounts
-- **Analytics Overview** — Business metrics and performance indicators
-- **Search & Pagination** — Efficient data browsing capabilities
-
-### 💳 Payment System (Staged for Production)
-
-- Fully implemented Visa checkout API integration
-- Secure payment processing architecture
-- Ready for activation in production environment
+### 🛠️ Admin Dashboard
+- **Overview** — Sales summaries, customer counts, top-selling products, latest orders
+- **Products** — Add, edit, delete products; manage categories; view product details
+- **Orders** — View all orders, update order/payment/shipment status manually or automatically
+- **Users** — View customer data, ban/unban users, delete accounts
+- **Admins** — Add, delete, ban/unban admin accounts (Super Admin access)
 
 ---
 
-## 🛠️ Tech Stack
+## 🧱 Tech Stack
 
-### Frontend
-
-```typescript
-{
-  "framework": "React 18.x",
-  "language": "TypeScript 5.x",
-  "build": "Vite 5.x",
-  "styling": "TailwindCSS 3.x",
-  "ui-components": "shadcn/ui",
-  "state-management": "Redux Toolkit",
-  "form-handling": "react-hook-form + zod",
-  "http-client": "axios",
-  "notifications": "react-hot-toast",
-  "icons": "lucide-react"
-}
-```
-
-### Backend Integration
-
-- RESTful API architecture
-- JWT-based authentication
-- Role-based access control
-- File upload handling
-- Email service integration
+| Category | Technology |
+|---|---|
+| **Framework** | React 18 + Vite |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS, shadcn/ui, Radix UI |
+| **State Management** | Redux Toolkit |
+| **Forms & Validation** | React Hook Form + Zod |
+| **HTTP Client** | Axios |
+| **Routing** | React Router v6 |
+| **Auth** | JWT + Refresh Tokens (auto-refresh) + Google OAuth |
+| **Payment** | Paymob |
+| **Notifications** | React Hot Toast, SweetAlert2 |
+| **Icons** | Font Awesome, Lucide React |
+| **Carousels** | React Slick |
+| **Deployment** | Vercel (Frontend) |
 
 ---
 
-## 🏗️ Architecture
+## 🗂️ Project Structure
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    E-Store Platform                      │
-├─────────────────────────────────────────────────────────┤
-│                                                           │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   React UI   │  │    Redux     │  │   Routing    │  │
-│  │  Components  │◄─┤    Store     │◄─┤   System     │  │
-│  └──────┬───────┘  └──────┬───────┘  └──────────────┘  │
-│         │                  │                             │
-│         ▼                  ▼                             │
-│  ┌──────────────────────────────┐                       │
-│  │      Axios HTTP Client       │                       │
-│  └─────────────┬────────────────┘                       │
-│                │                                         │
-└────────────────┼─────────────────────────────────────────┘
-                 │
-                 ▼
-         ┌───────────────┐
-         │   Backend API │
-         │   (REST)      │
-         └───────────────┘
+NeoTech/
+├── public/
+└── src/
+    ├── assets/
+    ├── axios/
+    │   └── axiosApi.ts             # Axios instance with interceptors
+    ├── components/                 # Reusable UI components
+    │   ├── AuthForm.tsx
+    │   ├── Card.tsx
+    │   ├── Header.tsx
+    │   ├── Footer.tsx
+    │   └── ui/                     # shadcn/ui components
+    ├── hooks/
+    │   └── useTokenRefreshManager.ts
+    ├── layouts/
+    │   └── MainLayout.tsx
+    ├── pages/
+    │   ├── admin/                  # Dashboard pages
+    │   │   ├── Overview.tsx
+    │   │   ├── Orders.tsx
+    │   │   ├── Customers.tsx
+    │   │   ├── Admins.tsx
+    │   │   └── ProductCRUD.tsx
+    │   ├── auth/                   # Auth pages
+    │   │   ├── Login.tsx
+    │   │   ├── SignUp.tsx
+    │   │   ├── VerifyEmail.tsx
+    │   │   ├── ForgetPassword.tsx
+    │   │   └── ResetPassword.tsx
+    │   └── profile/                # User profile pages
+    │       ├── MyProfile.tsx
+    │       ├── LastOrders.tsx
+    │       └── WishList.tsx
+    ├── routes/
+    │   └── AppRouter.tsx
+    ├── store/
+    │   ├── store.ts
+    │   └── slices/
+    │       ├── auth/
+    │       ├── admin/
+    │       ├── orders/
+    │       ├── products/
+    │       └── profile/
+    ├── types/
+    │   └── index.ts
+    └── utils/
 ```
+
+---
+
+## 🔐 Authentication & Security
+
+- **JWT Access + Refresh Token** architecture with automatic silent token refresh
+- Configurable refresh interval (default: 15 min), retry attempts (default: 3), and retry delay (default: 5s)
+- **Google OAuth** integration
+- Email verification on registration
+- Role-based route protection (user / admin / super admin)
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env.local` file at the root of the project:
+
+```env
+# API
+VITE_BASE_URL=https://your-backend-url.com/
+
+# Token refresh settings
+VITE_REFRESH_INTERVAL=900000        # 15 minutes in ms
+VITE_MAX_RETRY_ATTEMPTS=3
+VITE_RETRY_DELAY=5000               # 5 seconds in ms
+```
+
+> ⚠️ Never commit `.env.local` to version control. It is already listed in `.gitignore`.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-
-```bash
-Node.js >= 18.0.0
-npm >= 9.0.0 (or pnpm >= 8.0.0)
-```
+- Node.js >= 18
+- npm >= 9
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/anaswail/e-store.git
-   cd e-store
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/anaswail/NeoTech.git
+cd NeoTech
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   pnpm install
-   ```
+# Install dependencies
+npm install
 
-3. **Configure environment variables**
-   
-   Create a `.env` file in the root directory:
-   ```env
-   VITE_API_BASE_URL=your_backend_api_url
-   VITE_STRIPE_PUBLIC_KEY=your_stripe_key
-   ```
-
-4. **Start development server**
-   ```bash
-   npm run dev
-   ```
-   
-   Application will be available at `http://localhost:5173`
-
-5. **Build for production**
-   ```bash
-   npm run build
-   npm run preview  # Preview production build
-   ```
-
----
-
-## 📁 Project Structure
-
+# Start development server
+npm run dev
 ```
-e-store/
-│
-├── public/                 # Static assets
-│
-├── src/
-│   ├── assets/            # Images, fonts, and media
-│   │
-│   ├── axios/             # HTTP client configuration
-│   │   └── axiosApi.ts
-│   │
-│   ├── components/        # Reusable React components
-│   │   ├── ui/           # shadcn/ui components
-│   │   ├── cart/         # Cart-related components
-│   │   ├── product/      # Product display components
-│   │   └── layout/       # Layout components
-│   │
-│   ├── hooks/            # Custom React hooks
-│   │
-│   ├── layouts/          # Page layout templates
-│   │
-│   ├── lib/              # Utility functions and helpers
-│   │
-│   ├── pages/            # Route pages
-│   │   ├── admin/       # Admin dashboard pages
-│   │   ├── auth/        # Authentication pages
-│   │   ├── profile/     # User profile pages
-│   │   ├── HomePage.tsx
-│   │   ├── AllProducts.tsx
-│   │   ├── ProductDetails.tsx
-│   │   └── ...
-│   │
-│   ├── routes/           # Route configuration
-│   │
-│   ├── store/            # Redux store configuration
-│   │   ├── slices/      # Redux slices
-│   │   └── store.ts
-│   │
-│   ├── types/            # TypeScript type definitions
-│   │
-│   ├── App.tsx
-│   └── main.tsx
-│
-├── .env.example          # Environment variables template
-├── components.json       # shadcn/ui configuration
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── tailwind.config.js
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
 ```
 
 ---
 
-## 🔌 API Integration
+## 🔄 State Management Patterns
 
-The frontend communicates with a custom-built REST API developed by **Hager Gamal**.
+This project uses **Redux Toolkit** with a consistent pattern across all async features:
 
-### Current Endpoints
-
-| Feature | Status | Description |
-|---------|--------|-------------|
-| Authentication | ✅ Active | Login, register, email verification |
-| Products | ✅ Active | CRUD operations, search, filtering |
-| Cart | ✅ Active | Add, update, remove items |
-| User Profile | ✅ Active | Update details, avatar upload |
-| Admin Panel | ✅ Active | Product management |
-| Orders | 🔄 Static | Dynamic implementation in Phase 2 |
-| Wishlist | 🔄 Static | Dynamic implementation in Phase 2 |
-| Payment | 🔒 Disabled | Fully coded, staged for production |
+- Each feature has its own **slice** under `store/slices/`
+- Async operations are handled with `createAsyncThunk` in a dedicated `act/` folder per domain
+- State shape follows: `{ data, loading, error }` for predictable rendering
+- The Axios instance handles **request/response interceptors** for token injection and error normalization
 
 ---
 
-## 🗺️ Roadmap
+## 🤝 Team
 
-### Phase 2 — Advanced Features
-
-- [ ] **Payment Activation** — Enable secure Visa/Mastercard processing
-- [ ] **Dynamic Wishlist** — Real-time wishlist synchronization
-- [ ] **Order Management** — Complete order lifecycle tracking
-- [ ] **Advanced Analytics** — Revenue, conversion, and customer insights
-- [ ] **Role-Based Access** — Multiple admin permission levels
-- [ ] **Performance Optimization** — Code splitting, lazy loading, caching
-- [ ] **Testing Suite** — Unit tests, integration tests, E2E tests
-- [ ] **Multi-language Support** — Internationalization (i18n)
-- [ ] **Product Reviews** — Customer ratings and feedback system
-- [ ] **Live Chat Support** — Real-time customer service
+| Role | Name | Profile |
+|---|---|---|
+| Frontend Developer | **Anas Wael** | [LinkedIn](https://www.linkedin.com/in/anas-wael/) · [GitHub](https://github.com/anaswail) |
+| Backend Developer | **Hagar Gamal** | [LinkedIn](https://www.linkedin.com/in/hagar-e-64b44b1b4/) · [GitHub](https://github.com/Hagar-Elessawy0) |
 
 ---
 
-## 👥 Contributors
+## 📚 What I Learned
 
-<table>
-<tr>
-<td align="center">
-<a href="https://github.com/anaswail">
-<img src="https://github.com/anaswail.png" width="100px;" alt="Anas Wael"/><br />
-<sub><b>Anas Wael</b></sub>
-</a><br />
-<sub>Frontend Developer</sub>
-</td>
-<td align="center">
-    <a href="https://github.com/Hagar-Elessawy0">
-<img src="https://avatars.githubusercontent.com/u/175347500?v=4" width="100px;" alt="Hager Gamal"/><br />
-<sub><b>Hager Gamal</b></sub>
-<br />
-<sub>Backend Developer</sub>
-</td>
-</tr>
-</table>
+A dedicated patterns and learnings log from this project is documented on Notion:
 
----
+📓 [View Patterns & Notes](https://www.notion.so/Patterns-29adef5f641d807e8c22f4c99f5d3239?source=copy_link)
 
-## 📬 Contact & Support
-
-**Anas Wael**
-- 📧 Email: anaswail246@gmail.com
-- 🐙 GitHub: [@anaswail](https://github.com/anaswail)
-- 💼 LinkedIn: [Anas Wael](https://www.linkedin.com/in/anas-wael/)
-
-For bug reports or feature requests, please open an issue on GitHub.
+Key areas covered: component architecture, Redux patterns, async state management, JWT auth flows, role-based access, and API integration strategies.
 
 ---
 
 ## 📄 License
 
-This project is developed for educational and portfolio purposes.
-
-```
-MIT License
-
-Copyright (c) 2025 Anas Wael & Hager Gamal
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software.
-```
-
----
-
-<div align="center">
-
-**Built with ❤️ by Anas Wael & Hager Gamal**
-
-⭐ Star this repository if you find it helpful!
-
-</div>
+This project is built for portfolio purposes. All rights reserved © Anas Wael.
