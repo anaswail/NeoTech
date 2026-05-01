@@ -65,46 +65,46 @@ const ProductDetails = () => {
   }, [product]);
 
   const handleAddToCart = () => {
-    if (product) {
-      if (isAddedToCart) {
-        // Remove from cart if already added
-        dispatch(removeFromCart({ id: product.id } as CartItem));
-        setIsAddedToCart(false);
-        toast.success(`${product.title} has been deleted from the cart`, {
-          style: {
-            border: "1px solid #713200",
-            padding: "16px",
-            color: "#00000",
-          },
-          iconTheme: {
-            primary: "green",
-            secondary: "#FFFAEE",
-          },
-        });
-      } else {
-        // Add to cart if not added
-        const cartItem: CartItem = {
-          id: product.id,
-          title: product.title,
-          price: product.maxPrice,
-          quantity: count,
-          img: product?.images?.[0]?.secure_url ?? "",
-          variationSku: product?.variations?.[0]?.sku ?? "",
-        };
-        dispatch(addToCart(cartItem));
-        setIsAddedToCart(true);
-        toast.success(`${product.title} added to cart successfully`, {
-          style: {
-            border: "1px solid #713200",
-            padding: "16px",
-            color: "#00000",
-          },
-          iconTheme: {
-            primary: "green",
-            secondary: "#FFFAEE",
-          },
-        });
-      }
+    if (!product?.id) return;
+
+    if (isAddedToCart) {
+      // Remove from cart if already added
+      dispatch(removeFromCart({ id: product.id } as CartItem));
+      setIsAddedToCart(false);
+      toast.success(`${product.title} has been deleted from the cart`, {
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#00000",
+        },
+        iconTheme: {
+          primary: "green",
+          secondary: "#FFFAEE",
+        },
+      });
+    } else {
+      // Add to cart if not added
+      const cartItem: CartItem = {
+        id: product.id,
+        title: product.title,
+        price: product.maxPrice,
+        quantity: count,
+        img: product?.images?.[0]?.secure_url ?? "",
+        variationSku: product?.variations?.[0]?.sku ?? "",
+      };
+      dispatch(addToCart(cartItem));
+      setIsAddedToCart(true);
+      toast.success(`${product.title} added to cart successfully`, {
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#00000",
+        },
+        iconTheme: {
+          primary: "green",
+          secondary: "#FFFAEE",
+        },
+      });
     }
   };
 

@@ -327,12 +327,12 @@ const HomePage: React.FC = () => {
             {homeData?.bestSelling?.map((product) => (
               <div key={product.id} className="px-2">
                 <Card
-                  img={product.interfaceImages.secure_url}
-                  title={product.title}
-                  price={product.maxPrice}
-                  discount={product.minPrice}
+                  img={product?.interfaceImages?.secure_url ?? ""}
+                  title={product?.title}
+                  price={product?.maxPrice}
+                  discount={product?.minPrice}
                   wishAndCart={true}
-                  id={product.id}
+                  id={product?.id ?? ""}
                 />
               </div>
             ))}
@@ -360,12 +360,12 @@ const HomePage: React.FC = () => {
           {homeData?.discoverProducts?.map((product) => (
             <Card
               key={product.id}
-              img={product.interfaceImages.secure_url}
-              title={product.title}
-              price={product.maxPrice}
-              discount={product.minPrice}
+              img={product?.interfaceImages?.secure_url ?? ""}
+              title={product?.title}
+              price={product?.maxPrice}
+              discount={product?.minPrice}
               wishAndCart={true}
-              id={product.id}
+              id={product?.id ?? ""}
             />
           ))}
         </div>

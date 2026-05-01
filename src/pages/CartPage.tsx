@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store/store";
 import { Trash2Icon } from "lucide-react";
@@ -23,7 +22,7 @@ const CartPage = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     id: string,
     min = 1,
-    max = 99
+    max = 99,
   ) => {
     const value = parseInt(e.target.value) || min;
     updateQuantity(value, id, min, max);
@@ -222,9 +221,8 @@ const CartPage = () => {
               Total: $
               {cartItems
                 .reduce(
-                  (total, product, id) =>
-                    total + product.price * product.quantity,
-                  0
+                  (total, product) => total + product.price * product.quantity,
+                  0,
                 )
                 .toFixed(2)}
             </p>

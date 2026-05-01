@@ -41,12 +41,12 @@ const AllProducts = ({ heading = true }: { heading: boolean }) => {
         {data?.map((product, idx) => (
           <Card
             key={idx}
-            img={product?.interfaceImages.secure_url}
+            img={product?.interfaceImages?.secure_url ?? ""}
             title={product.title}
             price={product.maxPrice}
             discount={product.minPrice}
             wishAndCart={true}
-            id={product.id}
+            id={product.id ?? ""}
           />
         ))}
       </div>

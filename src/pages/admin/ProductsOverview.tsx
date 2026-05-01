@@ -1,7 +1,7 @@
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Filter, Plus, SearchIcon } from "lucide-react";
+import { Plus, SearchIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store/store";
 import { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ const ProductsOverview = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data: homeData } = useSelector((state: RootState) => state.home);
   const { data: categoryData, loading } = useSelector(
-    (state: RootState) => state.category
+    (state: RootState) => state.category,
   );
   const {
     data: productsData,
@@ -75,12 +75,12 @@ const ProductsOverview = () => {
     const query = e.target.value.toLocaleLowerCase();
     const source =
       selectedCat === "all"
-        ? productsData ?? []
-        : categoryData?.products?.products ?? [];
+        ? (productsData ?? [])
+        : (categoryData?.products?.products ?? []);
     setProducts(
       source.filter((product) =>
-        product.title.toLocaleLowerCase().includes(query)
-      )
+        product.title.toLocaleLowerCase().includes(query),
+      ),
     );
   };
 
@@ -149,13 +149,13 @@ const ProductsOverview = () => {
             {products?.map((product, idx) => (
               <Card
                 key={idx}
-                img={product?.interfaceImages.secure_url}
+                img={product?.interfaceImages?.secure_url ?? ""}
                 title={product.title}
                 price={product.maxPrice}
                 discount={product.minPrice}
                 wishAndCart={false}
                 deleteAndUpdate={true}
-                id={product.id}
+                id={product?.id ?? ""}
               />
             ))}
           </div>

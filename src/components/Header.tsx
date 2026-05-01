@@ -8,7 +8,6 @@ import {
   X,
   ChevronDown,
   LogInIcon,
-  User,
 } from "lucide-react";
 import { userToken } from "@/utils/Repeated";
 import { useEffect, useState } from "react";

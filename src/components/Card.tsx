@@ -20,7 +20,6 @@ const Card = ({
   price,
   discount,
   id,
-  deleteIcon = false,
   wishAndCart = false,
   deleteAndUpdate = false,
 }: cardProps) => {
@@ -41,7 +40,7 @@ const Card = ({
     (state: RootState) => state.getWishlist,
   );
 
-  const { loading: toggleWishlistLoad, error: toggleWishlistErr } = useSelector(
+  const { loading: toggleWishlistLoad } = useSelector(
     (state: RootState) => state.toggleWishlist,
   );
 
@@ -77,7 +76,7 @@ const Card = ({
       dispatch(actGetMyWishlist());
     } else if (actToggleWishlist.rejected.match(result)) {
       toast.error(
-        result.payload?.message || "Something went wrong. Please try again.",
+        (result.payload as any)?.message || "Something went wrong. Please try again.",
       );
     }
   };

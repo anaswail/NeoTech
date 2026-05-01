@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 import { categoriesLevels } from "@/utils/Repeated";
 import type { CategoryLevels } from "@/types";
 import { actGetProductById } from "@/store/slices/products/act/actGetProductById";
-import { useLocation } from "react-router";
 import { actUpdateMainProductInfo } from "@/store/slices/products/act/actUpdateMainProductInfo";
 import { actUpdateProductImg } from "@/store/slices/products/act/actUpdateProductImg";
 import { actUpdateVariations } from "@/store/slices/products/act/actUpdateVariations";
@@ -38,7 +37,7 @@ const ProductCRUD = () => {
     }
   }, [productId]);
 
-  const { data, loading } = useSelector((state: RootState) => state.productId);
+  const { data } = useSelector((state: RootState) => state.productId);
 
   // Form basic fields
   const [formData, setFormData] = useState({
@@ -107,7 +106,7 @@ const ProductCRUD = () => {
   // ===== IMAGE HANDLERS =====
   const handleFileChange = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -158,10 +157,10 @@ const ProductCRUD = () => {
   const updateVariation = (
     id: string,
     field: keyof Variation,
-    value: string
+    value: string,
   ) => {
     setVariations(
-      variations.map((v) => (v.id === id ? { ...v, [field]: value } : v))
+      variations.map((v) => (v.id === id ? { ...v, [field]: value } : v)),
     );
   };
 
@@ -197,11 +196,13 @@ const ProductCRUD = () => {
   };
 
   const { error: addProductError } = useSelector(
-    (state: RootState) => state.newProduct
+    (state: RootState) => state.newProduct,
   );
 
   // ===== SUBMIT HANDLER =====
   const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!validate()) {
       return;
     }
@@ -313,8 +314,8 @@ const ProductCRUD = () => {
             actUpdateMainProductInfo({
               title: formData.title,
               description: formData.description,
-            })
-          ).unwrap()
+            }),
+          ).unwrap(),
         );
       }
 
@@ -328,7 +329,7 @@ const ProductCRUD = () => {
         });
 
         promises.push(
-          dispatch(actUpdateProductImg({ images: imagesFormData })).unwrap()
+          dispatch(actUpdateProductImg({ images: imagesFormData })).unwrap(),
         );
       }
 
@@ -356,8 +357,8 @@ const ProductCRUD = () => {
                 actUpdateVariations({
                   sku,
                   variations: variationData,
-                })
-              ).unwrap()
+                }),
+              ).unwrap(),
             );
           }
         });
@@ -695,7 +696,7 @@ const ProductCRUD = () => {
                             updateVariation(
                               variation.id,
                               "price",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="130"
@@ -720,7 +721,7 @@ const ProductCRUD = () => {
                             updateVariation(
                               variation.id,
                               "comparePrice",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="150"
@@ -740,7 +741,7 @@ const ProductCRUD = () => {
                             updateVariation(
                               variation.id,
                               "stock",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="10"
@@ -765,7 +766,7 @@ const ProductCRUD = () => {
                             updateVariation(
                               variation.id,
                               "colorName",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="Red"
@@ -791,7 +792,7 @@ const ProductCRUD = () => {
                               updateVariation(
                                 variation.id,
                                 "hex",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="w-10 sm:w-12 h-10 sm:h-12 rounded border-2 border-gray-300 cursor-pointer"
@@ -803,7 +804,7 @@ const ProductCRUD = () => {
                               updateVariation(
                                 variation.id,
                                 "hex",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             placeholder="#FF0000"
